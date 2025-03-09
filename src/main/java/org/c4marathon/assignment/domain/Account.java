@@ -1,6 +1,9 @@
 package org.c4marathon.assignment.domain;
 
-import org.apache.catalina.Member;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.c4marathon.assignment.domain.common.BaseTimeEntity;
 import org.c4marathon.assignment.domain.enums.AccountType;
 
@@ -29,7 +32,10 @@ import jakarta.persistence.ManyToOne;
 // Transaction Isolation Level을 조사해보고, 어떤 단계를 사용해야 할지 생각해보자.
 // 인당 한도는 어떻게 관리해야 할까?
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTimeEntity{
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -37,9 +43,17 @@ public class Account extends BaseTimeEntity{
     private AccountType accountType; // MAIN, SAVING
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Member_id", nullable = false)
-    private Member Member;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     private Long balance; // 잔액
+
+    @Builder
+    public Account(Member member, Long balance, AccountType accountType) {
+        this.member = member;
+        this.balance = balance;
+        this.accountType = accountType;
+    }
+    
 }
 
