@@ -20,7 +20,8 @@ public class MemberAccountController {
     private final MemberAccountService memberAccountService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount(@RequestBody MemberRegistrationRequestDto request) {
+    public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount(
+            @RequestBody MemberRegistrationRequestDto request) {
         Long memberId = memberAccountService.registerMemberWithAccount(request);
         return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
     }

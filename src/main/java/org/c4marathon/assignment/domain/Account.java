@@ -34,9 +34,10 @@ import jakarta.persistence.ManyToOne;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account extends BaseTimeEntity{
+public class Account extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +55,5 @@ public class Account extends BaseTimeEntity{
         this.balance = balance;
         this.accountType = accountType;
     }
-    
-}
 
+}

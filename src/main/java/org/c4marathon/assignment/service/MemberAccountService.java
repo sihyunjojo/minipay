@@ -15,7 +15,7 @@ public class MemberAccountService {
 
     @Transactional
     public Long registerMemberWithAccount(MemberRegistrationRequestDto request) {
-        Long memberId = memberService.registerMember(request); 
+        Long memberId = memberService.registerMember(request);
         accountService.createMainAccountForMember(memberId);
 
         return memberId;

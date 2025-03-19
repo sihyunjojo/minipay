@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -25,14 +24,14 @@ public class AccountService {
 
     @Transactional
     public AccountDto createMainAccountForMember(Long memberId) {
-        
+
         Member memberProxy = entityManager.getReference(Member.class, memberId);
 
         Account mainAccount = Account.builder()
-        .member(memberProxy)
-        .balance(0L)
-        .accountType(AccountType.MAIN) // 메인 계좌 표시
-        .build();
+                .member(memberProxy)
+                .balance(0L)
+                .accountType(AccountType.MAIN) // 메인 계좌 표시
+                .build();
 
         accountRepository.save(mainAccount);
 
@@ -55,7 +54,6 @@ public class AccountService {
 
         return new AccountDto(savingAccount);
     }
-
 
     public void validateMainAccountExists(Long memberId) {
         Member memberProxy = entityManager.getReference(Member.class, memberId);

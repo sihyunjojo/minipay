@@ -19,7 +19,7 @@ import lombok.Setter;
 public abstract class BaseTimeEntity {
 
     @CreatedDate // ✅ Spring Data JPA에서 자동으로 설정
-    @Column(updatable = false) 
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate // ✅ @PreUpdate 없이 자동으로 변경됨
