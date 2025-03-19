@@ -3,6 +3,7 @@ package org.c4marathon.assignment.service;
 import org.c4marathon.assignment.domain.Account;
 import org.c4marathon.assignment.domain.Member;
 import org.c4marathon.assignment.domain.enums.AccountType;
+import org.c4marathon.assignment.dto.account.AccountDto;
 import org.c4marathon.assignment.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +22,9 @@ public class AccountService {
     private EntityManager entityManager;
 
     private final AccountRepository accountRepository;
-    
+
     @Transactional
-    public void createMainAccountForMember(Long memberId) {
+    public AccountDto createMainAccountForMember(Long memberId) {
         
         Member memberProxy = entityManager.getReference(Member.class, memberId);
 
@@ -34,5 +35,35 @@ public class AccountService {
         .build();
 
         accountRepository.save(mainAccount);
+
+        return new AccountDto(mainAccount);
     }
+
+    @Transactional
+    public AccountDto createSavingAccountForMember(Long memberId) {
+        validateMainAccountExists(memberId);
+
+        Member memberProxy = entityManager.getReference(Member.class, memberId);
+
+        Account savingAccount = Account.builder()
+                .member(memberProxy)
+                .balance(0L)
+                .accountType(AccountType.SAVING)
+                .build();
+
+        accountRepository.save(savingAccount);
+
+        return new AccountDto(savingAccount);
+    }
+
+
+    public void validateMainAccountExists(Long memberId) {
+        Member memberProxy = entityManager.getReference(Member.class, memberId);
+
+        boolean exists = accountRepository.existsByMemberAndAccountType(memberProxy, AccountType.MAIN);
+        if (!exists) {
+            throw new IllegalStateException("메인 계좌가 존재하지 않아 적금 계좌를 생성할 수 없습니다.");
+        }
+    }
+
 }
