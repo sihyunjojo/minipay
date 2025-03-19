@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.service;
 
+import org.c4marathon.assignment.dto.account.AccountDto;
 import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,12 @@ public class MemberAccountService {
 
         return memberId;
     }
+
+    @Transactional
+    public AccountDto registerSavingAccount(Long memberId) {
+        memberService.validateMemberExists(memberId);
+
+        return accountService.createSavingAccountForMember(memberId);
+    }
+
 }
