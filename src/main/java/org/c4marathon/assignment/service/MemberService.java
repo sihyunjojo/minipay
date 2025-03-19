@@ -26,4 +26,10 @@ public class MemberService {
         return member.getId();
     }
 
+    public void validateMemberExists(Long memberId) {
+        boolean exists = memberRepository.existsById(memberId);
+        if (!exists) {
+            throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
+        }
+    }
 }
