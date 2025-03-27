@@ -5,6 +5,7 @@ import org.c4marathon.assignment.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+@ToString
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,11 +39,12 @@ public class MainAccount implements Account {
         this.balance -= amount;
     }
 
-    public void increaseDailyCharge(Long amount) {
-        this.dailyChargeAmount += amount;
+    public void charge(Long amount) {
+        this.balance += amount;
+        increaseDailyCharge(amount);
     }
 
-    public void resetDailyChargeAmount() {
-        this.dailyChargeAmount = 0L;
+    private void increaseDailyCharge(Long amount) {
+        this.dailyChargeAmount += amount;
     }
 }
