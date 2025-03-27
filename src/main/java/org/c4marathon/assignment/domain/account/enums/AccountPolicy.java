@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum AccountPolicy {
     MAIN_DAILY_LIMIT(3_000_000L),
-    DEFAULT(null);
+    CHARGE_UNIT(10_000L);
 
     private final Long value;
 
