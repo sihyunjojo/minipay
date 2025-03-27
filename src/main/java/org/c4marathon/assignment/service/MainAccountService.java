@@ -30,12 +30,7 @@ public class MainAccountService {
 		mainAccountRepository.save(mainAccount);
 	}
 
-	public MainAccount getMainAccountByMemberId(Long memberId) {
-		return mainAccountRepository.findByMemberId(memberId)
-			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
-	}
-
-	public Long getMainAccountByMemberId2(Long memberId) {
+	public Long getMainAccountByMemberId(Long memberId) {
 		return mainAccountRepository.findIdByMemberId(memberId)
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}

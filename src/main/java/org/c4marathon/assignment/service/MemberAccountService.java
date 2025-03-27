@@ -24,17 +24,10 @@ public class MemberAccountService {
         return memberId;
     }
 
-    // @Transactional
-    // public AccountDto registerSavingAccount(Long memberId) {
-    //     memberService.validateMemberExists(memberId);
-    //     MainAccount mainAccount = mainAccountService.getMainAccountByMemberId(memberId);
-    //     return savingAccountService.createSavingAccountForMember2(memberId, mainAccount);
-    // }
-
     @Transactional
     public AccountDto registerSavingAccount(Long memberId) {
         memberService.validateMemberExists(memberId);
-        Long memberAccountId = mainAccountService.getMainAccountByMemberId2(memberId);
+        Long memberAccountId = mainAccountService.getMainAccountByMemberId(memberId);
         return savingAccountService.createSavingAccountForMember(memberId, memberAccountId);
     }
 
