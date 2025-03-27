@@ -44,4 +44,10 @@ springdoc:
 
 logging:
   level:
-    root: WARN
+    root: info
+#trace
+#debug
+#warn
+#info
+#error
+
