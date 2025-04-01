@@ -9,10 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MainAccountRepository extends JpaRepository<MainAccount, Long>, MainAccountQueryRepository {
+	// @Lock(LockModeType.PESSIMISTIC_WRITE) // 비관적 락
 	// DB에서 MainAccount 테이블의 모든 컬럼을 가져옵니다.
 	// 이걸 다시 JPA가 엔티티로 변환하고 영속성 컨텍스트에 등록하죠.
 	// DB IO + 매핑 비용이 큼 → 느림
-	@Query("SELECT m FROM MainAccount m WHERE m.member.id = :memberId")
+	@Query("SELECT m FROM MainAccount m WHERE m.member.id = :memberId") // 비관적락이 미세하지만 느리긴하다. (사실상 거의 동일한 성능을 보임)
 	Optional<MainAccount> findByMemberId(@Param("memberId") Long memberId);
 
 	// DB에서 가져오는 건 딱 id 하나
@@ -36,29 +37,4 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	void fastCharge(@Param("id") Long id, @Param("amount") Long amount);
 
 	int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
-
-
-	// 동시 요청이 발생할 수 있기 때문이야.
-	// 애플리케이션에서 from.getBalance()로 확인한 시점과
-	// DB에서 UPDATE가 실제로 일어나는 시점 사이에는 시간 차이가 존재해.
-	// 그 사이에 다른 트랜잭션이 balance를 바꿔버릴 수 있어.
-	// Pre-check in app + assert in DB 패턴 (내가 보기엔 괜찮아 보여도, DB가 최종 판단한다)
-	// 포인트, 쿠폰, 돈처럼 정합성이 중요한 도메인에서 거의 필수로 사용
-	// 이 조건은 비관적 락보다 가볍다
-	// 이 방식을 쓰면 낙관적,비관적락을 안쓰고 그냥 락을 안걸어도 정합성을 유지시켜줌.
-// 	@Modifying
-// 	@Query("""
-//     UPDATE MainAccount m
-//     SET m.balance = m.balance + :amount,
-//         m.dailyChargeAmount = m.dailyChargeAmount + :amount
-//     WHERE m.id = :id
-//     AND m.balance + :amount >= :minRequiredBalance
-//     AND m.dailyChargeAmount + :amount <= :limit
-// """)
-// 	int beforeConditionalFastCharge(@Param("id") Long id,
-// 		@Param("amount") Long amount,
-// 		@Param("minRequiredBalance") Long minRequiredBalance,
-// 		@Param("limit") Long limit);
-
-
 }

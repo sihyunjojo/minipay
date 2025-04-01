@@ -44,26 +44,6 @@ public class MainAccountService {
 	}
 
 	@Transactional
-	public void charge(MainAccount account, Long amount) {
-		if (account.getDailyChargeAmount() + amount > AccountPolicy.MAIN_DAILY_LIMIT.getValue()) {
-			throw new IllegalStateException("일일 충전 한도를 초과했습니다.");
-		}
-
-		account.charge(amount);
-	}
-
-	// DB에 직접 UPDATE만 하고, 영속성 컨텍스트에는 반영되지 않음
-	// @Transactional
-	// public void fastCharge(MainAccount account, Long amount) {
-	// 	if (account.getDailyChargeAmount() + amount > AccountPolicy.MAIN_DAILY_LIMIT.getValue()) {
-	// 		throw new IllegalStateException("일일 충전 한도를 초과했습니다.");
-	// 	}
-	//
-	// 	// 내가 들고 있는 from 객체는 여전히 이전의 상태
-	// 	mainAccountRepository.fastCharge(account.getId(), amount);
-	// }
-
-	@Transactional
 	public void conditionalFastCharge(Long accountId, Long amount, Long minRequiredBalance) {
 		int updated = mainAccountRepository.conditionalFastCharge(
 			accountId,
