@@ -56,6 +56,12 @@ public class MainAccountService {
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}
 
+	// 📌 2. ID 기반 최신 조회 (Post-fetch용)
+	public MainAccount getById(Long id) {
+		return mainAccountRepository.findById(id)
+			.orElseThrow(() -> new IllegalStateException("계좌 없음"));
+	}
+
 	@Transactional
 	public boolean conditionalFastCharge(Long accountId, Long amount, Long minRequiredBalance) {
 		int updated = mainAccountRepository.conditionalFastCharge(
