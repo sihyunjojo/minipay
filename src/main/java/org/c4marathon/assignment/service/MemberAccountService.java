@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.service;
 
+import org.c4marathon.assignment.domain.Member;
 import org.c4marathon.assignment.domain.account.MainAccount;
 import org.c4marathon.assignment.dto.account.AccountDto;
 import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
@@ -25,10 +26,25 @@ public class MemberAccountService {
     }
 
     @Transactional
+    public Long registerMemberWithAccount2(MemberRegistrationRequestDto request) {
+        Member member = memberService.registerMember2(request);
+        mainAccountService.createMainAccountForMember2(member);
+
+        return member.getId();
+    }
+
+    @Transactional
     public AccountDto registerSavingAccount(Long memberId) {
         memberService.validateMemberExists(memberId);
         Long memberAccountId = mainAccountService.getMainAccountByMemberId(memberId);
         return savingAccountService.createSavingAccountForMember(memberId, memberAccountId);
+    }
+
+    @Transactional
+    public AccountDto registerSavingAccount2(Long memberId) {
+        memberService.validateMemberExists(memberId);
+        MainAccount mainAccount = mainAccountService.getMainAccountByMemberId2(memberId);
+        return savingAccountService.createSavingAccountForMember(memberId, mainAccount);
     }
 
 }

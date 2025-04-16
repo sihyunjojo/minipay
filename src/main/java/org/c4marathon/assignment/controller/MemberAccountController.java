@@ -26,9 +26,23 @@ public class MemberAccountController {
         return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
     }
 
+
+    @PostMapping("/2")
+    public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount2(
+        @RequestBody MemberRegistrationRequestDto request) {
+        Long memberId = memberAccountService.registerMemberWithAccount2(request);
+        return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
+    }
+
     @PostMapping("/{memberId}/accounts/saving")
     public ResponseEntity<ApiResponse<AccountDto>> createSavingAccount(@PathVariable Long memberId) {
         AccountDto savingAccount = memberAccountService.registerSavingAccount(memberId);
+        return ResponseEntity.ok(ApiResponse.res(201, "적금 계좌 생성 완료", savingAccount));
+    }
+
+    @PostMapping("/{memberId}/accounts/saving/2")
+    public ResponseEntity<ApiResponse<AccountDto>> createSavingAccount2(@PathVariable Long memberId) {
+        AccountDto savingAccount = memberAccountService.registerSavingAccount2(memberId);
         return ResponseEntity.ok(ApiResponse.res(201, "적금 계좌 생성 완료", savingAccount));
     }
 }

@@ -1,11 +1,10 @@
 package org.c4marathon.assignment.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.c4marathon.assignment.domain.Member;
 import org.c4marathon.assignment.domain.account.MainAccount;
 import org.c4marathon.assignment.domain.account.enums.AccountPolicy;
+import org.c4marathon.assignment.repository.EntityReferenceRepository;
 import org.c4marathon.assignment.repository.MainAccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,17 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainAccountService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
-
+	private final EntityReferenceRepository entityReferenceRepository;
 	private final MainAccountRepository mainAccountRepository;
 
 	@Transactional
 	public void createMainAccountForMember(Long memberId) {
-		Member memberProxy = entityManager.getReference(Member.class, memberId);
+		Member memberProxy = entityReferenceRepository.getMemberReference(memberId);
 
 		MainAccount mainAccount = MainAccount.builder()
 			.member(memberProxy)
+			.balance(0L)
+			.build();
+
+		mainAccountRepository.save(mainAccount);
+	}
+
+	@Transactional
+	public void createMainAccountForMember2(Member member) {
+		MainAccount mainAccount = MainAccount.builder()
+			.member(member)
 			.balance(0L)
 			.build();
 
@@ -43,8 +50,14 @@ public class MainAccountService {
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}
 
+
+	public MainAccount getMainAccountByMemberId2(Long memberId) {
+		return mainAccountRepository.findByMemberId(memberId)
+			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
+	}
+
 	@Transactional
-	public void conditionalFastCharge(Long accountId, Long amount, Long minRequiredBalance) {
+	public boolean conditionalFastCharge(Long accountId, Long amount, Long minRequiredBalance) {
 		int updated = mainAccountRepository.conditionalFastCharge(
 			accountId,
 			amount,
@@ -52,9 +65,7 @@ public class MainAccountService {
 			AccountPolicy.MAIN_DAILY_LIMIT.getValue()
 		);
 
-		if (updated == 0) {
-			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");
-		}
+		return updated > 0;
 	}
 
 
