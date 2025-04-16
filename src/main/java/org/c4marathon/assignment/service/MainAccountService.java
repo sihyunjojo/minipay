@@ -5,7 +5,7 @@ import org.c4marathon.assignment.domain.Member;
 import org.c4marathon.assignment.domain.account.MainAccount;
 import org.c4marathon.assignment.domain.account.enums.AccountPolicy;
 import org.c4marathon.assignment.repository.EntityReferenceRepository;
-import org.c4marathon.assignment.repository.MainAccountRepository;
+import org.c4marathon.assignment.repository.mainAccount.MainAccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
