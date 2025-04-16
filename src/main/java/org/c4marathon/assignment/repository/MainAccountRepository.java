@@ -20,21 +20,17 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	@Query("SELECT m.id FROM MainAccount m WHERE m.member.id = :memberId")
 	Optional<Long> findIdByMemberId(@Param("memberId") Long memberId);
 
+	// JPA 직접 업데이트를 쓸 땐 거의 무조건 필수
 	// JPA가 자동으로 영속성 컨텍스트를 초기화
 	// 이후 findById(id) 같은 조회를 해도 영속성 컨텍스트의 캐시가 아닌, DB의 최신값을 보장
 	// 쿼리를 실행한 후, 현재 영속성 컨텍스트(1차 캐시)를 자동으로 초기화(clear) 해주는 역할
+	// !! 그러나 이미 존재하던 객체는 detached 상태가 되며, 자동으로 최신 상태가 되지는 않음
+	// JPA의 영속성 컨텍스트(1차 캐시)를 거치지 않는다 (JPA는 “내 객체가 바뀌었다”는 걸 모름) -> 그래서 @modifyinh(clear) 해줘야함.
 	@Modifying(clearAutomatically = true)
 	// JPQL 기반의 Bulk Update 쿼리
-	// 영속성 컨텍스트를 거치지 않음
+	// 영속성 컨텍스트를 거치지 않음 (DB에 직접 UPDATE만 하고, 영속성 컨텍스트에는 반영되지 않음)
 	@Query("UPDATE MainAccount m SET m.dailyChargeAmount = 0")
 	void resetAllDailyChargeAmount();
-
-	// JPA 직접 업데이트를 쓸 땐 거의 무조건 필수
-	@Modifying(clearAutomatically = true)
-	// JPA의 영속성 컨텍스트(1차 캐시)를 거치지 않는다 (JPA는 “내 객체가 바뀌었다”는 걸 모름)
-	@Query("UPDATE MainAccount m SET m.balance = m.balance + :amount, m.dailyChargeAmount = m.dailyChargeAmount + :amount WHERE m.id = :id")
-	// DB에 직접 UPDATE만 하고, 영속성 컨텍스트에는 반영되지 않음
-	void fastCharge(@Param("id") Long id, @Param("amount") Long amount);
 
 	int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
 }
