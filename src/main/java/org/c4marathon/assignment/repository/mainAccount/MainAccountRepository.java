@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.repository;
+package org.c4marathon.assignment.repository.mainAccount;
 
 import java.util.Optional;
 
