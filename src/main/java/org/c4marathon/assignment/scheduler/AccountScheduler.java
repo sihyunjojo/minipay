@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.service;
+package org.c4marathon.assignment.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccountSchedulerService {
+public class AccountScheduler {
 
 	private final MainAccountRepository mainAccountRepository;
 
