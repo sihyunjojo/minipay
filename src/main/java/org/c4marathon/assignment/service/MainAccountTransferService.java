@@ -32,11 +32,10 @@ public class MainAccountTransferService {
 			Long chargeAmount = ((shortfall + chargeUnit - 1) / chargeUnit) * chargeUnit;
 
 			// ⚡ DB에서 한도/잔액 조건 포함 충전 시도
-			mainAccountService.conditionalFastCharge(
-				from.getId(),
-				chargeAmount,
-				amount
-			);
+			if (!mainAccountService.conditionalFastCharge(from.getId(), chargeAmount, amount)) {
+				throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");
+			}
+
 
 			// getByMemberId() 안에서 JPA가 내부적으로 실행하는 SELECT는, 이미 해당 엔티티(MainAccount)가 같은 트랜잭션의 영속성 컨텍스트에 존재하면,
 			// → DB에서 가져오지 않고, 기존 엔티티를 그대로 반환합니다.
