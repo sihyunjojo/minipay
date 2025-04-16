@@ -13,4 +13,10 @@ public enum AccountPolicy {
     AccountPolicy(Long value) {
         this.value = value;
     }
+
+    // 💡 단위에 맞춰 반올림 충전 계산
+    public static Long getRoundedCharge(Long shortfall) {
+        Long unit = CHARGE_UNIT.getValue();
+        return ((shortfall + unit - 1) / unit) * unit;
+    }
 }
