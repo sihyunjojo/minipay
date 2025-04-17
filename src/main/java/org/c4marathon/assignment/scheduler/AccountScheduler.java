@@ -2,22 +2,23 @@ package org.c4marathon.assignment.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
+import org.c4marathon.assignment.domain.service.MainAccountService;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
 public class AccountScheduler {
 
-	private final MainAccountRepository mainAccountRepository;
+	private final MainAccountService mainAccountService;
 
+	// Todo: 배치 처리 또는 chunk 단위 업데이트, 혹은 비동기 처리 , 재시도 전략
 	@Scheduled(cron = "0 0 0 * * *")
 	@Transactional
 	public void resetDailyChargeLimits() {
-		mainAccountRepository.resetAllDailyChargeAmount();
+		mainAccountService.resetAllDailyChargeLimits();
 		log.info("✅ 모든 사용자 일일 충전 한도 초기화 완료");
 	}
 }

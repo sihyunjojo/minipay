@@ -74,5 +74,10 @@ public class MainAccountService {
 		return updated > 0;
 	}
 
+	@Transactional
+	public void resetAllDailyChargeLimits() {
+		mainAccountRepository.resetAllDailyChargeAmount();
+	}
+
 
 }
