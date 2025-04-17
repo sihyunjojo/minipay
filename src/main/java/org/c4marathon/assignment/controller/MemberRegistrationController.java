@@ -25,11 +25,4 @@ public class MemberRegistrationController {
         return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
     }
 
-    @PostMapping("/2")
-    public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount2(
-        @RequestBody MemberRegistrationRequestDto request) {
-        Long memberId = memberAccountUseCase.registerMemberWithAccount2(request);
-        return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
-    }
-
 }

@@ -28,15 +28,6 @@ public class MainAccountService {
 		mainAccountRepository.save(mainAccount);
 	}
 
-	@Transactional
-	public void createMainAccountForMember2(Member member) {
-		MainAccount mainAccount = MainAccount.builder()
-			.member(member)
-			.balance(0L)
-			.build();
-
-		mainAccountRepository.save(mainAccount);
-	}
 
 	// @Transactional(readOnly = true)를 쓰면 무조건 빨라진다고 오해하지만,
 	// 실제로는 JPA의 변경 감지(dirty checking)를 비활성화하는 정도
@@ -47,12 +38,6 @@ public class MainAccountService {
 
 	public Long getMainAccountByMemberId(Long memberId) {
 		return mainAccountRepository.findIdByMemberId(memberId)
-			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
-	}
-
-
-	public MainAccount getMainAccountByMemberId2(Long memberId) {
-		return mainAccountRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}
 

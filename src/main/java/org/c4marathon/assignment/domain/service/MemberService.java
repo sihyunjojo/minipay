@@ -25,18 +25,6 @@ public class MemberService {
         return member.getId();
     }
 
-    @Transactional
-    public Member registerMember2(MemberRegistrationRequestDto request) {
-        Member member = Member.builder()
-            .name(request.name())
-            .email(request.email())
-            .password(request.password())
-            .build();
-
-        memberRepository.save(member);
-        return member;
-    }
-
     public void validateMemberExists(Long memberId) {
         boolean exists = memberRepository.existsById(memberId);
         if (!exists) {

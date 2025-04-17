@@ -32,19 +32,4 @@ public class SavingAccountService {
 
 		return new AccountDto(savingAccount);
 	}
-
-	@Transactional
-	public AccountDto createSavingAccountForMember(Long memberId, MainAccount mainAccount) {
-		Member memberProxy = entityReferenceRepository.getMemberReference(memberId);
-
-		SavingAccount savingAccount = SavingAccount.builder()
-			.member(memberProxy)
-			.balance(0L)
-			.mainAccount(mainAccount)
-			.build();
-
-		savingAccountRepository.save(savingAccount);
-
-		return new AccountDto(savingAccount);
-	}
 }
