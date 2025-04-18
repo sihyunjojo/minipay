@@ -21,7 +21,7 @@ reviews:
 
   # 변경 요청 워크플로우 사용 여부 (GitHub에서 "Request changes" 포함 여부)
   # 선택지: true / false
-  request_changes_workflow: true  # 리뷰만 하고, 변경 요청은 하지 않음
+  request_changes_workflow: true  # 리뷰만 하고, 변경 요청도 함.
 
   # 리뷰 전체 요약 포함 여부
   # 선택지: true / false
