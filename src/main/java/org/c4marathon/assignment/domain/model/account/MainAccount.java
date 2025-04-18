@@ -35,6 +35,7 @@ public class MainAccount implements Account {
 
     @Override
     public void withdraw(Long amount) {
+        if (amount <= 0) throw new IllegalArgumentException("출금액은 0보다 커야 합니다");
         if (this.balance < amount) throw new IllegalStateException("잔액 부족");
         this.balance -= amount;
     }
