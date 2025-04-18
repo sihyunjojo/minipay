@@ -25,8 +25,13 @@ public class TransferController {
 	public ResponseEntity<ApiResponse<String>> transfer(
 		@RequestBody TransferRequestDto request
 	) {
-		transferUseCase.transfer(request.fromMemberId(), request.toMemberId(), request.amount());
-		return ResponseEntity.ok(ApiResponse.res(200, "송금 성공"));
+		try {
+			transferUseCase.transfer(request.fromMemberId(), request.toMemberId(), request.amount());
+			return ResponseEntity.ok(ApiResponse.res(200, "송금 성공"));
+		} catch (IllegalStateException e) {
+			return ResponseEntity.badRequest()
+				.body(ApiResponse.res(400, e.getMessage()));
+		}
 	}
 
 }
