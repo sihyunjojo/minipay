@@ -17,7 +17,7 @@ reviews:
   #   - "precise" (간결하고 직설적인 피드백)
   #   - "kind" (정중하고 따뜻한 스타일)
   #   - "nitpick" (작은 디테일까지 꼼꼼하게 짚는 스타일)
-  profile: "nitpick"  # 간결하고 직설적인 피드백
+  profile: "assertive"  # 직설적이고 명확한 피드백 (기존 nitpick 대체)
 
   # 변경 요청 워크플로우 사용 여부 (GitHub에서 "Request changes" 포함 여부)
   # 선택지: true / false
