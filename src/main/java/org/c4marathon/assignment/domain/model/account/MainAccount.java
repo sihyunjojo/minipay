@@ -7,6 +7,9 @@ import lombok.*;
 
 @ToString
 @Entity
+@Table(name = "main_account", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "member_id")
+}) // 똑같은 회원에 대해 중복 생성 방지
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MainAccount implements Account {
