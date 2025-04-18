@@ -18,7 +18,11 @@ public class AccountScheduler {
 	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	@Transactional
 	public void resetDailyChargeLimits() {
-		mainAccountService.resetAllDailyTransferAmount();
-		log.info("✅ 모든 사용자 일일 충전 한도 초기화 완료");
+		try {
+			mainAccountService.resetAllDailyTransferAmount();
+			log.info("✅ 모든 사용자 일일 충전 한도 초기화 완료");
+		} catch (Exception e) {
+	   		log.error("❌ 일일 충전 한도 초기화 중 오류 발생", e);
+		}
 	}
 }
