@@ -19,6 +19,11 @@ public class MainAccountService {
 
 	@Transactional
 	public void createMainAccountForMember(Long memberId) {
+		boolean accountExists = mainAccountRepository.findByMemberId(memberId).isPresent();
+		if (accountExists) {
+			throw new IllegalStateException("회원이 이미 메인 계좌를 가지고 있습니다.");
+		}
+
 		Member memberProxy = entityReferenceRepository.getMemberReference(memberId);
 
 		MainAccount mainAccount = MainAccount.builder()
