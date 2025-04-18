@@ -61,8 +61,8 @@ public class MainAccountService {
 	}
 
 	@Transactional
-	public void resetAllDailyChargeLimits() {
-		mainAccountRepository.resetAllDailyChargeAmount();
+	public void resetAllDailyTransferAmount() {
+		mainAccountRepository.resetAllDailyTransferAmount();
 	}
 
 

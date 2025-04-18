@@ -30,7 +30,7 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	// JPQL 기반의 Bulk Update 쿼리
 	// 영속성 컨텍스트를 거치지 않음 (DB에 직접 UPDATE만 하고, 영속성 컨텍스트에는 반영되지 않음)
 	@Query("UPDATE MainAccount m SET m.dailyChargeAmount = 0")
-	void resetAllDailyChargeAmount();
+	void resetAllDailyTransferAmount();
 
 	int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
 }
