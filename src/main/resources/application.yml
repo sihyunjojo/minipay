@@ -25,14 +25,6 @@ spring:
     import:
       - classpath:policy-account.yml
 
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console
-#      settings:
-#        trace: false
-#        web-allow-others: true
-
 # java -XX:+PrintFlagsFinal -version # JVM이 사용하는 내부 설정값(Flags)을 전부 출력
 # 기본 JVM 메모리 설정: -Xms = 약 256MB, -Xmx = 약 4GB (전체의 1/4)
 # Stack Memory (-Xss) 기본: 1MB per thread
