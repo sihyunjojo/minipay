@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.usecase;
 
+import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
 import org.c4marathon.assignment.domain.service.MainAccountService;
 import org.c4marathon.assignment.domain.service.MemberService;
@@ -18,9 +19,9 @@ public class MemberAccountUseCase {
 
     @Transactional
     public Long registerMemberWithAccount(MemberRegistrationRequestDto request) {
-        Long memberId = memberService.registerMember(request);
-        mainAccountService.createMainAccountForMember(memberId);
+        Member member = memberService.registerMember(request);
+        mainAccountService.createMainAccountForMember(member);
 
-        return memberId;
+        return member.getId();
     }
 }

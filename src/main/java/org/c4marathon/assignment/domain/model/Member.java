@@ -38,4 +38,11 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.password = password;
     }
+
+    public void setMainAccount(MainAccount mainAccount) {
+        this.mainAccount = mainAccount;
+        if (mainAccount != null && mainAccount.getMember() != this) {
+            mainAccount.setMember(this);
+        }
+    }
 }

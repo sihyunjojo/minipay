@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.account.enums.AccountPolicy;
-import org.c4marathon.assignment.common.jpa.EntityReferenceRepository;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,24 +12,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainAccountService {
 
-	private final EntityReferenceRepository entityReferenceRepository;
 	private final MainAccountRepository mainAccountRepository;
 	private final AccountPolicyService accountPolicyService;
 
 	@Transactional
-	public void createMainAccountForMember(Long memberId) {
-		boolean accountExists = mainAccountRepository.findByMemberId(memberId).isPresent();
+	public void createMainAccountForMember(Member member) {
+		boolean accountExists = mainAccountRepository.findByMemberId(member.getId()).isPresent();
 		if (accountExists) {
 			throw new IllegalStateException("회원이 이미 메인 계좌를 가지고 있습니다.");
 		}
 
-		Member memberProxy = entityReferenceRepository.getMemberReference(memberId);
-
 		MainAccount mainAccount = MainAccount.builder()
-			.member(memberProxy)
 			.balance(0L)
 			.build();
 
+		member.setMainAccount(mainAccount);
 		mainAccountRepository.save(mainAccount);
 	}
 

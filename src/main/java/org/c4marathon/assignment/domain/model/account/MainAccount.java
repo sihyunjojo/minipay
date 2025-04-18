@@ -42,4 +42,11 @@ public class MainAccount implements Account {
         if (this.balance < amount) throw new IllegalStateException("잔액 부족");
         this.balance -= amount;
     }
+
+    public void setMember(Member member) {
+        this.member = member;
+        if (member != null && member.getMainAccount() != this) {
+            member.setMainAccount(this);
+        }
+    }
 }
