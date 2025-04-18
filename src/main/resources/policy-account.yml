@@ -1,0 +1,5 @@
+business:
+  rule:
+    account:
+      main-daily-limit: 3000000
+      charge-unit: 10000

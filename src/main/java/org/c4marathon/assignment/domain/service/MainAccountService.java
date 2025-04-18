@@ -15,6 +15,7 @@ public class MainAccountService {
 
 	private final EntityReferenceRepository entityReferenceRepository;
 	private final MainAccountRepository mainAccountRepository;
+	private final AccountPolicyService accountPolicyService;
 
 	@Transactional
 	public void createMainAccountForMember(Long memberId) {
@@ -53,7 +54,7 @@ public class MainAccountService {
 			accountId,
 			amount,
 			minRequiredBalance,
-			AccountPolicy.MAIN_DAILY_LIMIT.getValue()
+			accountPolicyService.getPolicyValue(AccountPolicy.MAIN_DAILY_LIMIT)
 		);
 
 		return updated > 0;
