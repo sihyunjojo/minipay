@@ -1,7 +1,6 @@
 package org.c4marathon.assignment.domain.service.mainaccount;
 
-import static org.springframework.transaction.annotation.Propagation.*;
-
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,8 @@ public class MainAccountService {
 	private static final int MAX_RETRY = 20;
 	private static final long BASE_SLEEP_TIME_MS = 50;      // 초기 대기 시간
 	private static final long MAX_SLEEP_TIME_MS = 1500;     // 최대 대기 시간
+
+	private final EntityManager entityManager;
 
 	private final MainAccountRepository mainAccountRepository;
 	private final AccountPolicyService accountPolicyService;
@@ -107,6 +108,7 @@ public class MainAccountService {
 			if (retryCount == MAX_RETRY) {
 				throw new OptimisticLockException("동시성 충돌로 인해 출금에 실패했습니다.");
 			}
+			entityManager.detach(account);
 			account = findById(accountId);
 			sleepWithBackoff(retryCount);
 		}
@@ -122,6 +124,7 @@ public class MainAccountService {
 			if (retryCount == MAX_RETRY) {
 				throw new OptimisticLockException("동시성 충돌로 인해 입금에 실패했습니다.");
 			}
+			entityManager.detach(account);
 			account = findById(accountId);
 			sleepWithBackoff(retryCount);
 		}
