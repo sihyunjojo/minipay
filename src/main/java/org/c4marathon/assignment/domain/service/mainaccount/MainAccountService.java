@@ -65,7 +65,7 @@ public class MainAccountService {
 		return transferAmount - currentBalance;
 	}
 
-	@Transactional(propagation = REQUIRES_NEW)
+	@Transactional()
 	public void chargeOrThrow(Long accountId, Long shortfall, Long minRequiredBalance) {
 		// Assert in DB (DB 정합성 확인하며 충전 시도)
 		long chargeAmount = accountPolicyService.getRoundedCharge(shortfall);
