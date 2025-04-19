@@ -2,7 +2,7 @@ package org.c4marathon.assignment.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.c4marathon.assignment.domain.service.MainAccountService;
+import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

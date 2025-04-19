@@ -1,7 +1,7 @@
 package org.c4marathon.assignment.usecase;
 
 import org.c4marathon.assignment.dto.account.AccountDto;
-import org.c4marathon.assignment.domain.service.MainAccountService;
+import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.service.MemberService;
 import org.c4marathon.assignment.domain.service.SavingAccountService;
 import org.springframework.transaction.annotation.Transactional;
