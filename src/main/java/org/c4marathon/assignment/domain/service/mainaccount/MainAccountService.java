@@ -62,7 +62,8 @@ public class MainAccountService {
 	public Long calculateShortfall(Long accountId, Long transferAmount) {
 		Long currentBalance = mainAccountRepository.findMainAccountAmountById(accountId);
 
-		return transferAmount - currentBalance;
+		long diff = transferAmount - currentBalance;
+		return Math.max(diff, 0L);    // 부족분이 없으면 0 반환
 	}
 
 	@Transactional()
