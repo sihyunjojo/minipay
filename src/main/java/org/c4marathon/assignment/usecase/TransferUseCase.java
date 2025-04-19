@@ -14,7 +14,6 @@ public class TransferUseCase {
 
 	private final MainAccountService mainAccountService;
 
-
 	@Transactional
 	public void transfer(Long fromMemberId, Long toMemberId, Long transferAmount) {
 		Long fromAccountId = mainAccountService.getMainAccountByMemberId(fromMemberId);

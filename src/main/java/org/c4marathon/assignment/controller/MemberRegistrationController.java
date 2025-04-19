@@ -16,13 +16,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/members")
 public class MemberRegistrationController {
 
-    private final MemberAccountUseCase memberAccountUseCase;
+	private final MemberAccountUseCase memberAccountUseCase;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount(
-            @RequestBody MemberRegistrationRequestDto request) {
-        Long memberId = memberAccountUseCase.registerMemberWithAccount(request);
-        return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
-    }
+	@PostMapping
+	public ResponseEntity<ApiResponse<Long>> registerMemberWithAccount(
+		@RequestBody MemberRegistrationRequestDto request) {
+		Long memberId = memberAccountUseCase.registerMemberWithAccount(request);
+		return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", memberId));
+	}
 
 }

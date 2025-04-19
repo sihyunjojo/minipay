@@ -1,6 +1,7 @@
 package org.c4marathon.assignment.domain.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
 import org.c4marathon.assignment.domain.repository.MemberRepository;
@@ -11,24 +12,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
+	private final MemberRepository memberRepository;
 
-    @Transactional
-    public Member registerMember(MemberRegistrationRequestDto request) {
-        Member member = Member.builder()
-                .name(request.name())
-                .email(request.email())
-                .password(request.password())
-                .build();
+	@Transactional
+	public Member registerMember(MemberRegistrationRequestDto request) {
+		Member member = Member.builder()
+			.name(request.name())
+			.email(request.email())
+			.password(request.password())
+			.build();
 
-        memberRepository.save(member);
-        return member;
-    }
+		memberRepository.save(member);
+		return member;
+	}
 
-    public void validateMemberExists(Long memberId) {
-        boolean exists = memberRepository.existsById(memberId);
-        if (!exists) {
-            throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
-        }
-    }
+	public void validateMemberExists(Long memberId) {
+		boolean exists = memberRepository.existsById(memberId);
+		if (!exists) {
+			throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
+		}
+	}
 }

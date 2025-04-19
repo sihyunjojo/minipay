@@ -1,12 +1,13 @@
 package org.c4marathon.assignment.domain.repository.mainaccount;
 
 import org.c4marathon.assignment.domain.model.account.QMainAccount;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+@Repository
 @RequiredArgsConstructor
 public class MainAccountQueryRepositoryImpl implements MainAccountQueryRepository {
 

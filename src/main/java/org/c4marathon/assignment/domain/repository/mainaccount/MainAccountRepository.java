@@ -43,12 +43,14 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE MainAccount a SET a.balance = a.balance + :amount, a.version = a.version + 1 "
 		+ "WHERE a.id = :accountId AND a.version = :version")
-	int depositByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount, @Param("version") Long version);
+	int depositByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount,
+		@Param("version") Long version);
 
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE MainAccount m SET m.balance = m.balance - :amount, m.version = m.version + 1 "
 		+ "WHERE m.id = :accountId AND m.balance >= :amount AND m.version = :version")
-	int withdrawByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount, @Param("version") Long version);
+	int withdrawByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount,
+		@Param("version") Long version);
 
 	@Query("SELECT m.balance FROM MainAccount m WHERE m.id = :accountId")
 	Long findMainAccountAmountById(@Param("accountId") Long accountId);

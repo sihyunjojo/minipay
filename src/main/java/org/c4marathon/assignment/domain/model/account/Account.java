@@ -17,7 +17,9 @@ import org.c4marathon.assignment.domain.model.Member;
 // Transaction Isolation Level을 조사해보고, 어떤 단계를 사용해야 할지 생각해보자.
 // 인당 한도는 어떻게 관리해야 할까?
 public interface Account {
-    Long getId();
-    Long getBalance();
-    Member getMember();
+	Long getId();
+
+	Long getBalance();
+
+	Member getMember();
 }

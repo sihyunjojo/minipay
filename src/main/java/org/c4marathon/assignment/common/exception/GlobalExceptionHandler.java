@@ -1,6 +1,7 @@
 package org.c4marathon.assignment.common.exception;
 
 import org.c4marathon.assignment.common.response.ApiResponse;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,36 +16,36 @@ import org.springframework.web.server.ResponseStatusException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.res(404, ex.getMessage()));
-    }
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			.body(ApiResponse.res(404, ex.getMessage()));
+	}
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
-        log.warn("예외 발생: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.res(500, ex.getMessage()));
-    }
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
+		log.warn("예외 발생: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ApiResponse.res(500, ex.getMessage()));
+	}
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(ResponseStatusException ex) {
-        return ResponseEntity.status(ex.getStatusCode())
-                .body(ApiResponse.res(ex.getStatusCode().value(), ex.getReason()));
-    }
+	@ExceptionHandler(ResponseStatusException.class)
+	public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(ResponseStatusException ex) {
+		return ResponseEntity.status(ex.getStatusCode())
+			.body(ApiResponse.res(ex.getStatusCode().value(), ex.getReason()));
+	}
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
-        log.warn("예외 발생: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.res(500, "서버 내부 오류"));
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+		log.warn("예외 발생: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ApiResponse.res(500, "서버 내부 오류"));
+	}
 
-    @ExceptionHandler(OptimisticLockException.class)
-    public ResponseEntity<ApiResponse<Void>> handleOptimisticLockException(OptimisticLockException ex) {
-        log.warn("동시성 충돌 예외 발생: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ApiResponse.res(409, "현재 다른 요청에 의해 처리 중입니다. 잠시 후 다시 시도해주세요."));
-    }
+	@ExceptionHandler(OptimisticLockException.class)
+	public ResponseEntity<ApiResponse<Void>> handleOptimisticLockException(OptimisticLockException ex) {
+		log.warn("동시성 충돌 예외 발생: {}", ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+			.body(ApiResponse.res(409, "현재 다른 요청에 의해 처리 중입니다. 잠시 후 다시 시도해주세요."));
+	}
 }

@@ -13,15 +13,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberAccountUseCase {
 
-    private final MemberService memberService;
-    private final MainAccountService mainAccountService;
+	private final MemberService memberService;
+	private final MainAccountService mainAccountService;
 
+	@Transactional
+	public Long registerMemberWithAccount(MemberRegistrationRequestDto request) {
+		Member member = memberService.registerMember(request);
+		mainAccountService.createMainAccountForMember(member);
 
-    @Transactional
-    public Long registerMemberWithAccount(MemberRegistrationRequestDto request) {
-        Member member = memberService.registerMember(request);
-        mainAccountService.createMainAccountForMember(member);
-
-        return member.getId();
-    }
+		return member.getId();
+	}
 }

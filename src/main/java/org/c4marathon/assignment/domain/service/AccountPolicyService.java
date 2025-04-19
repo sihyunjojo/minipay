@@ -8,7 +8,6 @@ import org.c4marathon.assignment.config.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.model.account.enums.AccountPolicy;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class AccountPolicyService {
