@@ -4,17 +4,25 @@ import java.util.Optional;
 
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 public interface MainAccountRepository extends JpaRepository<MainAccount, Long>, MainAccountQueryRepository {
 	// @Lock(LockModeType.PESSIMISTIC_WRITE) // 비관적 락
 	// DB에서 MainAccount 테이블의 모든 컬럼을 가져옵니다.
 	// 이걸 다시 JPA가 엔티티로 변환하고 영속성 컨텍스트에 등록하죠.
 	// DB IO + 매핑 비용이 큼 → 느림
-	@Query("SELECT m FROM MainAccount m WHERE m.member.id = :memberId") // 비관적락이 미세하지만 느리긴하다. (사실상 거의 동일한 성능을 보임)
+	@Query("SELECT m FROM MainAccount m WHERE m.member.id = :memberId")
+	// 비관적락이 미세하지만 느리긴하다. (사실상 거의 동일한 성능을 보임)
 	Optional<MainAccount> findByMemberId(@Param("memberId") Long memberId);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("SELECT m FROM MainAccount m WHERE m.id = :accountId")
+	Optional<MainAccount> findByIdWithPessimisticLock(@Param("accountId") Long accountId);
 
 	// DB에서 가져오는 건 딱 id 하나
 	@Query("SELECT m.id FROM MainAccount m WHERE m.member.id = :memberId")
@@ -32,5 +40,18 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	@Query("UPDATE MainAccount m SET m.dailyChargeAmount = 0")
 	void resetAllDailyTransferAmount();
 
-	int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE MainAccount a SET a.balance = a.balance + :amount, a.version = a.version + 1 "
+		+ "WHERE a.id = :accountId AND a.version = :version")
+	int depositByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount, @Param("version") Long version);
+
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE MainAccount m SET m.balance = m.balance - :amount, m.version = m.version + 1 "
+		+ "WHERE m.id = :accountId AND m.balance >= :amount AND m.version = :version")
+	int withdrawByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount, @Param("version") Long version);
+
+	@Query("SELECT m.balance FROM MainAccount m WHERE m.id = :accountId")
+	Long findMainAccountAmountById(@Param("accountId") Long accountId);
+
+	boolean tryFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
 }
