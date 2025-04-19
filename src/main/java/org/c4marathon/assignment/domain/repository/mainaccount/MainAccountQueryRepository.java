@@ -8,5 +8,5 @@ public interface MainAccountQueryRepository {
 	 * @param amount 청구할 금액 충전 후 필요한 최소 잔액 최소 충전 잔액
 	 * @param limit 일일 최대 충전 한도 반환 영향을 받는 행 수 (성공하면 1, 실패하면 0)
 	 */
-	int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long limit);
+	boolean tryFastCharge(Long id, Long amount, Long minRequiredBalance, Long limit);
 }

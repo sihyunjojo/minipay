@@ -22,9 +22,8 @@ public class MainAccountQueryRepositoryImpl implements MainAccountQueryRepositor
 	// 이 조건은 비관적 락보다 가볍다
 	// 이 방식을 쓰면 낙관적,비관적락을 안쓰고 그냥 락을 안걸어도 정합성을 유지시켜줌.
 	@Override
-	@Transactional
-	public int conditionalFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit) {
-		return (int) queryFactory
+	public boolean tryFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit) {
+		return queryFactory
 			.update(mainAccount)
 			.set(mainAccount.balance, mainAccount.balance.add(amount))
 			.set(mainAccount.dailyChargeAmount, mainAccount.dailyChargeAmount.add(amount))
@@ -33,6 +32,6 @@ public class MainAccountQueryRepositoryImpl implements MainAccountQueryRepositor
 				mainAccount.balance.add(amount).goe(minRequiredBalance),
 				mainAccount.dailyChargeAmount.add(amount).loe(dailyLimit)
 			)
-			.execute();
+			.execute() > 0;
 	}
 }
