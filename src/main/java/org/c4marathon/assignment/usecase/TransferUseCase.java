@@ -27,7 +27,7 @@ public class TransferUseCase {
 			return;
 		}
 
-		mainAccountService.chargeOrThrow2(fromAccountId, shortfall, transferAmount);
+		mainAccountService.chargeOrThrow(fromAccountId, shortfall, transferAmount);
 
 		mainAccountService.transfer(fromAccountId, toAccountId, transferAmount);
 	}
