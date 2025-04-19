@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException ex) {
-		log.error("예외 발생: {}", ex.getMessage(), ex);
+		log.warn("예외 발생: {}", ex.getMessage(), ex);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(ApiResponse.res(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
 	}
