@@ -100,7 +100,7 @@ public class MainAccountService {
 		int retryCount = 0;
 		while (retryCount++ < MAX_RETRY) {
 			if (mainAccountRepository.withdrawByOptimistic(accountId, amount, account.getVersion()) > 0) {
-				log.info("출금 성공, retryCount: {}", retryCount);
+				log.debug("출금 성공, retryCount: {}", retryCount);
 				return;
 			}
 			if (retryCount == MAX_RETRY) {
@@ -115,7 +115,7 @@ public class MainAccountService {
 		int retryCount = 0;
 		while (retryCount++ < MAX_RETRY) {
 			if (mainAccountRepository.depositByOptimistic(accountId, amount, account.getVersion()) > 0) {
-				log.info("입금 성공, retryCount: {}", retryCount);
+				log.debug("입금 성공, retryCount: {}", retryCount);
 				return;
 			}
 			if (retryCount == MAX_RETRY) {
