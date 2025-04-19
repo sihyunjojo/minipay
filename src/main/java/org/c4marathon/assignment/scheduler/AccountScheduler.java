@@ -19,7 +19,7 @@ public class AccountScheduler {
 	@Transactional
 	public void resetDailyChargeLimits() {
 		try {
-			mainAccountService.resetAllDailyTransferAmount();
+			mainAccountService.resetAllDailyChargeAmount();
 			log.info("✅ 모든 사용자 일일 충전 한도 초기화 완료");
 		} catch (Exception e) {
 	   		log.error("❌ 일일 충전 한도 초기화 중 오류 발생", e);
