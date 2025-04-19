@@ -20,6 +20,4 @@ public interface Account {
     Long getId();
     Long getBalance();
     Member getMember();
-    void deposit(Long amount);
-    void withdraw(Long amount);
 }

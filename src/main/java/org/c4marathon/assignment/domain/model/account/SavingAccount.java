@@ -30,15 +30,4 @@ public class SavingAccount implements Account {
 		this.balance = balance;
 		this.mainAccount = mainAccount;
 	}
-
-	@Override
-	public void deposit(Long amount) {
-		this.balance += amount;
-	}
-
-	@Override
-	public void withdraw(Long amount) {
-		if (this.balance < amount) throw new IllegalStateException("잔액 부족");
-		this.balance -= amount;
-	}
 }
