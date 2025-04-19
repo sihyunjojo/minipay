@@ -18,9 +18,10 @@ public class SavingAccountController {
 
 	private final SavingAccountUseCase savingAccountUseCase;
 
-	@PostMapping("/{memberId}/accounts/saving")
+	@PostMapping("/{memberId}")
 	public ResponseEntity<ApiResponse<AccountDto>> createSavingAccount(@PathVariable Long memberId) {
 		AccountDto savingAccount = savingAccountUseCase.registerSavingAccount(memberId);
-		return ResponseEntity.ok(ApiResponse.res(201, "적금 계좌 생성 완료", savingAccount));
+		return ResponseEntity.status(201)
+			.body(ApiResponse.res(201, "적금 계좌 생성 완료", savingAccount));
 	}
 }
