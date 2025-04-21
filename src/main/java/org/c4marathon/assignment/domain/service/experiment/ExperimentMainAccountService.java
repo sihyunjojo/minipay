@@ -7,10 +7,11 @@ import java.util.function.Supplier;
 
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.dto.RetryResult;
+import org.c4marathon.assignment.dto.log.RetryResult;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
@@ -56,10 +57,10 @@ public class ExperimentMainAccountService {
 		RetryResult<Void> withdrawResult = withdrawWithRetry(fromAccountId, amount, from);
 		RetryResult<Void> depositResult = depositWithRetry(toAccountId, amount, to);
 
-		if (withdrawResult.getRetryCount() > 0 || depositResult.getRetryCount() > 0) {
-			log.info("출금 최종 재시도 횟수: {}", withdrawResult.getRetryCount());
-			log.info("입금 최종 재시도 횟수: {}", depositResult.getRetryCount());
-		}
+		// if (withdrawResult.getRetryCount() > 0 || depositResult.getRetryCount() > 0) {
+		// 	log.info("출금 최종 재시도 횟수: {}", withdrawResult.getRetryCount());
+		// 	log.info("입금 최종 재시도 횟수: {}", depositResult.getRetryCount());
+		// }
 	}
 
 	private RetryResult<Void> withdrawWithRetry(Long accountId, Long amount, MainAccount initialAccount) {
@@ -90,14 +91,14 @@ public class ExperimentMainAccountService {
 
 	// 이전 트랜잭션의 rollback-only 상태를 회피하려는 의도 (원래 아래 트랜잭션으로 하려했지만, 이후 리트라이 로직으로 변경) (requrieds_new 삭제)
 	// 상위 트랜잭션이 아직 종료되지 않아 락을 보유 중인 상태에서, 하위 메서드가 새로운 트랜잭션(REQUIRES_NEW) 으로 동일 자원에 접근하면서 락 충돌이 발생
-	// @Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void tryWithdraw(Long accountId, Long amount, Long version) {
 		if (mainAccountRepository.withdrawByOptimistic(accountId, amount, version) <= 0) {
 			throw new OptimisticLockException("동시성 충돌로 인해 출금 쿼리가 적용되지 않음");
 		}
 	}
 
-	// @Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void tryDeposit(Long accountId, Long amount, Long version) {
 		if (mainAccountRepository.depositByOptimistic(accountId, amount, version) <= 0) {
 			throw new OptimisticLockException("동시성 충돌로 인해 입금 쿼리가 적용되지 않음");
@@ -122,14 +123,14 @@ public class ExperimentMainAccountService {
 		while (true) {
 			try {
 				T result = operation.call(); // 💡 성공 시
-				if (retryCount > 0) {
-					log.debug("시도 완료: retryCount = {}", retryCount);
-				}
+				// if (retryCount > 0) {
+				// 	log.debug("시도 완료: retryCount = {}", retryCount);
+				// }
 				return new RetryResult<>(result, retryCount); // 💡 여기에 retryCount 담김
 			} catch (Throwable e) {
 				retryCount++;
 				if (retryCount >= MAX_RETRY || !isRetryable(e)) {
-					log.error("최대 재시도 횟수 초과 또는 재시도 불가능한 예외: {}", e.getMessage());
+					// log.error("최대 재시도 횟수 초과 또는 재시도 불가능한 예외: {}", e.getMessage());
 					throw new RuntimeException(e);
 				}
 				sleepWithBackoff(retryCount);
