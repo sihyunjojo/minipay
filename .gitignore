@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+docs/
+naver-intellij-formatter.xml
+# QueryDSL Q 클래스 자동 생성 파일 무시
+/src/main/generated/

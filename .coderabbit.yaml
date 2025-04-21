@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# 리뷰 언어 설정
+# 선택지:
+#   - "en-US" (기본값, 영어)
+#   - "ko-KR" (한국어)
+language: "ko-KR"  # 한국어로 리뷰 받기
+
+# 얼리 액세스 기능 사용 여부 (베타 기능)
+# 선택지: true / false
+early_access: false  # 안정된 기능만 사용
+
+reviews:
+  # 리뷰 스타일(profile) 설정
+  # 선택지:
+  #   - "chill" (친근하고 부드러운 스타일)
+  #   - "precise" (간결하고 직설적인 피드백)
+  #   - "kind" (정중하고 따뜻한 스타일)
+  #   - "nitpick" (작은 디테일까지 꼼꼼하게 짚는 스타일)
+  profile: "assertive"  # 직설적이고 명확한 피드백 (기존 nitpick 대체)
+
+  # 변경 요청 워크플로우 사용 여부 (GitHub에서 "Request changes" 포함 여부)
+  # 선택지: true / false
+  request_changes_workflow: true  # 리뷰만 하고, 변경 요청도 함.
+
+  # 리뷰 전체 요약 포함 여부
+  # 선택지: true / false
+  high_level_summary: true  # 리뷰 상단에 요약 제공
+
+  # 시(詩) 형식의 요약 제공 여부
+  # 선택지: true / false
+  poem: false  # 재미 요소로 시 형식 요약 포함
+
+  # 리뷰 상태 요약을 출력할지 여부 (승인 / 변경 요청 등 표시)
+  # 선택지: true / false
+  review_status: true  # 리뷰 상태를 명확하게 표시
+
+  # walkthrough(코드 흐름 설명) 접기 여부
+  # 선택지: true / false
+  collapse_walkthrough: false  # 펼쳐서 보여주기
+
+  auto_review:
+    # PR 생성 시 자동 리뷰 수행 여부
+    # 선택지: true / false
+    enabled: true  # 자동으로 리뷰 시작
+
+    # Draft PR (아직 리뷰를 받기에는 준비되지 않은 PR일 때, 임시로 올려놓는 용도)에도 리뷰할지 여부
+    # 선택지: true / false
+    drafts: false  # Draft 상태 PR은 리뷰하지 않음
+
+chat:
+  # PR에서 질문이 달렸을 때 자동 응답 기능
+  # 선택지: true / false
+  auto_reply: true  # AI가 자동 응답해줌
+
+
+# 🔧 선택적 설정 (원할 때 주석 해제해서 사용 가능)
+
+# 아직 공식적으로 지원되지 않기 때문에 생기는 오류
+#suggestions:
+#  enabled: true         # AI가 코드 자동 수정 제안 (예: 코드 리팩토링)
+#  limit: 5              # 최대 제안 개수 설정 (기본값 3, 범위 1~5)
+
+# walkthrough 설정
+# 선택지:
+#   - enabled: true / false
+#   - limit: 숫자 (리뷰할 최대 줄 수)
+#walkthrough:
+#  enabled: true     # 코드 흐름을 단계별로 설명
+#  limit: 100        # 최대 100줄까지 walkthrough 생성
+
+# GitHub PR에 자동 라벨 부착 설정
+# 선택지:
+#   - enable: true / false
+#labels:
+#  enable: true            # PR 리뷰 결과에 따라 자동 라벨 부착
+#  success: "code-approved"        # 리뷰 승인 시 라벨
+#  request_changes: "needs-work"   # 변경 요청 시 라벨
+#  commented: "feedback-given"     # 코멘트만 있을 때 라벨
+
+# 특정 파일 제외 및 파일 크기 제한 등 리뷰 규칙 설정
+# 선택지:
+#   - ignore_files: 문자열 배열
+#   - max_file_size: 숫자 (KB 단위)
+#rules:
+#  ignore_files:
+#    - "*.lock"     # lock 파일 무시
+#    - "docs/**"    # 문서 디렉토리 무시
+#    - "*.md"       # 마크다운 파일 무시
+#  max_file_size: 500  # 500KB 이상 파일은 리뷰 생략
+
+# 리뷰 시 코드 몇 줄까지 보여줄지 설정 (주석 참고용)
+# 선택지:
+#   - lines_before: 숫자
+#   - lines_after: 숫자
+# code_context:
+#   lines_before: 10      # 리뷰 시 위로 10줄 보여줌
+#   lines_after: 10       # 리뷰 시 아래로 10줄 보여줌
+
+# GitHub PR 요약 섹션에 리뷰 요약 포함 여부
+# 선택지: true / false
+# github:
+#   summarise_reviews: true  # PR 요약란에 리뷰 내용 포함
+
+# 민감한 파일에 대한 리뷰 허용 여부
+# 선택지: true / false
+# allow_review_on_sensitive_files: false  # .env, 인증키 등 민감 파일 리뷰 금지
+
+# 전체 리뷰 가능한 최대 줄 수 설정
+# 선택지: 숫자 (1 이상)
+# max_review_size: 1000  # 리뷰 대상 최대 줄 수 (1,000줄 초과 시 생략)

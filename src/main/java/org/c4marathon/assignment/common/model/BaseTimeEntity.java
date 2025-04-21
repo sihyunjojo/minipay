@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.common;
+package org.c4marathon.assignment.common.model;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +18,10 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class) // ✅ Auditing 기능 활성화
 public abstract class BaseTimeEntity {
 
-    @CreatedDate // ✅ Spring Data JPA에서 자동으로 설정
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+	@CreatedDate // ✅ Spring Data JPA에서 자동으로 설정
+	@Column(updatable = false)
+	private LocalDateTime createdAt;
 
-    @LastModifiedDate // ✅ @PreUpdate 없이 자동으로 변경됨
-    private LocalDateTime updatedAt;
+	@LastModifiedDate // ✅ @PreUpdate 없이 자동으로 변경됨
+	private LocalDateTime updatedAt;
 }
