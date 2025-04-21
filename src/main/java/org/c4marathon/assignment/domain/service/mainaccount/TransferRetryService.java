@@ -1,5 +1,7 @@
 package org.c4marathon.assignment.domain.service.mainaccount;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
@@ -14,6 +16,7 @@ import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,10 +25,13 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransferRetryService {
+
 
 	private final MainAccountRepository mainAccountRepository;
 	private final PlatformTransactionManager transactionManager;
@@ -39,8 +45,8 @@ public class TransferRetryService {
 	private final EntityManager entityManager;
 
 	// 멀티스레드 환경에서 동시성 문제 없이 다음을 수행하고 싶을 때:
-	AtomicInteger retrySuccessCounter = new AtomicInteger(0);
-	private final ConcurrentLinkedQueue<Integer> retryAttemptHistory = new ConcurrentLinkedQueue<>();
+	// AtomicInteger retrySuccessCounter = new AtomicInteger(0);
+	// private final ConcurrentLinkedQueue<Integer> retryAttemptHistory = new ConcurrentLinkedQueue<>();
 
 
 	/**
@@ -77,13 +83,13 @@ public class TransferRetryService {
 			try {
 				operation.call();
 
-				if (attempts > 0) {
-					log.info("이체 처리 완료. 재시도 성공 {}/{}", attempts, MAX_RETRY);
-					retrySuccessCounter.incrementAndGet();
-				}
-				if (attempts > 1) {
-					retryAttemptHistory.add(attempts);
-				}
+				// if (attempts > 0) {
+				// 	log.info("이체 처리 완료. 재시도 성공 {}/{}", attempts, MAX_RETRY);
+				// 	retrySuccessCounter.incrementAndGet();
+				// }
+				// if (attempts > 1) {
+				// 	retryAttemptHistory.add(attempts);
+				// }
 				return;
 
 			} catch (Exception e) {
@@ -92,7 +98,7 @@ public class TransferRetryService {
 					lastException = e;
 
 					if (attempts >= MAX_RETRY) {
-						log.error("최대 재시도 횟수 초과: {}", e.getMessage());
+						// log.error("최대 재시도 횟수 초과: {}", e.getMessage());
 						break;
 					}
 
@@ -186,36 +192,4 @@ public class TransferRetryService {
 			throw new OptimisticLockingFailureException("입금 처리 중 충돌이 발생했습니다.");
 		}
 	}
-
-	// @Retryable(
-	// 	retryFor = { Exception.class }, // ← value 말고 retryFor
-	// 	// noRetryFor = { IllegalArgumentException.class }, // ← exclude 말고 noRetryFor
-	// 	maxAttempts = 5,
-	// 	backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000),
-	// 	listeners = {"loggingRetryListener"} // ← 클래스명 camelCase로 지정
-	// )
-	// public void transferWithRetry(Long fromAccountId, Long toAccountId, Long amount) {
-	// 	MainAccount from = mainAccountService.findById(fromAccountId);
-	// 	MainAccount to = mainAccountService.findById(toAccountId);
-	//
-	// 	mainAccountService.tryWithdraw(fromAccountId, amount, from.getVersion());
-	// 	mainAccountService.tryDeposit(toAccountId, amount, to.getVersion());
-	//
-	// 	log.debug("Retryable transfer success: from={}, to={}, amount={}", fromAccountId, toAccountId, amount);
-	// }
-
-	@Scheduled(fixedRate = 10000)
-	public void setRetrySuccessCounter() {
-		log.info("Retry Success Count: {}", retrySuccessCounter.get());
-	}
-
-	@Scheduled(fixedRate = 60000)
-	public void printRetryStats() {
-		log.info("성공까지 걸린 평균 시도 수: {}", retryAttemptHistory.stream()
-			.mapToInt(Integer::intValue)
-			.average()
-			.orElse(0.0));
-		log.info("🔁 지금까지 성공한 retry 시도 수 목록: {}", retryAttemptHistory);
-	}
-
 }
