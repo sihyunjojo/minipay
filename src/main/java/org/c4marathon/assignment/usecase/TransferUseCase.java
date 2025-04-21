@@ -1,6 +1,5 @@
 package org.c4marathon.assignment.usecase;
 
-import org.c4marathon.assignment.domain.service.experiment.ExperimentMainAccountService;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ public class TransferUseCase {
 
 	private final MainAccountService mainAccountService;
 	private final TransferService transferService;
-	private final ExperimentMainAccountService experimentMainAccountService;
 
 	@Transactional
 	public void transfer(Long fromMemberId, Long toMemberId, Long transferAmount) {
