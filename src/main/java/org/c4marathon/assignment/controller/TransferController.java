@@ -33,5 +33,4 @@ public class TransferController {
 				.body(ApiResponse.res(400, e.getMessage()));
 		}
 	}
-
 }

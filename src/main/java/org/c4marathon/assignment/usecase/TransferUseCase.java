@@ -1,6 +1,8 @@
 package org.c4marathon.assignment.usecase;
 
+import org.c4marathon.assignment.domain.service.experiment.ExperimentMainAccountService;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
+import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TransferUseCase {
 
 	private final MainAccountService mainAccountService;
+	private final TransferService transferService;
+	private final ExperimentMainAccountService experimentMainAccountService;
 
 	@Transactional
 	public void transfer(Long fromMemberId, Long toMemberId, Long transferAmount) {
@@ -22,12 +26,12 @@ public class TransferUseCase {
 		Long shortfall = mainAccountService.calculateShortfall(fromAccountId, transferAmount);
 
 		if (shortfall <= 0) {
-			mainAccountService.transfer(fromAccountId, toAccountId, transferAmount);
+			transferService.transfer(fromAccountId, toAccountId, transferAmount);
 			return;
 		}
 
 		mainAccountService.chargeOrThrow(fromAccountId, shortfall, transferAmount);
 
-		mainAccountService.transfer(fromAccountId, toAccountId, transferAmount);
+		transferService.transfer(fromAccountId, toAccountId, transferAmount);
 	}
 }
