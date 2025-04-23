@@ -44,7 +44,7 @@ public class MainAccountService {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public MainAccount getRefreshedAccount(Long accountId) {
-		return mainAccountRepository.findByIdWithoutCache(accountId)
+		return mainAccountRepository.findByIdWithoutSecondCache(accountId)
 			.orElseThrow(() -> new IllegalStateException("ID가 " + accountId + "인 메인 계좌가 존재하지 않습니다."));
 	}
 

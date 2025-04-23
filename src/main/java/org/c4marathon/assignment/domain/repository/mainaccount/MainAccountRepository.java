@@ -20,13 +20,14 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	// 비관적락이 미세하지만 느리긴하다. (사실상 거의 동일한 성능을 보임)
 	Optional<MainAccount> findByMemberId(@Param("memberId") Long memberId);
 
+	// JPA의 1차 캐시는 무시 불가능.
 	@Query("SELECT m FROM MainAccount m WHERE m.id = :id")
 	@QueryHints({
 		@QueryHint(name = "org.hibernate.cacheable", value = "false"),
 		@QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "BYPASS"),
 		@QueryHint(name = "jakarta.persistence.cache.storeMode", value = "REFRESH")
 	})
-	Optional<MainAccount> findByIdWithoutCache(@Param("id") Long id);
+	Optional<MainAccount> findByIdWithoutSecondCache(@Param("id") Long id);
 
 	@Query("SELECT a FROM MainAccount a LEFT JOIN FETCH a.sentTransactions WHERE a.id = :id")
 	Optional<MainAccount> findByIdWithSentTransactions(@Param("id") Long id);
