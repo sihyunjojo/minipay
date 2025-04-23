@@ -1,5 +1,5 @@
 package org.c4marathon.assignment.domain.model.enums;
 
-public enum SettlementType {
+public enum SettlementPolicy {
 	EQUAL, RANDOM
 }
