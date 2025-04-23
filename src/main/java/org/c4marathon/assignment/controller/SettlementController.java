@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-// SettlementController.java
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/settlements")
@@ -24,7 +24,7 @@ public class SettlementController {
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<List<SettlementResponseDto>>> settle(
-		@RequestBody SettlementRequestDto request
+		@RequestBody @Valid SettlementRequestDto request
 	) {
 		try {
 			List<SettlementResponseDto> result = settlementUseCase.settle(request);
