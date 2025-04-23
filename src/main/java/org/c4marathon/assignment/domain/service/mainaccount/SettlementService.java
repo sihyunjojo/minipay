@@ -7,12 +7,9 @@ import java.util.SplittableRandom;
 import org.c4marathon.assignment.dto.account.SettlementRequestDto;
 import org.c4marathon.assignment.dto.account.SettlementResponseDto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
-@RequestMapping
 public class SettlementService {
-
 
 	public List<SettlementResponseDto> calculateSettlement(SettlementRequestDto request) {
 		List<Long> participantIds = request.participantMemberIdList();
