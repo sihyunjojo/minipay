@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MainAccountValidator {
 
-	public void validateSattlement(SettlementRequestDto request) {
+	public void validateSettlement(SettlementRequestDto request) {
 		List<Long> participantIds = request.participantMemberIdList();
 		long totalAmount = request.totalAmount();
 

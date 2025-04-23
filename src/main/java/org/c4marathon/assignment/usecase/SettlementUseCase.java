@@ -18,7 +18,7 @@ public class SettlementUseCase{
 	private final SettlementService settlementService;
 
 	public List<SettlementResponseDto> settle(SettlementRequestDto request) {
-		mainAccountValidator.validateSattlement(request);
+		mainAccountValidator.validateSettlement(request);
 		return settlementService.calculateSettlement(request);
 	}
 }
