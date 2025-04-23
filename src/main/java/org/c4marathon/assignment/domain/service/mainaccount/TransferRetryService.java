@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -53,7 +54,7 @@ public class TransferRetryService {
 	 * 이체를 재시도 로직과 함께 수행
 	 * 성능보다 정합성이 우선되어야함.
 	 */
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void transferWithRetry(Long fromAccountId, Long toAccountId, Long transferAmount) {
 		MainAccount[] accounts = new MainAccount[2];
 

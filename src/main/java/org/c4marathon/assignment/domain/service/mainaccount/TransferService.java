@@ -17,6 +17,5 @@ public class TransferService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void transfer(Long fromAccountId, Long toAccountId, Long transferAmount) {
 		mainAccountValidator.validateTransfer(fromAccountId, toAccountId, transferAmount);
-		transferRetryService.transferWithRetry(fromAccountId, toAccountId, transferAmount);
 	}
 }
