@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 // 클린 아키텍처: UseCase는 별도의 서비스로 분리
@@ -23,7 +24,7 @@ public class TransferController {
 
 	@PostMapping("/transfer")
 	public ResponseEntity<ApiResponse<String>> transfer(
-		@RequestBody TransferRequestDto request
+		@RequestBody @Valid TransferRequestDto request
 	) {
 		try {
 			transferUseCase.transfer(request.fromMemberId(), request.toMemberId(), request.amount());
