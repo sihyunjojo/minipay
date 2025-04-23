@@ -17,10 +17,7 @@ public class TransferUseCase {
 	private final TransferService transferService;
 
 	@Transactional
-	public void transfer(Long fromMemberId, Long toMemberId, Long transferAmount) {
-		Long fromAccountId = mainAccountService.getMainAccountByMemberId(fromMemberId);
-		Long toAccountId = mainAccountService.getMainAccountByMemberId(toMemberId);
-
+	public void transfer(Long fromAccountId, Long toAccountId, Long transferAmount) {
 		Long shortfall = mainAccountService.calculateShortfall(fromAccountId, transferAmount);
 
 		if (shortfall <= 0) {
