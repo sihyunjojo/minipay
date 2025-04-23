@@ -1,11 +1,8 @@
 package org.c4marathon.assignment.domain.service.mainaccount;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
@@ -13,42 +10,32 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransferRetryService {
 
-
-	private final MainAccountRepository mainAccountRepository;
+	private final TransferService transferService;
+	private final MainAccountService mainAccountService;
 	private final PlatformTransactionManager transactionManager;
 
 
-	private static final int MAX_RETRY = 5; // 10
-	private static final long BASE_SLEEP_TIME_MS = 100;      // 초기 대기 시간 // 50
+	private static final int MAX_RETRY = 3; // 10
+	// 10초 (connection-timeout) 동안 100개의 커넥션이 돌아간다면 → 100ms~500ms 백오프는 적정 대기 타임
+	private static final long BASE_SLEEP_TIME_MS = 300;      // 초기 대기 시간 : 정상 요청이 20~50ms라면 300ms 정도면 대부분의 락이 풀렸을 확률 높음 -> 동시에 같은 계좌를 접근할 가능성이 높은 서비스면 300~600ms 이상 추천
 	private static final long MAX_SLEEP_TIME_MS = 2000;     // 최대 대기 시간 // 10000
-
 
 	private final EntityManager entityManager;
 
 	// 멀티스레드 환경에서 동시성 문제 없이 다음을 수행하고 싶을 때:
-	// AtomicInteger retrySuccessCounter = new AtomicInteger(0);
-	// private final ConcurrentLinkedQueue<Integer> retryAttemptHistory = new ConcurrentLinkedQueue<>();
-
+	private final ConcurrentLinkedQueue<Integer> retryAttemptHistory = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * 이체를 재시도 로직과 함께 수행
@@ -60,12 +47,35 @@ public class TransferRetryService {
 
 		executeWithRetry(() -> {
 			// 재시도할 때마다 새로운 트랜잭션 컨텍스트에서 최신 엔티티 조회
-			accounts[0] = getRefreshedAccount(fromAccountId);
-			accounts[1] = getRefreshedAccount(toAccountId);
+			accounts[0] = mainAccountService.getRefreshedAccount(fromAccountId);
+			accounts[1] = mainAccountService.getRefreshedAccount(toAccountId);
 
 			// 새 트랜잭션에서 이체 수행
-			return performTransferInNewTransaction(accounts[0], accounts[1], transferAmount);
+			return transferService.transferInNewTransaction(accounts[0], accounts[1], transferAmount);
 		});
+	}
+
+	/**
+	 * 보류 중인 이체 시작을 재시도 로직과 함께 수행
+	 */
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void initiatePendingTransferWithRetry(Long fromAccountId, Long toAccountId, Long amount) {
+		executeWithRetry(() -> transferService.initiate(fromAccountId, toAccountId, amount));
+	}
+
+	/**
+	 * 보류 중인 이체 수락을 재시도 로직과 함께 수행
+	 */
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void acceptPendingTransferWthRetry(Long transactionId) {
+		executeWithRetry(() -> transferService.accept(transactionId));
+	}
+
+	/**
+	 * 보류 중인 이체 취소를 재시도 로직과 함께 수행
+	 */
+	public void cancelPendingTransferWithRetry(Long transactionId) {
+		executeWithRetry(() -> transferService.cancel(transactionId));
 	}
 
 	/**
@@ -84,13 +94,9 @@ public class TransferRetryService {
 			try {
 				operation.call();
 
-				// if (attempts > 0) {
-				// 	log.info("이체 처리 완료. 재시도 성공 {}/{}", attempts, MAX_RETRY);
-				// 	retrySuccessCounter.incrementAndGet();
-				// }
-				// if (attempts > 1) {
-				// 	retryAttemptHistory.add(attempts);
-				// }
+				if (attempts >= 1) {
+					retryAttemptHistory.add(attempts);
+				}
 				return;
 
 			} catch (Exception e) {
@@ -99,7 +105,6 @@ public class TransferRetryService {
 					lastException = e;
 
 					if (attempts >= MAX_RETRY) {
-						// log.error("최대 재시도 횟수 초과: {}", e.getMessage());
 						break;
 					}
 
@@ -119,49 +124,14 @@ public class TransferRetryService {
 
 	private void sleepWithBackoff(int retryCount) {
 		try {
-			long sleep = Math.min(BASE_SLEEP_TIME_MS * (1L << retryCount), MAX_SLEEP_TIME_MS);
-			sleep += ThreadLocalRandom.current().nextLong(0, 100); // jitter
+			long exponential = BASE_SLEEP_TIME_MS * (1L << retryCount);  // 지수 백오프
+			long jitter = ThreadLocalRandom.current().nextLong(BASE_SLEEP_TIME_MS); // 0~100
+			long sleep = Math.min(exponential + jitter, MAX_SLEEP_TIME_MS);
 			Thread.sleep(sleep);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new IllegalStateException("스레드 인터럽트 발생", e);
 		}
-	}
-
-	/**
-	 * 새로운 트랜잭션에서 이체 수행
-	 */
-	// 이전 트랜잭션의 rollback-only 상태를 회피하려는 의도 (원래 아래 트랜잭션으로 하려했지만, 이후 리트라이 로직으로 변경) (requrieds_new 삭제)
-	// 상위 트랜잭션이 아직 종료되지 않아 락을 보유 중인 상태에서, 하위 메서드가 새로운 트랜잭션(REQUIRES_NEW) 으로 동일 자원에 접근하면서 락 충돌이 발생
-	// @Transactional(propagation = Propagation.REQUIRES_NEW)
-	private Boolean performTransferInNewTransaction(MainAccount from, MainAccount to, Long amount) {
-		// Spring AOP의 한계 때문에 직접 설정
-		TransactionTemplate template = new TransactionTemplate(transactionManager);
-		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		return template.execute(status -> {
-			try {
-				// 출금
-				withdraw(from, amount);
-				// 입금
-				deposit(to, amount);
-				return true;
-			} catch (Exception e) {
-				status.setRollbackOnly();
-				throw e;
-			}
-		});
-	}
-
-	private MainAccount getRefreshedAccount(Long accountId) {
-		TransactionTemplate template = new TransactionTemplate(transactionManager);
-		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		template.setReadOnly(true);
-
-		return template.execute(status ->
-			mainAccountRepository.findById(accountId)
-				.orElseThrow(() -> new IllegalStateException("ID가 " + accountId + "인 메인 계좌가 존재하지 않습니다."))
-		);
 	}
 
 	private boolean isRetryableException(Exception e) {
@@ -170,27 +140,4 @@ public class TransferRetryService {
 			e instanceof TransactionSystemException;
 	}
 
-	private void withdraw(MainAccount from, Long amount) {
-		int withdrawResult = mainAccountRepository.withdrawByOptimistic(
-			from.getId(),
-			amount,
-			from.getVersion()
-		);
-
-		if (withdrawResult == 0) {
-			throw new OptimisticLockingFailureException("출금 처리 중 충돌이 발생했습니다.");
-		}
-	}
-
-	private void deposit(MainAccount to, Long amount) {
-		int depositResult = mainAccountRepository.depositByOptimistic(
-			to.getId(),
-			amount,
-			to.getVersion()
-		);
-
-		if (depositResult == 0) {
-			throw new OptimisticLockingFailureException("입금 처리 중 충돌이 발생했습니다.");
-		}
-	}
 }
