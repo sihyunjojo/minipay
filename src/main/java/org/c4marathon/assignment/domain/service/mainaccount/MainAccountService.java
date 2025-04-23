@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainAccountService {
 
-	private final MainAccountRepository mainAccountRepository;
 	private final AccountPolicyService accountPolicyService;
+	private final MainAccountRepository mainAccountRepository;
 
 	@Transactional
 	public void createMainAccountForMember(Member member) {
@@ -42,6 +42,12 @@ public class MainAccountService {
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public MainAccount getRefreshedAccount(Long accountId) {
+		return mainAccountRepository.findByIdWithoutCache(accountId)
+			.orElseThrow(() -> new IllegalStateException("ID가 " + accountId + "인 메인 계좌가 존재하지 않습니다."));
+	}
+
 	@Transactional
 	public void resetAllDailyChargeAmount() {
 		mainAccountRepository.resetAllDailyChargeAmount();
@@ -52,14 +58,11 @@ public class MainAccountService {
 		Long currentBalance = mainAccountRepository.findMainAccountAmountById(accountId);
 
 		long diff = transferAmount - currentBalance;
-		return Math.max(diff, 0L);    // 부족분이 없으면 0 반환
+		return Math.max(diff, 0L);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void chargeOrThrow(Long accountId, Long shortfall, Long minRequiredBalance) {
-		// Assert in DB (DB 정합성 확인하며 충전 시도)
-		long chargeAmount = accountPolicyService.getRoundedCharge(shortfall);
-
+	public void chargeOrThrow(Long accountId, Long chargeAmount, Long minRequiredBalance) {
 		boolean success = mainAccountRepository.tryFastCharge(accountId, chargeAmount, minRequiredBalance,
 			accountPolicyService.getPolicyValue(AccountPolicy.MAIN_DAILY_LIMIT));
 
@@ -67,4 +70,5 @@ public class MainAccountService {
 			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");
 		}
 	}
+
 }
