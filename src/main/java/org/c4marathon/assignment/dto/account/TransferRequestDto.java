@@ -1,7 +1,6 @@
 package org.c4marathon.assignment.dto.account;
 
-public record TransferRequestDto(
-	Long fromMemberId,
-	Long toMemberId,
-	Long amount
-) {}
+import jakarta.validation.constraints.NotNull;
+
+public record TransferRequestDto(@NotNull Long fromMemberId, @NotNull Long toMemberId, @NotNull Long amount) {
+}
