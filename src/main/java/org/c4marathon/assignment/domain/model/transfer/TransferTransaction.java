@@ -20,9 +20,14 @@ public class TransferTransaction extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "from_main_account_id", nullable = false)
 	private MainAccount fromMainAccount;
-	@OneToOne(fetch = FetchType.LAZY)
+
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "to_main_account_id", nullable = false)
 	private MainAccount toMainAccount;
 
 	private Long amount;
@@ -30,20 +35,25 @@ public class TransferTransaction extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private TransferStatus status;
 
-	private LocalDateTime completedAt;
 	private LocalDateTime expiredAt;
 
-	public boolean isExpired(LocalDateTime now) {
-		return status == TransferStatus.PENDING && expiredAt.isBefore(now);
-	}
+	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount) {
+		TransferTransaction transferTransaction = new TransferTransaction(
+			null,
+			fromMainAccount,
+			toMainAccount,
+			amount,
+			TransferStatus.PENDING,
+			LocalDateTime.now().plusHours(72)
+		);
+		fromMainAccount.addSentTransaction(transferTransaction);
+		toMainAccount.addReceivedTransaction(transferTransaction);
 
-	public boolean canBeCanceled() {
-		return status == TransferStatus.PENDING;
+		return transferTransaction;
 	}
 
 	public void markAsCompleted() {
 		this.status = TransferStatus.COMPLETED;
-		this.completedAt = LocalDateTime.now();
 	}
 
 	public void markAsCanceled() {
