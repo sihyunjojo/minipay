@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
 
+import org.c4marathon.assignment.domain.model.enums.PolicyType;
 import org.c4marathon.assignment.dto.account.SettlementRequestDto;
 import org.c4marathon.assignment.dto.account.SettlementResponseDto;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SettlementService {
+
+	public static final Long COMPANY_ID = PolicyType.COMPANY_ID.getValue();
 
 	public List<SettlementResponseDto> calculateSettlement(SettlementRequestDto request) {
 		List<Long> participantIds = request.participantMemberIdList();
@@ -35,7 +38,7 @@ public class SettlementService {
 
 		// 남은 금액은 회사(-1)에서 부담
 		if (remainder > 0) {
-			responses.add(new SettlementResponseDto(-1L, remainder));
+			responses.add(new SettlementResponseDto(COMPANY_ID, remainder));
 		}
 
 		return responses;
