@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/accounts/pending-transfer")
 public class TransferTransactionController {
 
-	private final TransferTransactionUseCase transferTransactionUsecase;
+	private final TransferTransactionUseCase transferTransactionUseCase;
 
 	@Operation(summary = "보류 송금 시작", description = "받는 사람이 수락해야 완료되는 송금을 생성합니다.")
 	@PostMapping("")
@@ -27,7 +27,7 @@ public class TransferTransactionController {
 		@Parameter(description = "송금 금액 (단위: 원)", required = true, example = "50000") @RequestParam Long amount
 	) {
 		try {
-			transferTransactionUsecase.initiatePendingTransfer(fromAccountId, toAccountId, amount);
+			transferTransactionUseCase.initiatePendingTransfer(fromAccountId, toAccountId, amount);
 			return ResponseEntity.ok(ApiResponse.res(200, "Pending 송금 요청 완료"));
 		} catch (IllegalStateException e) {
 			return ResponseEntity.badRequest().body(ApiResponse.res(400, e.getMessage()));
@@ -40,7 +40,7 @@ public class TransferTransactionController {
 		@Parameter(description = "보류 거래 ID", required = true, example = "2") @RequestParam Long transactionId
 	) {
 		try {
-			transferTransactionUsecase.acceptPendingTransfer(transactionId);
+			transferTransactionUseCase.acceptPendingTransfer(transactionId);
 			return ResponseEntity.ok(ApiResponse.res(200, "송금 수령 완료"));
 		} catch (IllegalStateException e) {
 			return ResponseEntity.badRequest().body(ApiResponse.res(400, e.getMessage()));
@@ -53,7 +53,7 @@ public class TransferTransactionController {
 		@Parameter(description = "보류 거래 ID", required = true, example = "1") @RequestParam Long transactionId
 	) {
 		try {
-			transferTransactionUsecase.cancelPendingTransfer(transactionId);
+			transferTransactionUseCase.cancelPendingTransfer(transactionId);
 			return ResponseEntity.ok(ApiResponse.res(200, "송금 취소 완료"));
 		} catch (IllegalStateException e) {
 			return ResponseEntity.badRequest().body(ApiResponse.res(400, e.getMessage()));
