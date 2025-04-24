@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.config;
+package org.c4marathon.assignment.infra.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.config.property;
+package org.c4marathon.assignment.infra.config.property;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

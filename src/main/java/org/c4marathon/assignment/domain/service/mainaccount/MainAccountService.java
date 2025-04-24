@@ -3,7 +3,7 @@ package org.c4marathon.assignment.domain.service.mainaccount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.c4marathon.assignment.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;

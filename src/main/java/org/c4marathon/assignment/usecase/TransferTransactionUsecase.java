@@ -1,6 +1,6 @@
 package org.c4marathon.assignment.usecase;
 
-import org.c4marathon.assignment.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.service.TransferTransactionService;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.validator.MainAccountValidator;

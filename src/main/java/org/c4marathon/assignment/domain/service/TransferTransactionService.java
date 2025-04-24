@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.config.property.TransferTransactionPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.TransferTransactionPolicyProperties;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
