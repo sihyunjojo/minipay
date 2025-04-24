@@ -1,11 +1,10 @@
 package org.c4marathon.assignment.domain.repository.transfertransaction;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.QMember;
@@ -15,6 +14,7 @@ import org.c4marathon.assignment.domain.model.transfer.QTransferTransaction;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -38,17 +38,21 @@ public class TransferTransactionQueryRepositoryImpl implements TransferTransacti
 		QMainAccount main = QMainAccount.mainAccount;
 		QMember member = QMember.member;
 
-		return queryFactory
-			.select(tx)
+		List<Tuple> results = queryFactory
+			.select(member, tx)
 			.from(tx)
 			.join(tx.fromMainAccount, main).fetchJoin()
 			.join(main.member, member).fetchJoin()
 			.where(
 				tx.status.eq(TransferStatus.PENDING),
-				tx.expiredAt.loe(remindTime)
+				tx.createdAt.loe(remindTime)
 			)
-			.transform(
-				groupBy(member).as(list(tx)) // 결과를 member 단위로 묶음 후 각 그룹의 값으로 TransferTransaction의 리스트를 지정
-			);
+			.fetch();
+
+		return results.stream()
+			.collect(Collectors.groupingBy(
+				tuple -> Objects.requireNonNull(tuple.get(member)),
+				Collectors.mapping(tuple -> tuple.get(tx), Collectors.toList())
+			));
 	}
 }
