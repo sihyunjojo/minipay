@@ -11,14 +11,14 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties(prefix = "remind")
 public class TransferTransactionPolicyProperties {
-	private long pendingTransferExpireAfterDurationHour = Duration.ofHours(72).toHours();
-	private long pendingTransferRemindDurationHour = Duration.ofHours(24).toHours();
+	private long pendingTransferExpireAfterDurationHours = Duration.ofHours(72).toHours();
+	private long pendingTransferRemindDurationHours = Duration.ofHours(24).toHours();
 
-	public Duration getPendingTransferExpireAfterDurationHour() {
-		return Duration.ofHours(pendingTransferExpireAfterDurationHour);
+	public Duration getPendingTransferExpireAfterDurationHours() {
+		return Duration.ofHours(pendingTransferExpireAfterDurationHours);
 	}
 
-	public Duration getPendingTransferRemindDurationHour() {
-		return Duration.ofHours(pendingTransferRemindDurationHour);
+	public Duration getPendingTransferRemindDurationHours() {
+		return Duration.ofHours(pendingTransferRemindDurationHours);
 	}
 }
