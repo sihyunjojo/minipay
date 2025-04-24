@@ -3,6 +3,7 @@ package org.c4marathon.assignment.domain.model.transfer;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.c4marathon.assignment.common.model.BaseTimeEntity;
@@ -37,14 +38,16 @@ public class TransferTransaction extends BaseTimeEntity {
 
 	private LocalDateTime expiredAt;
 
-	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount) {
+	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount, Duration expireAfter) {
+		LocalDateTime expiredAt = LocalDateTime.now().plus(expireAfter);
+
 		TransferTransaction transferTransaction = new TransferTransaction(
 			null,
 			fromMainAccount,
 			toMainAccount,
 			amount,
 			TransferStatus.PENDING,
-			LocalDateTime.now().plusHours(72)
+			expiredAt
 		);
 		fromMainAccount.addSentTransaction(transferTransaction);
 		toMainAccount.addReceivedTransaction(transferTransaction);
