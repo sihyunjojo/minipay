@@ -15,7 +15,7 @@ public class MainAccountValidator {
 		if (totalAmount <= 0) {
 			throw new IllegalArgumentException("정산 금액은 0보다 커야 합니다.");
 		}
-		if (participantIds == null || participantIds.isEmpty()) {
+		if (participantIds.isEmpty()) {
 			throw new IllegalStateException("참여자 목록이 비어있을 수 없습니다.");
 		}
 		if (participantIds.stream().distinct().count() != participantIds.size()) {

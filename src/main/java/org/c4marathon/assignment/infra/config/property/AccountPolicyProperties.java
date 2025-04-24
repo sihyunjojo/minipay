@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.config;
+package org.c4marathon.assignment.infra.config.property;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,4 +17,8 @@ public class AccountPolicyProperties {
 	private Long mainDailyLimit = 3_000_000L;
 	@NotNull
 	private Long chargeUnit = 10_000L;
+
+	public Long getRoundedCharge(Long shortfall) {
+		return ((shortfall + chargeUnit - 1) / chargeUnit) * chargeUnit;
+	}
 }

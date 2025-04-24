@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -17,21 +18,21 @@ import lombok.RequiredArgsConstructor;
 // → 송금은 계좌의 서브기능이 아니라, 고유한 도메인 행위이기 때문에 TransferController로 분리하는 게 클린하고 확장 가능성도 좋다.
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/accounts/transfer")
 public class TransferController {
 
 	private final TransferUseCase transferUseCase;
 
-	@PostMapping("/transfer")
+	@Operation(summary = "즉시 송금 요청", description = "보류 없이 바로 송금하는 API입니다.")
+	@PostMapping("")
 	public ResponseEntity<ApiResponse<String>> transfer(
-		@RequestBody @Valid TransferRequestDto request
+		@Valid @RequestBody TransferRequestDto request
 	) {
 		try {
-			transferUseCase.transfer(request.fromMemberId(), request.toMemberId(), request.amount());
+			transferUseCase.transfer(request.fromAccountId(), request.toAccountId(), request.amount());
 			return ResponseEntity.ok(ApiResponse.res(200, "송금 성공"));
 		} catch (IllegalStateException e) {
-			return ResponseEntity.badRequest()
-				.body(ApiResponse.res(400, e.getMessage()));
+			return ResponseEntity.badRequest().body(ApiResponse.res(400, e.getMessage()));
 		}
 	}
 }
