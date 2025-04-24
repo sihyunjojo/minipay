@@ -16,11 +16,11 @@ public class TransferTransactionPolicyProperties {
 	private long pendingTransferExpireAfterDuration = Duration.ofHours(24).toHours();
 	private long pendingTransferRemindDuration = Duration.ofHours(72).toHours();
 
-	public Duration getpendingTransferExpireAfterDuration() {
+	public Duration getPendingTransferExpireAfterDuration() {
 		return Duration.ofHours(pendingTransferExpireAfterDuration);
 	}
 
-	public Duration getpendingTransferRemindDuration() {
+	public Duration getPendingTransferRemindDuration() {
 		return Duration.ofHours(pendingTransferRemindDuration);
 	}
 }

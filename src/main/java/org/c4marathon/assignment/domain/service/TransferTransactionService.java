@@ -52,7 +52,7 @@ public class TransferTransactionService {
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId).orElseThrow();
 				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
-					transferTransactionPolicyProperties.getpendingTransferExpireAfterDuration());
+					transferTransactionPolicyProperties.getPendingTransferExpireAfterDuration());
 
 				transferTransactionRepository.save(tx);
 
@@ -169,14 +169,14 @@ public class TransferTransactionService {
 	}
 
 	public Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember() {
-		Duration duration = transferTransactionPolicyProperties.getpendingTransferRemindDuration();
+		Duration duration = transferTransactionPolicyProperties.getPendingTransferRemindDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindTargetGroupedByMember(remindTime);
 	}
 
 	public List<TransferTransaction> findRemindPendingTargetTransactionsWithMember() {
-		Duration duration = transferTransactionPolicyProperties.getpendingTransferRemindDuration();
+		Duration duration = transferTransactionPolicyProperties.getPendingTransferRemindDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMember(remindTime);
