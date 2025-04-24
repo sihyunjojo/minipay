@@ -52,7 +52,7 @@ public class TransferTransactionService {
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId).orElseThrow();
 				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
-					transferTransactionPolicyProperties.getTransactionExpiredAfterDuration());
+					transferTransactionPolicyProperties.getpendingTransferExpireAfterDuration());
 
 				transferTransactionRepository.save(tx);
 
@@ -75,7 +75,7 @@ public class TransferTransactionService {
 			try {
 				// 거래 조회 및 상태 확인
 				TransferTransaction tx = transferTransactionRepository.findPendingTransferTransactionById(transactionId)
-					.orElseThrow(() -> new IllegalArgumentException("거래가 존재하지 않음"));
+					.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 입금 계좌 정보 갱신
 				MainAccount toAccount = mainAccountRepository.findById(tx.getToMainAccount().getId())
@@ -169,14 +169,14 @@ public class TransferTransactionService {
 	}
 
 	public Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember() {
-		Duration duration = transferTransactionPolicyProperties.getPendingExpiredThresholdDuration();
+		Duration duration = transferTransactionPolicyProperties.getpendingTransferRemindDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindTargetGroupedByMember(remindTime);
 	}
 
 	public List<TransferTransaction> findRemindPendingTargetTransactionsWithMember() {
-		Duration duration = transferTransactionPolicyProperties.getPendingExpiredThresholdDuration();
+		Duration duration = transferTransactionPolicyProperties.getpendingTransferRemindDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMember(remindTime);
