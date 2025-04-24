@@ -57,7 +57,7 @@ public class TransferTransactionService {
 
 				transferTransactionRepository.save(tx);
 
-				return true;
+				return null;
 			} catch (Exception e) {
 				status.setRollbackOnly();
 				throw e;
