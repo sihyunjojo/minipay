@@ -31,7 +31,6 @@ public class PendingTransferScheduler {
 			for (TransferTransaction transferTransaction : remindPendingTargetTransactions) {
 				reminderService.remindTransactions(transferTransaction);
 			}
-			log.info("모든 사용자에게 알림 완료");
 		} catch (Exception e) {
 			log.error("대기 중인 송금에 대한 알림 중 오류 발생", e);
 		}
@@ -43,7 +42,6 @@ public class PendingTransferScheduler {
 		try {
 			Map<Member, List<TransferTransaction>> remindTargetGroupedByMember = transferTransactionService.findRemindTargetGroupedByMember();
 			reminderService.remindTransactions(remindTargetGroupedByMember);
-			log.info("모든 사용자에게 알림 완료");
 		} catch (Exception e) {
 			log.error("대기 중인 송금에 대한 알림 중 오류 발생", e);
 		}
@@ -57,7 +55,6 @@ public class PendingTransferScheduler {
 			List<TransferTransaction> expiredPendingTransferTransactions = transferTransactionService.findAllByExpiredPendingTransferTransactionWithMainAccount();
 			for (TransferTransaction transferTransaction : expiredPendingTransferTransactions) {
 				transferTransactionService.expired(transferTransaction);
-				log.info("{}에 대한 환불 완료", transferTransaction.getId());
 			}
 			log.info("시간이 지난 대기 중이던 트랜잭션 만료 완료");
 		} catch (Exception e) {
