@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
 		log.error("예외 발생: {}", ex.getMessage(), ex);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.res(500, "서버 내부 오류"));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.res(500, ex.getMessage()));
 	}
 
 	@ExceptionHandler(OptimisticLockException.class)
