@@ -3,11 +3,10 @@ package org.c4marathon.assignment.domain.service.mainaccount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.c4marathon.assignment.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.account.enums.AccountPolicy;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.domain.service.AccountPolicyService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainAccountService {
 
-	private final AccountPolicyService accountPolicyService;
+	private final AccountPolicyProperties accountPolicyProperties;
 	private final MainAccountRepository mainAccountRepository;
 
 	@Transactional
@@ -45,7 +44,7 @@ public class MainAccountService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public MainAccount getRefreshedAccount(Long accountId) {
 		return mainAccountRepository.findByIdWithoutSecondCache(accountId)
-			.orElseThrow(() -> new IllegalStateException("ID가 " + accountId + "인 메인 계좌가 존재하지 않습니다."));
+			.orElseThrow(() -> new IllegalStateException(String.format("ID가 %s인 메인 계좌가 존재하지 않습니다.", accountId)));
 	}
 
 	@Transactional
@@ -64,7 +63,7 @@ public class MainAccountService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void chargeOrThrow(Long accountId, Long chargeAmount, Long minRequiredBalance) {
 		boolean success = mainAccountRepository.tryFastCharge(accountId, chargeAmount, minRequiredBalance,
-			accountPolicyService.getPolicyValue(AccountPolicy.MAIN_DAILY_LIMIT));
+			accountPolicyProperties.getMainDailyLimit());
 
 		if (!success) {
 			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");
