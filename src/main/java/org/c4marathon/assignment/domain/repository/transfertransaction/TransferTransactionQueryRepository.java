@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TransferTransactionQueryRepository {
 	Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember(LocalDateTime remindTime);
 }
