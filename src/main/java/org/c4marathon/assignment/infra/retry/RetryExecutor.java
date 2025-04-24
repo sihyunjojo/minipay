@@ -60,7 +60,7 @@ public class RetryExecutor {
 					// 엔티티 매니저 초기화 - 현재 컨텍스트에서 캐시된 엔티티 제거
 					entityManager.clear();
 				} else {
-					throw new RuntimeException("재시도 불가능한 비즈니스 예외 발생", e);
+					throw new RuntimeException(String.format("재시도 불가능한 예외 발생 : %s", e.getMessage()), e);
 				}
 			}
 		}
