@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.config.property.TransactionPolicyProperties;
+import org.c4marathon.assignment.config.property.TransferTransactionPolicyProperties;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TransferTransactionService {
 
 	private final PlatformTransactionManager transactionManager;
-	private final TransactionPolicyProperties transactionPolicyProperties;
+	private final TransferTransactionPolicyProperties transferTransactionPolicyProperties;
 
 	private final TransferTransactionRepository transferTransactionRepository;
 	private final MainAccountRepository mainAccountRepository;
@@ -52,7 +52,7 @@ public class TransferTransactionService {
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId).orElseThrow();
 				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
-					transactionPolicyProperties.getTransactionExpiredAfterDuration());
+					transferTransactionPolicyProperties.getTransactionExpiredAfterDuration());
 
 				transferTransactionRepository.save(tx);
 
@@ -169,14 +169,14 @@ public class TransferTransactionService {
 	}
 
 	public Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember() {
-		Duration duration = transactionPolicyProperties.getPendingExpiredThresholdDuration();
+		Duration duration = transferTransactionPolicyProperties.getPendingExpiredThresholdDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindTargetGroupedByMember(remindTime);
 	}
 
 	public List<TransferTransaction> findRemindPendingTargetTransactionsWithMember() {
-		Duration duration = transactionPolicyProperties.getPendingExpiredThresholdDuration();
+		Duration duration = transferTransactionPolicyProperties.getPendingExpiredThresholdDuration();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMember(remindTime);
