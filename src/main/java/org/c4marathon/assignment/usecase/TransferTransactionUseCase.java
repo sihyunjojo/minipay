@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class TransferTransactionUsecase {
+public class TransferTransactionUseCase {
 
 	private final MainAccountValidator mainAccountValidator;
 

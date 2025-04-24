@@ -1,8 +1,7 @@
 package org.c4marathon.assignment.controller;
 
 import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.usecase.TransferTransactionUsecase;
-import org.c4marathon.assignment.usecase.TransferUseCase;
+import org.c4marathon.assignment.usecase.TransferTransactionUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/accounts/pending-transfer")
 public class TransferTransactionController {
 
-	private final TransferTransactionUsecase transferTransactionUsecase;
+	private final TransferTransactionUseCase transferTransactionUsecase;
 
 	@Operation(summary = "보류 송금 시작", description = "받는 사람이 수락해야 완료되는 송금을 생성합니다.")
 	@PostMapping("")
