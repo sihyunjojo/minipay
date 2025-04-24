@@ -42,7 +42,7 @@ public class TransferTransactionService {
 		return template.execute(status -> {
 			try {
 				MainAccount fromAccount = mainAccountRepository.findByIdWithSentTransactions(fromAccountId)
-					.orElseThrow();
+					.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
 				int result = mainAccountRepository.withdrawByOptimistic(fromAccount.getId(), amount,
 					fromAccount.getVersion());
 
@@ -50,7 +50,8 @@ public class TransferTransactionService {
 					throw new OptimisticLockException("잔고 출금 실패 - 동시성 문제");
 				}
 
-				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId).orElseThrow();
+				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId)
+					.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
 				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
 					transferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHour());
 
