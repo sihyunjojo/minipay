@@ -21,7 +21,7 @@ public class SettlementService {
 		return switch (request.type()) {
 			case EQUAL -> calculateEqualShare(totalAmount, participantIds);
 			case RANDOM -> calculateRandomShare(totalAmount, participantIds);
-			default -> throw new IllegalStateException("존재하지 않는 값입니다.: " + request.type());
+			default -> throw new IllegalStateException(String.format("%s는 존재하지 않는 값입니다. ", request.type()));
 		};
 	}
 
