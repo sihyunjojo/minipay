@@ -44,9 +44,10 @@ public class SavingAccountService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public SavingAccount getRefreshedAccount(Long accountId) {
 		return savingAccountRepository.findByIdWithoutSecondCache(accountId)
-			.orElseThrow(() -> new IllegalStateException(String.format("ID가 %s인 메인 계좌가 존재하지 않습니다.", accountId)));
+			.orElseThrow(() -> new IllegalStateException(String.format("ID가 %s인 적금 계좌가 존재하지 않습니다.", accountId)));
 	}
 
+	@Transactional
 	public void deposit(Long accountId, Long amount) {
 		SavingAccount account = savingAccountRepository.findById(accountId)
 			.orElseThrow(() -> new IllegalArgumentException("적금 계좌를 찾을 수 없음"));
@@ -57,6 +58,7 @@ public class SavingAccountService {
 	public void applyInterest() {
 		List<SavingAccount> accounts = savingAccountRepository.findAll();
 		for (SavingAccount account : accounts) {
+			// fixme: 금액 계산은 BigDecimal 사용을 고려
 			double rate = savingAccountPolicyProperties.getInterestRate(account.getSavingType());
 			Long interest = account.calculateInterest(rate);
 			account.deposit(interest);
