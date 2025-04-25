@@ -24,6 +24,7 @@ public class SavingAccountPolicyProperties {
 		return switch (type) {
 			case FIXED -> fixedInterestRate;
 			case FLEXIBLE -> flexibleInterestRate;
+			default -> throw new IllegalArgumentException(String.format("지원하지 않는 적금 형태입니다.: %s", type));
 		};
 	}
 }
