@@ -1,6 +1,6 @@
 package org.c4marathon.assignment.usecase;
 
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.MainAccountPolicyProperties;
 import org.c4marathon.assignment.domain.service.TransferTransactionService;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.validator.MainAccountValidator;
@@ -19,7 +19,7 @@ public class TransferTransactionUseCase {
 	private final MainAccountService mainAccountService;
 	private final TransferTransactionService transferTransactionService;
 
-	private final AccountPolicyProperties accountPolicyProperties;
+	private final MainAccountPolicyProperties mainAccountPolicyProperties;
 	private final RetryExecutor retryExecutor;
 
 	@Transactional
@@ -33,7 +33,7 @@ public class TransferTransactionUseCase {
 			return;
 		}
 
-		long chargeAmount = accountPolicyProperties.getRoundedCharge(shortfall);
+		long chargeAmount = mainAccountPolicyProperties.getRoundedCharge(shortfall);
 		mainAccountService.chargeOrThrow(fromAccountId, chargeAmount, transferAmount);
 
 		retryExecutor.executeWithRetry(() -> transferTransactionService.initiate(fromAccountId, toAccountId, transferAmount));
