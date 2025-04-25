@@ -23,18 +23,22 @@ public class MainAccount implements Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private Long balance;
+	private Long dailyChargeAmount = 0L;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	// 서로 Setter만 잘되어 있으면, emberRepository.save(member)만으로 account까지 자동 저장
+	@OneToMany(mappedBy = "mainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SavingAccount> savingAccounts;
 
 	@OneToMany(mappedBy = "fromMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TransferTransaction> sentTransactions = new ArrayList<>();
 
 	@OneToMany(mappedBy = "toMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TransferTransaction> receivedTransactions = new ArrayList<>();
-
-	private Long balance;
-	private Long dailyChargeAmount = 0L;
 
 	@Version
 	private Long version;
@@ -60,6 +64,13 @@ public class MainAccount implements Account {
 		}
 	}
 
+	public void addSavingAccount(SavingAccount savingAccount) {
+		savingAccounts.add(savingAccount);
+		if (savingAccount != null && savingAccount.getMainAccount() != this) {
+			savingAccount.setMainAccount(this);
+		}
+	}
+
 	// 받은 거래 추가
 	public void addReceivedTransaction(TransferTransaction transaction) {
 		receivedTransactions.add(transaction);
@@ -67,23 +78,4 @@ public class MainAccount implements Account {
 			transaction.setToMainAccount(this);
 		}
 	}
-
-	// 보낸 거래 제거
-	public void removeSentTransaction(TransferTransaction transaction) {
-		sentTransactions.remove(transaction);
-		transaction.setFromMainAccount(null);
-	}
-
-	// 받은 거래 제거
-	public void removeReceivedTransaction(TransferTransaction transaction) {
-		receivedTransactions.remove(transaction);
-		transaction.setToMainAccount(null);
-	}
-
-	public static MainAccount of(Long id) {
-		MainAccount account = new MainAccount();
-		account.setId(id);
-		return account;
-	}
-
 }

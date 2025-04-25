@@ -5,3 +5,6 @@ business:
       main-daily-limit: 3000000
       # 자동 충전 단위 (원)
       charge-unit: 10000
+    saving-account:
+      fixed-interest-rate: 0.05
+      flexible_interest-rate: 0.03

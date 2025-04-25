@@ -46,4 +46,11 @@ public class Member extends BaseTimeEntity {
 			mainAccount.setMember(this);
 		}
 	}
+
+	public void addSavingAccount(SavingAccount savingAccount) {
+		savingAccounts.add(savingAccount);
+		if (savingAccount != null && savingAccount.getMember() != this) {
+			savingAccount.setMember(this);
+		}
+	}
 }
