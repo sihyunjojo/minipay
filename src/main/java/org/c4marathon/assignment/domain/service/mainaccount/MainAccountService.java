@@ -3,7 +3,7 @@ package org.c4marathon.assignment.domain.service.mainaccount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.MainAccountPolicyProperties;
 import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MainAccountService {
 
-	private final AccountPolicyProperties accountPolicyProperties;
+	private final MainAccountPolicyProperties mainAccountPolicyProperties;
 	private final MainAccountRepository mainAccountRepository;
 
 	@Transactional
@@ -36,8 +36,8 @@ public class MainAccountService {
 	// @Transactional(readOnly = true)를 쓰면 무조건 빨라진다고 오해하지만,
 	// 실제로는 JPA의 변경 감지(dirty checking)를 비활성화하는 정도
 	@Transactional(readOnly = true)
-	public Long getMainAccountByMemberId(Long memberId) {
-		return mainAccountRepository.findIdByMemberId(memberId)
+	public MainAccount findByMemberId(Long memberId) {
+		return mainAccountRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new IllegalStateException("메인 계좌가 존재하지 않습니다."));
 	}
 
@@ -52,18 +52,17 @@ public class MainAccountService {
 		mainAccountRepository.resetAllDailyChargeAmount();
 	}
 
-	@Transactional(readOnly = true)
 	public Long calculateShortfall(Long accountId, Long transferAmount) {
 		Long currentBalance = mainAccountRepository.findMainAccountAmountById(accountId);
-
 		long diff = transferAmount - currentBalance;
+
 		return Math.max(diff, 0L);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void chargeOrThrow(Long accountId, Long chargeAmount, Long minRequiredBalance) {
 		boolean success = mainAccountRepository.tryFastCharge(accountId, chargeAmount, minRequiredBalance,
-			accountPolicyProperties.getMainDailyLimit());
+			mainAccountPolicyProperties.getMainDailyLimit());
 
 		if (!success) {
 			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");
