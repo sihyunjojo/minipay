@@ -7,4 +7,4 @@ business:
       charge-unit: 10000
     saving-account:
       fixed-interest-rate: 0.05
-      flexible_interest-rate: 0.03
+      flexible-interest-rate: 0.03
