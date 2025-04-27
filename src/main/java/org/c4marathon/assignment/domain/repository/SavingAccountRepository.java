@@ -14,8 +14,11 @@ import jakarta.persistence.QueryHint;
 
 public interface SavingAccountRepository extends JpaRepository<SavingAccount, Long> {
 
-	@Query("SELECT a FROM SavingAccount a WHERE a.savingType = 'FIXED'")
-	List<SavingAccount> findAllFixedSavingAccount();
+	@Query("SELECT sa FROM SavingAccount sa " +
+		"JOIN FETCH sa.member m " +
+		"JOIN FETCH m.mainAccount " +
+		"WHERE sa.savingType = 'FIXED'")
+	List<SavingAccount> findAllFixedSavingAccountWithMemberAndMainAccount();
 
 	@Query("SELECT s FROM SavingAccount s WHERE s.id = :id")
 	@QueryHints({

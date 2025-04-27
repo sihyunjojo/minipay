@@ -66,7 +66,7 @@ public class SavingAccountService {
 	}
 
 	public Map<MainAccount, List<SavingDepositRequest>> getSubscribedDepositAmount() {
-		List<SavingAccount> accounts = savingAccountRepository.findAllFixedSavingAccount();
+		List<SavingAccount> accounts = savingAccountRepository.findAllFixedSavingAccountWithMemberAndMainAccount();
 
 		return accounts.stream()
 			.filter(this::isLinkedToMainAccount)
