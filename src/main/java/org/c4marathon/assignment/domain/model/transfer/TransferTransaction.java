@@ -21,6 +21,14 @@ public class TransferTransaction extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Builder.Default
+	private Long amount = 0L;
+
+	@Enumerated(EnumType.STRING)
+	private TransferStatus status;
+
+	private LocalDateTime expiredAt;
+
 	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "from_main_account_id", nullable = false)
@@ -31,23 +39,16 @@ public class TransferTransaction extends BaseTimeEntity {
 	@JoinColumn(name = "to_main_account_id", nullable = false)
 	private MainAccount toMainAccount;
 
-	private Long amount;
-
-	@Enumerated(EnumType.STRING)
-	private TransferStatus status;
-
-	private LocalDateTime expiredAt;
-
 	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount, Duration expireAfter) {
 		LocalDateTime expiredAt = LocalDateTime.now().plus(expireAfter);
 
 		TransferTransaction transferTransaction = new TransferTransaction(
 			null,
-			fromMainAccount,
-			toMainAccount,
 			amount,
 			TransferStatus.PENDING,
-			expiredAt
+			expiredAt,
+			fromMainAccount,
+			toMainAccount
 		);
 		fromMainAccount.addSentTransaction(transferTransaction);
 		toMainAccount.addReceivedTransaction(transferTransaction);

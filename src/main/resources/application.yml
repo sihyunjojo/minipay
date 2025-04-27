@@ -8,7 +8,7 @@ spring:
     username: sihyun
     password: plate0113!
     hikari:
-      maximum-pool-size: 50    # 동시에 사용 가능한 최대 DB 연결 수
+      maximum-pool-size: 100    # 동시에 사용 가능한 최대 DB 연결 수
       minimum-idle: 5            # 최소 유휴 커넥션 수 (항상 대기 상태로 유지)
       connection-timeout: 10000  # 커넥션 풀에서 커넥션을 얻기 위한 최대 대기 시간 (10초)
 
@@ -49,4 +49,14 @@ springdoc:
 logging:
   level:
     root: info
-#trace, debug, warn, info, error, off
+#    org:
+#      hibernate:
+#        engine:
+#          transaction: DEBUG
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE
+#      .springframework:
+#        transaction: TRACE
