@@ -2,7 +2,7 @@ package org.c4marathon.assignment.usecase;
 
 import java.util.concurrent.Callable;
 
-import org.c4marathon.assignment.infra.config.property.MainAccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
 import org.c4marathon.assignment.domain.validator.MainAccountValidator;
@@ -22,7 +22,7 @@ public class TransferUseCase {
 	private final TransferService transferService;
 
 	private final RetryExecutor retryExecutor;
-	private final MainAccountPolicyProperties mainAccountPolicyProperties;
+	private final AccountPolicyProperties accountPolicyProperties;
 	private final MainAccountValidator mainAccountValidator;
 
 
@@ -34,7 +34,7 @@ public class TransferUseCase {
 		Long shortfall = mainAccountService.calculateShortfall(fromAccountId, transferAmount);
 
 		if (shortfall > 0) {
-			long chargeAmount = mainAccountPolicyProperties.getRoundedCharge(shortfall);
+			long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(fromAccountId, chargeAmount, transferAmount);
 		}
 
