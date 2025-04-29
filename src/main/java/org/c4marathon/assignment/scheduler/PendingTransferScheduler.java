@@ -3,7 +3,7 @@ package org.c4marathon.assignment.scheduler;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.domain.model.Member;
+import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
 import org.c4marathon.assignment.domain.service.ReminderService;
 import org.c4marathon.assignment.domain.service.TransferTransactionService;

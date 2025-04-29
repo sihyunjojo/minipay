@@ -1,8 +1,8 @@
 ---
 name: Question template
 about: 추가적인 질문이 있을때 사용하는 템플릿입니다. (질문에 대한 고민 과정을 상세히 적어주세요)
-title: "질문 리포트"
-labels: "Question"
+title: "[Question] 질문 리포트"
+labels: [Question]
 assignees:
 created by: sihyunjojo
 ---

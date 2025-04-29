@@ -1,8 +1,8 @@
 ---
 name: Bug template
 about: 예상치 못한 문제 또는 의도하지 않은 동작이 발생 시 사용하는 템플릿입니다.
-title: "버그 리포트"
-labels: "Bug"
+title: "[Bug] 버그 리포트"
+labels: [Bug]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

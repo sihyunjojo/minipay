@@ -1,8 +1,8 @@
 ---
 name: Help Wanted template
 about: 도움이 필요할 시 사용하는 템플릿입니다.
-title: "도움 요청 리포트"
-labels: "Help Wanted"
+title: "[Help] 도움 요청 리포트"
+labels: [Help Wanted]
 assignees:
 created by: sihyunjojo
 ---

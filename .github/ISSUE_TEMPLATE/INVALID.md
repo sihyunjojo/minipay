@@ -1,8 +1,8 @@
 ---
 name: Invalid template
 about: 잘못된 부분을 발견 시 사용하는 템플릿입니다.
-title: "부적절한 상황에 대한 리포트"
-labels: "Invalid"
+title: "[Invalid] 부적절한 상황에 대한 리포트"
+labels: [Invalid]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

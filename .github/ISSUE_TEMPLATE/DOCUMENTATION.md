@@ -1,8 +1,8 @@
 ---
 name: Document template
 about: 문서 개선 또는 추가 사항 요청시 사용하는 템플릿입니다.
-title: "문서 개선 리포트"
-labels: "Document"
+title: "[Docs] 문서 개선 리포트"
+labels: [Document]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

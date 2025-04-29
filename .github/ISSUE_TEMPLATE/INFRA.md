@@ -1,8 +1,8 @@
 ---
 name: Infra template
 about: 인프라 관련 이슈에 대해서 작성하는 템플릿입니다.
-title: "인프라 리포트"
-labels: "Infra"
+title: "[Infra] 인프라 리포트"
+labels: [Infra]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

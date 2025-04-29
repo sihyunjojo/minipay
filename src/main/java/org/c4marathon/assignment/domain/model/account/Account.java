@@ -1,6 +1,6 @@
 package org.c4marathon.assignment.domain.model.account;
 
-import org.c4marathon.assignment.domain.model.Member;
+import org.c4marathon.assignment.domain.model.member.Member;
 
 // Step 1. 계좌 세팅
 // 구현사항

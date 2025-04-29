@@ -2,7 +2,7 @@
 name: Design template
 about: 아키텍처 설계 및 시스템 디자인을 위한 이슈 템플릿입니다.
 title: "[Design] "
-labels: "Design"
+labels: [Design]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---
