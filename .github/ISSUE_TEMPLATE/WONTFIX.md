@@ -1,8 +1,8 @@
 ---
 name: WontFix template
 about: 진행되지 않는 작업을 요청하는 템플릿입니다.
-title: "작업 요청 리포트"
-labels: "WontFix"
+title: "[WontFix] 작업 요청 리포트"
+labels: [WontFix]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

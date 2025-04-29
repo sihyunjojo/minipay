@@ -1,8 +1,8 @@
 ---
 name: Chore template
 about: 설정 및 기타 이슈 발생시 사용하는 템플릿입니다.
-title: "설정 및 기타 오류 리포트"
-labels: "Chore"
+title: "[Chore] 설정 및 기타 오류 리포트"
+labels: [Chore]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---

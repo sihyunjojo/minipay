@@ -1,8 +1,8 @@
 ---
 name: Enhancement template
-about: 새로운 기능을 요청 및 개선 사항을 요청하는 템플릿입니다.
-title: "기능 개선 리포트"
-labels: "Enhancement"
+about: 기능의 개선 사항을 요청하는 템플릿입니다.
+title: "[Enhancement] 기능 개선 리포트"
+labels: [Enhancement]
 assignees: sihyunjojo
 created by: sihyunjojo
 ---
