@@ -3,7 +3,7 @@ package org.c4marathon.assignment.domain.model.account;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.c4marathon.assignment.domain.model.Member;
+import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
 
 import jakarta.persistence.*;

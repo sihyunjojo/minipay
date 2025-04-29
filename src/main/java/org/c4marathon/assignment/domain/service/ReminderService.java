@@ -3,7 +3,7 @@ package org.c4marathon.assignment.domain.service;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.domain.model.Member;
+import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
 import org.springframework.stereotype.Service;
 

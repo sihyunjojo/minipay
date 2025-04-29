@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.model;
+package org.c4marathon.assignment.domain.model.member;
 
 import jakarta.persistence.*;
 import lombok.*;
