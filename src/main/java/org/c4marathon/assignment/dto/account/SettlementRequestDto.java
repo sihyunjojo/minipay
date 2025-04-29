@@ -7,7 +7,7 @@ import org.c4marathon.assignment.domain.model.enums.SettlementPolicy;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public record SettlementRequestDto(
 
@@ -16,7 +16,7 @@ public record SettlementRequestDto(
 	SettlementPolicy type,
 
 	@NotNull
-	@Positive
+	@PositiveOrZero(message = "음수는 정산할 수 없습니다.")
 	@Schema(description = "전체 정산 금액", example = "20000")
 	Long totalAmount,
 

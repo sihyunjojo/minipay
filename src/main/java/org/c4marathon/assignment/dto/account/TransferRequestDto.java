@@ -2,7 +2,7 @@ package org.c4marathon.assignment.dto.account;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public record TransferRequestDto(
 
@@ -16,6 +16,6 @@ public record TransferRequestDto(
 
 	@Schema(description = "송금 금액 (단위: 원)", example = "11111")
 	@NotNull(message = "송금 금액은 필수입니다.")
-	@Positive
+	@PositiveOrZero(message = "음수는 송금할 수 없습니다.")
 	Long amount
 ) {}
