@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
-import org.c4marathon.assignment.domain.validator.MainAccountValidator;
 import org.c4marathon.assignment.infra.retry.RetryExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +22,11 @@ public class TransferUseCase {
 
 	private final RetryExecutor retryExecutor;
 	private final AccountPolicyProperties accountPolicyProperties;
-	private final MainAccountValidator mainAccountValidator;
 
 
 	// todo: 이체 실패 시, 충전 보상 로직 만들기
 	@Transactional
 	public void transfer(Long fromAccountId, Long toAccountId, Long transferAmount) {
-		mainAccountValidator.validateTransfer(fromAccountId, toAccountId, transferAmount);
-
 		Long shortfall = mainAccountService.calculateShortfall(fromAccountId, transferAmount);
 
 		if (shortfall > 0) {
