@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.exception;
+package org.c4marathon.assignment.common.exception.handler;
 
 import org.c4marathon.assignment.common.response.ApiResponse;
 
