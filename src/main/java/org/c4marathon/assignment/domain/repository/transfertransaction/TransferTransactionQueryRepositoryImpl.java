@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.account.QMainAccount;
-import org.c4marathon.assignment.domain.model.enums.TransferStatus;
+import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
 import org.c4marathon.assignment.domain.model.member.QMember;
 import org.c4marathon.assignment.domain.model.transfer.QTransferTransaction;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
