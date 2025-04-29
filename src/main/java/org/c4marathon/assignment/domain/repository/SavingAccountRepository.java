@@ -33,4 +33,6 @@ public interface SavingAccountRepository extends JpaRepository<SavingAccount, Lo
 		+ "WHERE a.id = :accountId AND a.version = :version")
 	int depositByOptimistic(@Param("accountId") Long accountId, @Param("amount") Long amount,
 		@Param("version") Long version);
+
+	boolean existsByAccountNumber(String accountNumber);
 }

@@ -6,13 +6,18 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.c4marathon.assignment.common.exception.RetryableException;
+import org.c4marathon.assignment.common.generator.AccountNumberGenerator;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.account.SavingAccount;
+import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 import org.c4marathon.assignment.domain.repository.SavingAccountRepository;
+import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
 import org.c4marathon.assignment.dto.account.AccountResponseDto;
 import org.c4marathon.assignment.dto.account.CreateFixedSavingAccountRequestDto;
 import org.c4marathon.assignment.dto.account.SavingDepositRequest;
-import org.c4marathon.assignment.infra.config.property.SavingAccountPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.infra.retry.AccountNumberRetryExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +26,56 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SavingAccountService {
 
-	private final SavingAccountPolicyProperties savingAccountPolicyProperties;
-
+	private final AccountPolicyProperties accountPolicyProperties;
 	private final SavingAccountRepository savingAccountRepository;
+	private final MainAccountRepository mainAccountRepository;
+	private final AccountNumberGenerator accountNumberGenerator;
+	private final AccountNumberRetryExecutor accountNumberRetryExecutor;
 
 	@Transactional
-	public AccountResponseDto createFixedSavingAccount(MainAccount mainAccount, CreateFixedSavingAccountRequestDto request) {
-		SavingAccount savingAccount = SavingAccount.createFixedSavingAccount(mainAccount.getMember(), mainAccount, request.subscribedDepositAmount());
-		savingAccountRepository.save(savingAccount);
+	public AccountResponseDto createFixedSavingAccount(Long memberId, CreateFixedSavingAccountRequestDto request) {
+		MainAccount mainAccount = mainAccountRepository.findByMemberId(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("메인 계좌를 찾을 수 없습니다."));
 
+		String accountNumber = generateUniqueAccountNumber();
+
+		SavingAccount savingAccount = SavingAccount.createFixed(
+			accountNumber,
+			mainAccount.getMember(),
+			mainAccount,
+			request.subscribedDepositAmount()
+		);
+
+		savingAccountRepository.save(savingAccount);
 		return new AccountResponseDto(savingAccount);
 	}
 
 	@Transactional
-	public AccountResponseDto createFlexibleSavingAccount(MainAccount mainAccount) {
-		SavingAccount savingAccount = SavingAccount.createFlexibleSavingAccount(mainAccount.getMember(), mainAccount);
-		savingAccountRepository.save(savingAccount);
+	public AccountResponseDto createFlexibleSavingAccount(Long memberId) {
+		MainAccount mainAccount = mainAccountRepository.findByMemberId(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("메인 계좌를 찾을 수 없습니다."));
 
+		String accountNumber = generateUniqueAccountNumber();
+
+		SavingAccount savingAccount = SavingAccount.createFlexible(
+			accountNumber,
+			mainAccount.getMember(),
+			mainAccount
+		);
+
+		savingAccountRepository.save(savingAccount);
 		return new AccountResponseDto(savingAccount);
+	}
+
+	private String generateUniqueAccountNumber() {
+		return accountNumberRetryExecutor.executeWithRetry(() -> {
+			String candidate = accountNumberGenerator.generate(AccountType.SAVING_ACCOUNT);
+
+			if (savingAccountRepository.existsByAccountNumber(candidate)) {
+				throw new RetryableException("중복된 적금 계좌번호 발생. 재시도합니다.");
+			}
+			return candidate;
+		});
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
@@ -59,7 +96,7 @@ public class SavingAccountService {
 		List<SavingAccount> accounts = savingAccountRepository.findAll();
 		for (SavingAccount account : accounts) {
 			// fixme: 금액 계산은 BigDecimal 사용을 고려
-			double rate = savingAccountPolicyProperties.getInterestRate(account.getSavingType());
+			double rate = accountPolicyProperties.getSaving().getInterestRate(account.getSavingType());
 			Long interest = account.calculateInterest(rate);
 			account.deposit(interest);
 		}
@@ -83,3 +120,4 @@ public class SavingAccountService {
 		return account.getMember() != null && account.getMember().getMainAccount() != null;
 	}
 }
+
