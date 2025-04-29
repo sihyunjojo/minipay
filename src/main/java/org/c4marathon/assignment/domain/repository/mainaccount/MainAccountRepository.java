@@ -63,5 +63,7 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	@Query("SELECT m.balance FROM MainAccount m WHERE m.id = :accountId")
 	Long findMainAccountAmountById(@Param("accountId") Long accountId);
 
+	boolean existsByAccountNumber(String accountNumber);
+
 	boolean tryFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
 }

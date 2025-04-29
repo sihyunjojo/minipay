@@ -15,7 +15,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	@Transactional
-	public Member registerMember(MemberRegistrationRequestDto request) {
+	public Member registerember(MemberRegistrationRequestDto request) {
 		Member member = Member.builder()
 			.name(request.name())
 			.email(request.email())
@@ -25,4 +25,5 @@ public class MemberService {
 		memberRepository.save(member);
 		return member;
 	}
+
 }
