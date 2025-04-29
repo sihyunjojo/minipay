@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.account;
+package org.c4marathon.assignment.dto.sattlement;
 
 import jakarta.validation.constraints.NotNull;
 
