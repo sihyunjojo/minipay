@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.c4marathon.assignment.domain.service.PendingTransferService;
 import org.c4marathon.assignment.domain.service.ReminderService;
-import org.c4marathon.assignment.domain.service.TransferTransactionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PendingTransferScheduler {
 
-	private final TransferTransactionService transferTransactionService;
+	private final PendingTransferService pendingTransferService;
 	private final ReminderService reminderService;
 
 	// Todo: fcm 알림 붙이기.
@@ -27,7 +27,7 @@ public class PendingTransferScheduler {
 	@Transactional
 	public void remindPendingTargetTransactions() {
 		try {
-			List<TransferTransaction> remindPendingTargetTransactions = transferTransactionService.findRemindPendingTargetTransactionsWithMember();
+			List<TransferTransaction> remindPendingTargetTransactions = pendingTransferService.findRemindPendingTargetTransactionsWithMember();
 			for (TransferTransaction transferTransaction : remindPendingTargetTransactions) {
 				reminderService.remindTransactions(transferTransaction);
 			}
@@ -40,7 +40,7 @@ public class PendingTransferScheduler {
 	@Transactional
 	public void remindPendingTargetTransactionsByImproved() {
 		try {
-			Map<Member, List<TransferTransaction>> remindTargetGroupedByMember = transferTransactionService.findRemindTargetGroupedByMember();
+			Map<Member, List<TransferTransaction>> remindTargetGroupedByMember = pendingTransferService.findRemindTargetGroupedByMember();
 			reminderService.remindTransactions(remindTargetGroupedByMember);
 		} catch (Exception e) {
 			log.error("대기 중인 송금에 대한 알림 중 오류 발생", e);
@@ -52,9 +52,9 @@ public class PendingTransferScheduler {
 	@Transactional
 	public void expireTargetTransactions() {
 		try {
-			List<TransferTransaction> expiredPendingTransferTransactions = transferTransactionService.findAllByExpiredPendingTransferTransactionWithMainAccount();
+			List<TransferTransaction> expiredPendingTransferTransactions = pendingTransferService.findAllByExpiredPendingTransferTransactionWithMainAccount();
 			for (TransferTransaction transferTransaction : expiredPendingTransferTransactions) {
-				transferTransactionService.expired(transferTransaction);
+				pendingTransferService.expired(transferTransaction);
 			}
 			log.info("시간이 지난 대기 중이던 트랜잭션 만료 완료");
 		} catch (Exception e) {
