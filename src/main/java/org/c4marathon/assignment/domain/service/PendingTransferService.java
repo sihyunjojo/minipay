@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TransferTransactionService {
+public class PendingTransferService {
 
 	private final PlatformTransactionManager transactionManager;
 	private final TransferTransactionPolicyProperties transferTransactionPolicyProperties;
