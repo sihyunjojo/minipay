@@ -11,7 +11,7 @@ import org.c4marathon.assignment.domain.service.SavingAccountService;
 import org.c4marathon.assignment.dto.account.AccountResponseDto;
 import org.c4marathon.assignment.dto.account.CreateFixedSavingAccountRequestDto;
 import org.c4marathon.assignment.dto.account.SavingDepositRequest;
-import org.c4marathon.assignment.infra.config.property.MainAccountPolicy;
+import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.infra.retry.RetryExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class SavingAccountUseCase {
 	private final SavingAccountService savingAccountService;
 	private final TransferService transferService;
 
-	private final MainAccountPolicy mainAccountPolicy;
+	private final AccountPolicyProperties accountPolicyProperties;
 	private final RetryExecutor retryExecutor;
 
 	@Transactional
@@ -61,7 +61,7 @@ public class SavingAccountUseCase {
 
 			// 잔액 부족 시 충전 진행
 			if (shortfall > 0) {
-				long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
+				long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 				mainAccountService.chargeOrThrow(mainAccount.getId(), chargeAmount, totalAmount);
 			}
 
