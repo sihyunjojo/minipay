@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 import org.c4marathon.assignment.common.model.BaseTimeEntity;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.enums.TransferStatus;
+import org.c4marathon.assignment.domain.model.transfer.enums.TransferType;
+import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
 
 @Entity
 @Getter
@@ -25,6 +26,11 @@ public class TransferTransaction extends BaseTimeEntity {
 	private Long amount = 0L;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private TransferType type;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private TransferStatus status;
 
 	private LocalDateTime expiredAt;
@@ -39,17 +45,12 @@ public class TransferTransaction extends BaseTimeEntity {
 	@JoinColumn(name = "to_main_account_id", nullable = false)
 	private MainAccount toMainAccount;
 
-	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount, Duration expireAfter) {
+	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount,
+		Duration expireAfter) {
 		LocalDateTime expiredAt = LocalDateTime.now().plus(expireAfter);
 
-		TransferTransaction transferTransaction = new TransferTransaction(
-			null,
-			amount,
-			TransferStatus.PENDING,
-			expiredAt,
-			fromMainAccount,
-			toMainAccount
-		);
+		TransferTransaction transferTransaction = new TransferTransaction(null, amount, TransferType.PENDING,
+			TransferStatus.PENDING, expiredAt, fromMainAccount, toMainAccount);
 		fromMainAccount.addSentTransaction(transferTransaction);
 		toMainAccount.addReceivedTransaction(transferTransaction);
 
