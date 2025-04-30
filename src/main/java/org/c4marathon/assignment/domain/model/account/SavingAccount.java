@@ -58,8 +58,6 @@ public class SavingAccount implements Account {
 		this.mainAccount = mainAccount;
 	}
 
-	//----FACTORY METHOD START----
-
 	public static SavingAccount createFixed(String accountNumber, Member member, MainAccount mainAccount, Long depositAmount) {
 		if (depositAmount == null || depositAmount <= 0) throw new IllegalArgumentException("정기 적금 금액은 필수입니다.");
 		return SavingAccount.builder()

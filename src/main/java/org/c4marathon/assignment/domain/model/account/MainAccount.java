@@ -55,7 +55,6 @@ public class MainAccount implements Account {
 		this.member = member;
 	}
 
-	//----FACTORY METHOD START----
 	public static MainAccount create( Member member, String accountNumber) {
 		if (member == null) throw new IllegalArgumentException("회원 정보는 필수입니다.");
 		return MainAccount.builder()

@@ -32,9 +32,7 @@ public class AccountNumberRetryExecutor {
 					}
 
 					log.warn("계좌번호 생성 재시도 {}/{}: {}", attempts, MAX_RETRY, e.getMessage());
-					//----MODIFIED PART 2 START---- (Sleep 제거)
-					// 바로 다음 루프로 넘어감
-					//----MODIFIED PART 2 END----
+
 				} else {
 					throw new RuntimeException(String.format("재시도 불가능한 예외 발생: %s", e.getMessage()), e);
 				}
