@@ -44,6 +44,9 @@ public class SavingAccountUseCase {
 		savingAccountService.deposit(savingAccountId, amount);
 	}
 
+	// fixme: ✅ "Service를 몰아서 호출하는 것" 자체는 문제가 아니다.
+	// ✅ 하지만 UseCase에 비즈니스 로직이 복잡하게 들어가면 문제다.
+	// ✅ 비즈니스 로직이 복잡해지면 Service로 넘기는 게 맞다.
 	@Transactional
 	public void processFixedSavingDeposits() {
 		Map<MainAccount, List<SavingDepositRequest>> amountMapping = savingAccountService.getSubscribedDepositAmount();
