@@ -34,7 +34,8 @@ public class PendingTransferService {
 	/**
 	 * 새로운 트랜잭션에서 이체 시작 수행
 	 */
-	// @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	// @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor =
+	// Exception.class)
 	public Boolean initiate(Long fromAccountId, Long toAccountId, Long amount) {
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -42,18 +43,18 @@ public class PendingTransferService {
 		return template.execute(status -> {
 			try {
 				MainAccount fromAccount = mainAccountRepository.findByIdWithSentTransactions(fromAccountId)
-					.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
+						.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
 				int result = mainAccountRepository.withdrawByOptimistic(fromAccount.getId(), amount,
-					fromAccount.getVersion());
+						fromAccount.getVersion());
 
 				if (result == 0) {
 					throw new OptimisticLockException("잔고 출금 실패 - 동시성 문제");
 				}
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId)
-					.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
+						.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
 				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
-					transferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHours());
+						transferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHours());
 
 				transferTransactionRepository.save(tx);
 
@@ -76,15 +77,15 @@ public class PendingTransferService {
 			try {
 				// 거래 조회 및 상태 확인
 				TransferTransaction tx = transferTransactionRepository.findPendingTransferTransactionById(transactionId)
-					.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
+						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 입금 계좌 정보 갱신
 				MainAccount toAccount = mainAccountRepository.findById(tx.getToMainAccount().getId())
-					.orElseThrow(() -> new IllegalArgumentException("입금 계좌가 존재하지 않습니다"));
+						.orElseThrow(() -> new IllegalArgumentException("입금 계좌가 존재하지 않습니다"));
 
 				// 입금 처리
 				int result = mainAccountRepository.depositByOptimistic(tx.getToMainAccount().getId(), tx.getAmount(),
-					toAccount.getVersion());
+						toAccount.getVersion());
 
 				if (result == 0) {
 					throw new OptimisticLockException("입금 실패 - 동시성 문제");
@@ -113,15 +114,15 @@ public class PendingTransferService {
 			try {
 				// 거래 조회 및 상태 확인
 				TransferTransaction tx = transferTransactionRepository.findPendingTransferTransactionById(transactionId)
-					.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
+						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 환불 계좌 정보 갱신
 				MainAccount fromAccount = mainAccountRepository.findById(tx.getFromMainAccount().getId())
-					.orElseThrow(() -> new IllegalArgumentException("환불 계좌가 존재하지 않습니다"));
+						.orElseThrow(() -> new IllegalArgumentException("환불 계좌가 존재하지 않습니다"));
 
 				// 환불 처리
 				int result = mainAccountRepository.depositByOptimistic(tx.getFromMainAccount().getId(), tx.getAmount(),
-					fromAccount.getVersion());
+						fromAccount.getVersion());
 
 				if (result == 0) {
 					throw new OptimisticLockException("환불 실패 - 동시성 문제");
@@ -147,11 +148,11 @@ public class PendingTransferService {
 			try {
 				// 환불 계좌 정보 갱신
 				MainAccount fromAccount = mainAccountRepository.findById(tx.getFromMainAccount().getId())
-					.orElseThrow(() -> new IllegalArgumentException("환불 계좌가 존재하지 않습니다"));
+						.orElseThrow(() -> new IllegalArgumentException("환불 계좌가 존재하지 않습니다"));
 
 				// 환불 처리
 				int result = mainAccountRepository.depositByOptimistic(tx.getFromMainAccount().getId(), tx.getAmount(),
-					fromAccount.getVersion());
+						fromAccount.getVersion());
 
 				if (result == 0) {
 					throw new OptimisticLockException("환불 실패 - 동시성 문제");
@@ -160,7 +161,7 @@ public class PendingTransferService {
 				// 거래 취소 처리
 				tx.markAsExpired();
 				transferTransactionRepository.save(tx);
-
+				
 				return true;
 			} catch (Exception e) {
 				status.setRollbackOnly();
@@ -169,6 +170,15 @@ public class PendingTransferService {
 		});
 	}
 
+
+	/**
+	 * 대기 중인 거래 조회
+	 */
+	public TransferTransaction findPendingTransferTransaction(Long transactionId) {
+		return transferTransactionRepository.findPendingTransferTransactionById(transactionId)
+				.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
+	}
+	
 	public Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember() {
 		Duration duration = transferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);

@@ -15,8 +15,8 @@ public interface TransferTransactionRepository extends JpaRepository<TransferTra
 	Optional<TransferTransaction> findPendingTransferTransactionById(@Param("toAccountId") Long toAccountId);
 
 	@Query("SELECT t FROM TransferTransaction t LEFT JOIN t.toMainAccount m WHERE t.status = 'PENDING' AND t.expiredAt <= :remindTime")
-	List<TransferTransaction> findRemindPendingTargetTransactionsWithMainAccount(LocalDateTime remindTime);
+	List<TransferTransaction> findRemindPendingTargetTransactionsWithMainAccount(@Param("remindTime") LocalDateTime remindTime);
 
 	@Query("SELECT t FROM TransferTransaction t LEFT JOIN t.toMainAccount m LEFT JOIN m.member WHERE t.status = 'PENDING' AND t.createdAt <= :remindTime")
-	List<TransferTransaction> findRemindPendingTargetTransactionsWithMember(LocalDateTime remindTime);
+	List<TransferTransaction> findRemindPendingTargetTransactionsWithMember(@Param("remindTime") LocalDateTime remindTime);
 }

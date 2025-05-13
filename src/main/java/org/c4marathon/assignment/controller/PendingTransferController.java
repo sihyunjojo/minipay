@@ -28,7 +28,7 @@ public class PendingTransferController {
 		@Valid @RequestBody TransferPendingRequestDto request
 	) {
 		try {
-			pendingTransferUseCase.initiatePendingTransfer(request);
+			pendingTransferUseCase.createPendingTransfer(request);
 			return ResponseEntity.ok(ApiResponse.res(200, "Pending 송금 요청 완료"));
 		} catch (IllegalStateException e) {
 			return ResponseEntity.badRequest().body(ApiResponse.res(400, e.getMessage()));
