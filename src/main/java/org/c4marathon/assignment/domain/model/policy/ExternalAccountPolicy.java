@@ -7,8 +7,8 @@ import lombok.Getter;
 
 @Getter
 public enum ExternalAccountPolicy {
-    COMPANY(-1L, "777777777777", AccountType.MAIN_ACCOUNT),
-    TEMPORARY_CHARGING(-2L, "000000000000", AccountType.EXTERNAL_ACCOUNT);
+    COMPANY(-1L, "01-77-77777777", AccountType.MAIN_ACCOUNT),
+    TEMPORARY_CHARGING(-2L, "00-00-00000000", AccountType.EXTERNAL_ACCOUNT);
 
     private final Long id;
     private final String number;
