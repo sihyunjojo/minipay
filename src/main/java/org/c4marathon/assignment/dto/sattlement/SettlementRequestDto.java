@@ -3,7 +3,7 @@ package org.c4marathon.assignment.dto.sattlement;
 import java.util.List;
 
 import org.c4marathon.assignment.common.validation.NoDuplicateElements;
-import org.c4marathon.assignment.domain.model.enums.SettlementPolicy;
+import org.c4marathon.assignment.domain.model.policy.SettlementPolicy;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
