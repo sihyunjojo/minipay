@@ -17,10 +17,9 @@ public class MemberAccountUseCase {
 	private final MainAccountService mainAccountService;
 
 	@Transactional
-	public Long registerMemberWithAccount(MemberRegistrationRequestDto request) {
+	public String registerMemberWithAccount(MemberRegistrationRequestDto request) {
 		Member member = memberService.registerember(request);
-		mainAccountService.createMainAccountForMember(member);
-		return member.getId();
+		return mainAccountService.createMainAccountForMember(member);
 	}
 
 }
