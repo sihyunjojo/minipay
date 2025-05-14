@@ -91,6 +91,13 @@ public class SavingAccountService {
 		account.deposit(amount);
 	}
 
+	@Transactional(readOnly = true)
+	public Long getMainAccountId(Long savingAccountId) {
+		SavingAccount savingAccount = savingAccountRepository.findById(savingAccountId)
+			.orElseThrow(() -> new IllegalArgumentException("적금 계좌를 찾을 수 없음"));
+		return savingAccount.getMainAccount().getId();
+	}
+
 	@Transactional
 	public void applyInterest() {
 		List<SavingAccount> accounts = savingAccountRepository.findAll();
