@@ -1,10 +1,10 @@
 package org.c4marathon.assignment.usecase;
 
-import static org.c4marathon.assignment.domain.model.enums.PolicyType.*;
-
 import java.util.List;
 
-import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.c4marathon.assignment.domain.model.account.Account;
+import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
+import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.PendingTransferService;
@@ -44,8 +44,10 @@ public class PendingTransferUseCase {
 		long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 		mainAccountService.chargeOrThrow(request.fromAccountId(), chargeAmount, request.amount());
 
+		Account toAccount = mainAccountService.getRefreshedAccount(request.fromAccountId());
 		TransferLog transferLog = transferLogFactory.createExternalChargeLog(
-			TEMPORARY_CHARGING_ID.getValue(),			request.fromAccountId(),
+			ExternalAccountPolicy.TEMPORARY_CHARGING,
+			toAccount,
 			chargeAmount);
 		transferLogService.saveTransferLog(transferLog);
 
@@ -53,15 +55,17 @@ public class PendingTransferUseCase {
 				() -> pendingTransferService.initiate(request.fromAccountId(), request.toAccountId(),
 						request.amount()));
 
-		TransferLog immediateTransferLog = transferLogFactory.createPendingTransferLog(request.fromAccountId(),
-				request.toAccountId(), request.amount());
+		Account fromAccount = mainAccountService.getRefreshedAccount(request.fromAccountId());
+		Account toAccount2 = mainAccountService.getRefreshedAccount(request.toAccountId());
+		TransferLog immediateTransferLog = transferLogFactory.createPendingTransferLog(fromAccount,
+				toAccount2, request.amount());
 		transferLogService.saveTransferLog(immediateTransferLog);
 	}
 
 	@Transactional
 	public void acceptPendingTransfer(Long transactionId) {
 		// 대기 중인 거래 조회
-		TransferTransaction tx = pendingTransferService.findPendingTransferTransaction(transactionId);
+		PendingTransferTransaction tx = pendingTransferService.findPendingPendingTransferTransaction(transactionId);
 
 		// 거래 수락 실행
 		retryExecutor.executeWithRetry(() -> pendingTransferService.accept(transactionId));
@@ -69,8 +73,8 @@ public class PendingTransferUseCase {
 		// 거래 로그 생성 및 저장
 		TransferLog transferLog = transferLogFactory.createCompletePendingTransferLog(
 				tx.getId(),
-				tx.getFromMainAccount().getId(),
-				tx.getToMainAccount().getId(),
+				tx.getFromMainAccount(),
+				tx.getToMainAccount(),
 				tx.getAmount());
 		transferLogService.saveTransferLog(transferLog);
 	}
@@ -78,7 +82,7 @@ public class PendingTransferUseCase {
 	@Transactional
 	public void cancelPendingTransfer(Long transactionId) {
 		// 대기 중인 거래 조회
-		TransferTransaction tx = pendingTransferService.findPendingTransferTransaction(transactionId);
+		PendingTransferTransaction tx = pendingTransferService.findPendingPendingTransferTransaction(transactionId);
 
 		// 거래 취소 실행
 		retryExecutor.executeWithRetry(() -> pendingTransferService.cancel(transactionId));
@@ -86,23 +90,23 @@ public class PendingTransferUseCase {
 		// 거래 로그 생성 및 저장
 		TransferLog transferLog = transferLogFactory.createCancelPendingTransferLog(
 				tx.getId(),
-				tx.getFromMainAccount().getId(),
-				tx.getToMainAccount().getId(),
+				tx.getFromMainAccount(),
+				tx.getToMainAccount(),
 				tx.getAmount());
 		transferLogService.saveTransferLog(transferLog);
 	}
 
 	@Transactional
 	public void expirePendingTransfer() {
-		List<TransferTransaction> expiredPendingTransferTransactions = pendingTransferService
-				.findAllByExpiredPendingTransferTransactionWithMainAccount();
-		for (TransferTransaction tx : expiredPendingTransferTransactions) {
+		List<PendingTransferTransaction> expiredPendingPendingTransferTransactions = pendingTransferService
+				.findAllByExpiredPendingPendingTransferTransactionWithMainAccount();
+		for (PendingTransferTransaction tx : expiredPendingPendingTransferTransactions) {
 			pendingTransferService.expired(tx);
 
 			TransferLog transferLog = transferLogFactory.createExpirePendingTransferLog(
 					tx.getId(),
-					tx.getFromMainAccount().getId(),
-					tx.getToMainAccount().getId(),
+					tx.getFromMainAccount(),
+					tx.getToMainAccount(),
 					tx.getAmount());
 			transferLogService.saveTransferLog(transferLog);
 		}

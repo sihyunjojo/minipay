@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.domain.model.account;
 
+import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 import org.c4marathon.assignment.domain.model.member.Member;
 
 // Step 1. 계좌 세팅
@@ -22,4 +23,8 @@ public interface Account {
 	Long getBalance();
 
 	Member getMember();
+
+	AccountType getType();
+
+	String getAccountNumber();
 }

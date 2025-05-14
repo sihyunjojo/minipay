@@ -1,12 +1,12 @@
 package org.c4marathon.assignment.usecase;
 
-import static org.c4marathon.assignment.domain.model.enums.PolicyType.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.c4marathon.assignment.domain.model.account.Account;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
+import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
@@ -55,9 +55,10 @@ public class SavingAccountUseCase {
 			long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(mainAccountId, chargeAmount, amount);
 
+			Account toAccount = mainAccountService.getRefreshedAccount(mainAccountId);
 			TransferLog chargeLog = transferLogFactory.createExternalChargeLog(
-				TEMPORARY_CHARGING_ID.getValue(),
-				mainAccountId,
+				ExternalAccountPolicy.TEMPORARY_CHARGING,
+				toAccount,
 				chargeAmount);
 			transferLogService.saveTransferLog(chargeLog);
 		}
@@ -71,14 +72,16 @@ public class SavingAccountUseCase {
 
 		retryExecutor.executeWithRetry(performDeposit);
 
+		Account fromAccount = mainAccountService.getRefreshedAccount(mainAccountId);
+		Account toAccount = savingAccountService.getRefreshedAccount(savingAccountId);
 		TransferLog depositLog = transferLogFactory.createToSavingTransferLog(
-			mainAccountId, 
-			savingAccountId, 
+			fromAccount, 
+			toAccount, 
 			amount);
 		transferLogService.saveTransferLog(depositLog);
 	}
 
-	// fixme: ✅ "Service를 몰아서 호출하는 것" 자체는 문제가 아니다.
+	// fixme: ✅ "Service를 몫아서 호출하는 것" 자체는 문제가 아니다.
 	// ✅ 하지만 UseCase에 비즈니스 로직이 복잡하게 들어가면 문제다.
 	// ✅ 비즈니스 로직이 복잡해지면 Service로 넘기는 게 맞다.
 	@Transactional
@@ -101,8 +104,10 @@ public class SavingAccountUseCase {
 				long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 				mainAccountService.chargeOrThrow(mainAccount.getId(), chargeAmount, totalAmount);
 
-				TransferLog transferLog = transferLogFactory.createExternalChargeLog(TEMPORARY_CHARGING_ID.getValue(),
-					mainAccount.getId(), chargeAmount);
+				TransferLog transferLog = transferLogFactory.createExternalChargeLog(
+					ExternalAccountPolicy.TEMPORARY_CHARGING,
+					mainAccount,
+					chargeAmount);
 				transferLogService.saveTransferLog(transferLog);
 			}
 
@@ -132,9 +137,11 @@ public class SavingAccountUseCase {
 			throw new RuntimeException("이자 입금 중 오류 발생: " + e.getMessage(), e);
 		}
 
+		Account fromAccount = mainAccountService.getRefreshedAccount(fromAccountId);
+		Account toAccount = savingAccountService.getRefreshedAccount(toAccountId);
 		TransferLog depositLog = transferLogFactory.createToSavingTransferLog(
-			fromAccountId, 
-			toAccountId, 
+			fromAccount, 
+			toAccount, 
 			amount);
 		transferLogService.saveTransferLog(depositLog);
 	}

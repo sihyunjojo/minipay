@@ -1,9 +1,9 @@
 package org.c4marathon.assignment.usecase;
 
-import static org.c4marathon.assignment.domain.model.enums.PolicyType.*;
-
 import java.util.concurrent.Callable;
 
+import org.c4marathon.assignment.domain.model.account.Account;
+import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
@@ -40,9 +40,10 @@ public class TransferUseCase {
 			long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(fromAccountId, chargeAmount, transferAmount);
 
+			Account toAccount = mainAccountService.getRefreshedAccount(fromAccountId);
 			TransferLog transferLog = transferLogFactory.createExternalChargeLog(
-				TEMPORARY_CHARGING_ID.getValue(),
-				fromAccountId,
+				ExternalAccountPolicy.TEMPORARY_CHARGING,
+				toAccount,
 				chargeAmount);
 			transferLogService.saveTransferLog(transferLog);
 		}
@@ -57,9 +58,12 @@ public class TransferUseCase {
 
 		retryExecutor.executeWithRetry(performTransfer);
 
-		TransferLog immediateTransferLog = transferLogFactory.createImmediateTransferLog(fromAccountId, toAccountId,
+		Account fromAccount = mainAccountService.getRefreshedAccount(fromAccountId);
+		Account toAccount = mainAccountService.getRefreshedAccount(toAccountId);
+		TransferLog immediateTransferLog = transferLogFactory.createImmediateTransferLog(
+			fromAccount, 
+			toAccount, 
 			transferAmount);
 		transferLogService.saveTransferLog(immediateTransferLog);
-
 	}
 }

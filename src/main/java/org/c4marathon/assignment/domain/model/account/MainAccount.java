@@ -3,8 +3,9 @@ package org.c4marathon.assignment.domain.model.account;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,10 +40,10 @@ public class MainAccount implements Account {
 	private List<SavingAccount> savingAccounts = new ArrayList<>();
 
 	@OneToMany(mappedBy = "fromMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TransferTransaction> sentTransactions = new ArrayList<>();
+	private List<PendingTransferTransaction> sentTransactions = new ArrayList<>();
 
 	@OneToMany(mappedBy = "toMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TransferTransaction> receivedTransactions = new ArrayList<>();
+	private List<PendingTransferTransaction> receivedTransactions = new ArrayList<>();
 
 	@Version
 	private Long version;
@@ -73,7 +74,7 @@ public class MainAccount implements Account {
 	}
 
 	// 보낸 거래 추가
-	public void addSentTransaction(TransferTransaction transaction) {
+	public void addSentTransaction(PendingTransferTransaction transaction) {
 		sentTransactions.add(transaction);
 		if (transaction != null && transaction.getFromMainAccount() != this) {
 			transaction.setFromMainAccount(this);
@@ -88,10 +89,15 @@ public class MainAccount implements Account {
 	}
 
 	// 받은 거래 추가
-	public void addReceivedTransaction(TransferTransaction transaction) {
+	public void addReceivedTransaction(PendingTransferTransaction transaction) {
 		receivedTransactions.add(transaction);
 		if (transaction != null && transaction.getToMainAccount() != this) {
 			transaction.setToMainAccount(this);
 		}
+	}
+
+	@Override
+	public AccountType getType() {
+		return AccountType.MAIN_ACCOUNT;
 	}
 }

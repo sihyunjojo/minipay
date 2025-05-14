@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.domain.model.account;
 
+import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.account.enums.SavingType;
 
@@ -93,5 +94,10 @@ public class SavingAccount implements Account {
 	 */
 	public Long calculateInterest(Double rate) {
 		return (long) (this.balance * rate); // 소수점 절삭
+	}
+
+	@Override
+	public AccountType getType() {
+		return AccountType.SAVING_ACCOUNT;
 	}
 }
