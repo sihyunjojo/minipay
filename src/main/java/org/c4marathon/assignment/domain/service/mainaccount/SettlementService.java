@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
 
-import org.c4marathon.assignment.domain.model.enums.PolicyType;
+import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.dto.sattlement.SettlementRequestDto;
 import org.c4marathon.assignment.dto.sattlement.SettlementResponseDto;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SettlementService {
 
-	public static final Long COMPANY_ID = PolicyType.COMPANY_ID.getValue();
+	public static final Long COMPANY_ID = ExternalAccountPolicy.COMPANY.getId();
 
 	public List<SettlementResponseDto> calculateSettlement(SettlementRequestDto request) {
 		List<Long> participantIds = request.participantMemberIdList();
