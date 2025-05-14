@@ -16,7 +16,7 @@ import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class TransferTransaction extends BaseTimeEntity {
+public class PendingTransferTransaction extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +45,11 @@ public class TransferTransaction extends BaseTimeEntity {
 	@JoinColumn(name = "to_main_account_id", nullable = false)
 	private MainAccount toMainAccount;
 
-	public static TransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount,
+	public static PendingTransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount,
 		Duration expireAfter) {
 		LocalDateTime expiredAt = LocalDateTime.now().plus(expireAfter);
 
-		TransferTransaction transferTransaction = new TransferTransaction(null, amount, TransferType.PENDING,
+		PendingTransferTransaction transferTransaction = new PendingTransferTransaction(null, amount, TransferType.PENDING,
 			TransferStatus.PENDING, expiredAt, fromMainAccount, toMainAccount);
 		fromMainAccount.addSentTransaction(transferTransaction);
 		toMainAccount.addReceivedTransaction(transferTransaction);

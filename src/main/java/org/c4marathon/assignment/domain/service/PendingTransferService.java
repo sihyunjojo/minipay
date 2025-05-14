@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.infra.config.property.TransferTransactionPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.PendingTransferTransactionPolicyProperties;
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
 import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.domain.repository.transfertransaction.TransferTransactionRepository;
+import org.c4marathon.assignment.domain.repository.transfertransaction.PendingTransferTransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -26,9 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingTransferService {
 
 	private final PlatformTransactionManager transactionManager;
-	private final TransferTransactionPolicyProperties transferTransactionPolicyProperties;
+	private final PendingTransferTransactionPolicyProperties pendingTransferTransactionPolicyProperties;
 
-	private final TransferTransactionRepository transferTransactionRepository;
+	private final PendingTransferTransactionRepository transferTransactionRepository;
 	private final MainAccountRepository mainAccountRepository;
 
 	/**
@@ -53,8 +53,8 @@ public class PendingTransferService {
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId)
 						.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
-				TransferTransaction tx = TransferTransaction.createPending(fromAccount, toAccount, amount,
-						transferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHours());
+				PendingTransferTransaction tx = PendingTransferTransaction.createPending(fromAccount, toAccount, amount,
+					pendingTransferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHours());
 
 				transferTransactionRepository.save(tx);
 
@@ -76,7 +76,7 @@ public class PendingTransferService {
 		return template.execute(status -> {
 			try {
 				// 거래 조회 및 상태 확인
-				TransferTransaction tx = transferTransactionRepository.findPendingTransferTransactionById(transactionId)
+				PendingTransferTransaction tx = transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
 						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 입금 계좌 정보 갱신
@@ -113,7 +113,7 @@ public class PendingTransferService {
 		return template.execute(status -> {
 			try {
 				// 거래 조회 및 상태 확인
-				TransferTransaction tx = transferTransactionRepository.findPendingTransferTransactionById(transactionId)
+				PendingTransferTransaction tx = transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
 						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 환불 계좌 정보 갱신
@@ -140,7 +140,7 @@ public class PendingTransferService {
 		});
 	}
 
-	public void expired(TransferTransaction tx) {
+	public void expired(PendingTransferTransaction tx) {
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
@@ -174,26 +174,26 @@ public class PendingTransferService {
 	/**
 	 * 대기 중인 거래 조회
 	 */
-	public TransferTransaction findPendingTransferTransaction(Long transactionId) {
-		return transferTransactionRepository.findPendingTransferTransactionById(transactionId)
+	public PendingTransferTransaction findPendingPendingTransferTransaction(Long transactionId) {
+		return transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
 				.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 	}
 	
-	public Map<Member, List<TransferTransaction>> findRemindTargetGroupedByMember() {
-		Duration duration = transferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
+	public Map<Member, List<PendingTransferTransaction>> findRemindTargetGroupedByMember() {
+		Duration duration = pendingTransferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindTargetGroupedByMember(remindTime);
 	}
 
-	public List<TransferTransaction> findRemindPendingTargetTransactionsWithMember() {
-		Duration duration = transferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
+	public List<PendingTransferTransaction> findRemindPendingTargetTransactionsWithMember() {
+		Duration duration = pendingTransferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMember(remindTime);
 	}
 
-	public List<TransferTransaction> findAllByExpiredPendingTransferTransactionWithMainAccount() {
+	public List<PendingTransferTransaction> findAllByExpiredPendingPendingTransferTransactionWithMainAccount() {
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMainAccount(LocalDateTime.now());
 	}
 }
