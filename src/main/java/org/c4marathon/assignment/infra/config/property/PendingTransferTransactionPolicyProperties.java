@@ -10,10 +10,10 @@ import java.time.Duration;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "remind")
+@ConfigurationProperties(prefix = "transfer-policy")
 public class PendingTransferTransactionPolicyProperties {
-    private long pendingTransferExpireAfterDurationHours = Duration.ofHours(72).toHours();
-    private long pendingTransferRemindDurationHours = Duration.ofHours(24).toHours();
+    private long pendingTransferExpireAfterDurationHours = 72;
+    private long pendingTransferRemindDurationHours = 24;
 
     public Duration getPendingTransferExpireAfterDurationHours() {
         return Duration.ofHours(pendingTransferExpireAfterDurationHours);
