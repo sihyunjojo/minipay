@@ -23,7 +23,7 @@ public record TransferLogDto(
 	public static TransferLogDto from(TransferLog log) {
 		return new TransferLogDto(
 			log.getId(),
-			log.getParentTransactionId(),
+			log.getParentTransferTransactionId(),
 			AccountSnapshotDto.from(log.getFrom()),
 			AccountSnapshotDto.from(log.getTo()),
 			log.getAmount(),
