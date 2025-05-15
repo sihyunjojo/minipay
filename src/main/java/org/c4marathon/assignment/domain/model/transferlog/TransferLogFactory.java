@@ -25,31 +25,31 @@ public class TransferLogFactory {
 	}
 
 	// 메인 → 메인 대기 송금
-	public TransferLog createPendingTransferLog(Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
+	public TransferLog createPendingTransferLog(Long parentTransferTransactionId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
 		AccountSnapshot from = AccountSnapshot.from(fromAccount);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
-		return buildTransferLog(null, from, to, amount, TransferType.PENDING, TransferStatus.PENDING, senderTime);
+		return buildTransferLog(parentTransferTransactionId, from, to, amount, TransferType.PENDING, TransferStatus.PENDING, senderTime);
 	}
 
 	// 대기 송금 완료
-	public TransferLog createCompletePendingTransferLog(Long parentId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
+	public TransferLog createCompletePendingTransferLog(Long parentTransferTransactionId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
 		AccountSnapshot from = AccountSnapshot.from(fromAccount);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
-		return buildTransferLog(parentId, from, to, amount, TransferType.PENDING, TransferStatus.COMPLETED, senderTime);
+		return buildTransferLog(parentTransferTransactionId, from, to, amount, TransferType.PENDING, TransferStatus.COMPLETED, senderTime);
 	}
 
 	// 대기 송금 취소
-	public TransferLog createCancelPendingTransferLog(Long parentId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
+	public TransferLog createCancelPendingTransferLog(Long parentTransferTransactionId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
 		AccountSnapshot from = AccountSnapshot.from(fromAccount);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
-		return buildTransferLog(parentId, from, to, amount, TransferType.PENDING, TransferStatus.CANCELED, senderTime);
+		return buildTransferLog(parentTransferTransactionId, from, to, amount, TransferType.PENDING, TransferStatus.CANCELED, senderTime);
 	}
 
 	// 대기 송금 만료
-	public TransferLog createExpirePendingTransferLog(Long parentId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
+	public TransferLog createExpirePendingTransferLog(Long parentTransferTransactionId, Account fromAccount, Account toAccount, long amount, LocalDateTime senderTime) {
 		AccountSnapshot from = AccountSnapshot.from(fromAccount);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
-		return buildTransferLog(parentId, from, to, amount, TransferType.PENDING, TransferStatus.EXPIRED, senderTime);
+		return buildTransferLog(parentTransferTransactionId, from, to, amount, TransferType.PENDING, TransferStatus.EXPIRED, senderTime);
 	}
 
 	// 메인 → 적금 송금
@@ -72,7 +72,7 @@ public class TransferLogFactory {
 		return buildTransferLog(null, from, to, amount, TransferType.CHARGE, TransferStatus.COMPLETED);
 	}
 
-	private TransferLog buildTransferLog(Long parentTransactionId, AccountSnapshot from, AccountSnapshot to, long amount,
+	private TransferLog buildTransferLog(Long parentTransferTransactionId, AccountSnapshot from, AccountSnapshot to, long amount,
 		TransferType transactionType, TransferStatus transactionStatus) {
 		LocalDateTime now = LocalDateTime.now(clock);
 
@@ -80,7 +80,7 @@ public class TransferLogFactory {
 		LocalDateTime receiverTime = transactionType.isReceiverTimeAuto(transactionStatus) ? now : null;
 
 		return TransferLog.builder()
-			.parentTransactionId(parentTransactionId)
+			.parentTransferTransactionId(parentTransferTransactionId)
 			.from(from)
 			.to(to)
 			.amount(amount)
@@ -91,14 +91,14 @@ public class TransferLogFactory {
 			.build();
 	}
 
-	private TransferLog buildTransferLog(Long parentTransactionId, AccountSnapshot from, AccountSnapshot to, long amount,
+	private TransferLog buildTransferLog(Long parentTransferTransactionId, AccountSnapshot from, AccountSnapshot to, long amount,
 		TransferType transactionType, TransferStatus transactionStatus, LocalDateTime senderTime) {
 		LocalDateTime now = LocalDateTime.now(clock);
 
 		LocalDateTime receiverTime = transactionType.isReceiverTimeAuto(transactionStatus) ? now : null;
 
 		return TransferLog.builder()
-			.parentTransactionId(parentTransactionId)
+			.parentTransferTransactionId(parentTransferTransactionId)
 			.from(from)
 			.to(to)
 			.amount(amount)
