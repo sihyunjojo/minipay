@@ -5,16 +5,12 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 
 @Builder
-public record TransferLogCursorPageResponse(
+public record TransferLogCursorPageResponseDto(
 
-	@Schema(
-		description = "송금 이력 목록",
-		example = "[{...}, {...}]"
-	)
-	List<TransferLog> data,
+	@Schema(description = "송금 이력 목록")
+	List<TransferLogDto> data,
 
 	@Schema(
 		description = "다음 페이지 존재 여부",

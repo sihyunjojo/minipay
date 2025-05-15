@@ -3,8 +3,8 @@ package org.c4marathon.assignment.controller;
 import io.swagger.v3.oas.annotations.Operation;
 
 import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.transferlog.TransferLogCursorPageResponse;
-import org.c4marathon.assignment.dto.transferlog.TransferLogSearchRequest;
+import org.c4marathon.assignment.dto.transferlog.TransferLogCursorPageResponseDto;
+import org.c4marathon.assignment.dto.transferlog.TransferLogSearchRequestDto;
 import org.c4marathon.assignment.usecase.TransferLogUseCase;
 
 import jakarta.validation.Valid;
@@ -24,12 +24,12 @@ public class TransferLogController {
 
 	@Operation(summary = "송금 이력 조회", description = "startAt를 기준으로 커서 기반 송금 이력을 조회합니다.")
 	@GetMapping
-	public ResponseEntity<ApiResponse<TransferLogCursorPageResponse>> getTransferLogs(
-		@Valid TransferLogSearchRequest request
+	public ResponseEntity<ApiResponse<TransferLogCursorPageResponseDto>> getTransferLogs(
+		@Valid TransferLogSearchRequestDto request
 	) {
-		TransferLogCursorPageResponse result;
+		TransferLogCursorPageResponseDto result;
 
-		if (request.startAt() != null) {
+		if (request.cursorStartAt() != null) {
 			result = transferLogUseCase.findAllBySendTimeAfterCursor(request);
 		} else {
 			result = transferLogUseCase.findAllByOffsetOrDefaultPaging(request);
