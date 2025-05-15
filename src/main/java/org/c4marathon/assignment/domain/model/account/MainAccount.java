@@ -28,6 +28,7 @@ public class MainAccount implements Account {
 	@Column(name = "account_number", nullable = false, unique = true, length = 20)
 	private String accountNumber;
 
+	// todo: BigInteger 사용 고려
 	private Long balance;
 	private Long dailyChargeAmount;
 

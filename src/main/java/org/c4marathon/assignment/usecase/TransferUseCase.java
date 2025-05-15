@@ -36,6 +36,7 @@ public class TransferUseCase {
 	private final AccountPolicyProperties accountPolicyProperties;
 
 	// todo: 이체 실패 시, 충전 보상 로직 만들기
+	// todo: 마지막에 오류 터질시, 로그는 롤백이 되는데 충전과 이체가 롤백이 안됨.
 	@Transactional
 	public void transfer(TransferRequestDto request) {
 		// 필요한 계정 식별자 저장
