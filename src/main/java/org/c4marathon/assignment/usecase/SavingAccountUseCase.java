@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 
 import org.c4marathon.assignment.domain.model.account.Account;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
+import org.c4marathon.assignment.domain.model.account.SavingAccount;
 import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
@@ -74,7 +75,7 @@ public class SavingAccountUseCase {
 
 		Account fromAccount = mainAccountService.getRefreshedAccount(mainAccountId);
 		Account toAccount = savingAccountService.getRefreshedAccount(savingAccountId);
-		TransferLog depositLog = transferLogFactory.createToSavingTransferLog(
+		TransferLog depositLog = transferLogFactory.createImmediateTransferLog(
 			fromAccount, 
 			toAccount, 
 			amount);
@@ -139,7 +140,7 @@ public class SavingAccountUseCase {
 
 		Account fromAccount = mainAccountService.getRefreshedAccount(fromAccountId);
 		Account toAccount = savingAccountService.getRefreshedAccount(toAccountId);
-		TransferLog depositLog = transferLogFactory.createToSavingTransferLog(
+		TransferLog depositLog = transferLogFactory.createFixedTermTransferLog(
 			fromAccount, 
 			toAccount, 
 			amount);
@@ -152,6 +153,13 @@ public class SavingAccountUseCase {
 
 	@Transactional
 	public void applyDailyInterest() {
-		savingAccountService.applyInterest();
+		List<SavingAccount> accounts = savingAccountService.findAll();
+		for (SavingAccount account : accounts) {
+			Long interest = savingAccountService.applyInterest(account);
+			TransferLog depositLog = transferLogFactory.createInterestPaymentLog(
+				account,
+				interest);
+			transferLogService.saveTransferLog(depositLog);
+		}
 	}
 }

@@ -50,6 +50,11 @@ public class SavingAccountService {
 		return new AccountResponseDto(savingAccount);
 	}
 
+	@Transactional(readOnly = true)
+	public List<SavingAccount> findAll(){
+		return savingAccountRepository.findAll();
+	}
+
 	@Transactional
 	public AccountResponseDto createFlexibleSavingAccount(Long memberId) {
 		MainAccount mainAccount = mainAccountRepository.findByMemberId(memberId)
@@ -90,13 +95,6 @@ public class SavingAccountService {
 			.orElseThrow(() -> new IllegalStateException(String.format("ID가 %s인 적금 계좌가 존재하지 않습니다.", accountId)));
 	}
 
-	@Transactional
-	public void deposit(Long accountId, Long amount) {
-		SavingAccount account = savingAccountRepository.findById(accountId)
-			.orElseThrow(() -> new IllegalArgumentException("적금 계좌를 찾을 수 없음"));
-		account.deposit(amount);
-	}
-
 	@Transactional(readOnly = true)
 	public Long getMainAccountId(Long savingAccountId) {
 		SavingAccount savingAccount = savingAccountRepository.findById(savingAccountId)
@@ -105,14 +103,11 @@ public class SavingAccountService {
 	}
 
 	@Transactional
-	public void applyInterest() {
-		List<SavingAccount> accounts = savingAccountRepository.findAll();
-		for (SavingAccount account : accounts) {
-			// fixme: 금액 계산은 BigDecimal 사용을 고려
-			double rate = accountPolicyProperties.getSaving().getInterestRate(account.getSavingType());
-			Long interest = account.calculateInterest(rate);
-			account.deposit(interest);
-		}
+	public Long applyInterest(SavingAccount account) {
+		double rate = accountPolicyProperties.getSaving().getInterestRate(account.getSavingType());
+		Long interest = account.calculateInterest(rate);
+		account.deposit(interest);
+		return interest;
 	}
 
 	public Map<MainAccount, List<SavingDepositRequest>> getSubscribedDepositAmount() {
