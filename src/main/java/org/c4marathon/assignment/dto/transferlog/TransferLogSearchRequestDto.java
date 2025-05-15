@@ -3,6 +3,8 @@ package org.c4marathon.assignment.dto.transferlog;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record TransferLogSearchRequestDto(
@@ -18,6 +20,7 @@ public record TransferLogSearchRequestDto(
 	Long cursorId,
 
 	@Schema(description = "페이지 크기", example = "10", defaultValue = "10")
+	@Max(value = 1000, message = "페이지 크기는 최대 1000까지만 허용됩니다")
 	Integer size,
 
 	@Schema(description = "페이지 번호 (0부터 시작) (커서 기반에서는 사용하지 않음)", example = "0", defaultValue = "0")
