@@ -61,7 +61,7 @@ public class PendingTransferUseCase {
 
 		Account fromAccount = mainAccountService.getRefreshedAccount(request.fromAccountId());
 		Account toAccount2 = mainAccountService.getRefreshedAccount(request.toAccountId());
-		TransferLog immediateTransferLog = transferLogFactory.createPendingTransferLog(fromAccount,
+		TransferLog immediateTransferLog = transferLogFactory.createPendingTransferLog(tx.getId(), fromAccount,
 				toAccount2, request.amount(), tx.getCreatedAt());
 		transferLogService.saveTransferLog(immediateTransferLog);
 	}
@@ -102,6 +102,7 @@ public class PendingTransferUseCase {
 		transferLogService.saveTransferLog(transferLog);
 	}
 
+	// todo: 보상 로직 만들기
 	@Transactional
 	public void expirePendingTransfer() {
 		List<PendingTransferTransaction> expiredPendingPendingTransferTransactions = pendingTransferService
