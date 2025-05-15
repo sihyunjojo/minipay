@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.SplittableRandom;
 
 import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.dto.sattlement.SettlementRequestDto;
-import org.c4marathon.assignment.dto.sattlement.SettlementResponseDto;
+import org.c4marathon.assignment.dto.settlement.SettlementRequestDto;
+import org.c4marathon.assignment.dto.settlement.SettlementResponseDto;
 import org.springframework.stereotype.Service;
 
 @Service

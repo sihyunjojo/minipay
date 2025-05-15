@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.sattlement;
+package org.c4marathon.assignment.dto.settlement;
 
 import java.util.List;
 
