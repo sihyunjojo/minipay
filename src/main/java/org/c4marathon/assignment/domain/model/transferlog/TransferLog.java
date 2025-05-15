@@ -53,7 +53,7 @@ public class TransferLog extends BaseTimeEntity {
 	@Column(nullable = false)
 	private TransferStatus status;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private LocalDateTime sendTime;
 
 	@Column(nullable = true)

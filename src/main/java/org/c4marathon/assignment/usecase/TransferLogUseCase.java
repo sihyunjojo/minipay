@@ -4,8 +4,9 @@ import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.service.TransferLogService;
 import lombok.RequiredArgsConstructor;
 
-import org.c4marathon.assignment.dto.transferlog.TransferLogCursorPageResponse;
-import org.c4marathon.assignment.dto.transferlog.TransferLogSearchRequest;
+import org.c4marathon.assignment.dto.transferlog.TransferLogCursorPageResponseDto;
+import org.c4marathon.assignment.dto.transferlog.TransferLogDto;
+import org.c4marathon.assignment.dto.transferlog.TransferLogSearchRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,29 +27,28 @@ public class TransferLogUseCase {
 
 	private final TransferLogService transferLogService;
 
-	public TransferLogCursorPageResponse findAllBySendTimeAfterCursor(TransferLogSearchRequest request) {
-		LocalDateTime startAt = Optional.ofNullable(request.startAt())
+	public TransferLogCursorPageResponseDto findAllBySendTimeAfterCursor(TransferLogSearchRequestDto request) {
+		LocalDateTime startAt = Optional.ofNullable(request.cursorStartAt())
 			.orElse(LocalDateTime.now().minusDays(10));
-		Long id = request.id();
-		int page = Optional.ofNullable(request.page()).orElse(0);
+		String accountNumber = request.accountNumber();
+		Long id = request.cursorId();
 		int size = Optional.ofNullable(request.size()).orElse(10);
 
-		Pageable pageable = createPageable(page, size, Sort.by("sendTime").ascending().and(Sort.by("id").ascending()));
-
 		Slice<TransferLog> slice = (id == null)
-			? transferLogService.findAllBySendTimeAfterCursor(startAt, pageable)
-			: transferLogService.findAllBySendTimeAndIdAfterCursor(startAt, id, pageable);
+			? transferLogService.findAllBySendTimeAfterCursor(accountNumber, startAt, size)
+			: transferLogService.findAllBySendTimeAndIdAfterCursor(accountNumber, startAt, id, size);
 
 		return buildCursorPageResponse(slice.getContent(), slice.hasNext());
 	}
 
-	public TransferLogCursorPageResponse findAllByOffsetOrDefaultPaging(TransferLogSearchRequest request) {
+	public TransferLogCursorPageResponseDto findAllByOffsetOrDefaultPaging(TransferLogSearchRequestDto request) {
+		String accountNumber = request.accountNumber();
 		int page = Optional.ofNullable(request.page()).orElse(0);
 		int size = Optional.ofNullable(request.size()).orElse(10);
 
 		Pageable pageable = createPageable(page, size, Sort.by("sendTime").descending().and(Sort.by("id").descending()));
 
-		Page<TransferLog> pageResult = transferLogService.findRecentLogs(pageable);
+		Page<TransferLog> pageResult = transferLogService.findRecentLogs(accountNumber, pageable);
 
 		return buildCursorPageResponse(pageResult.getContent(), pageResult.hasNext());
 	}
@@ -59,18 +59,22 @@ public class TransferLogUseCase {
 	}
 
 	// 커서 기반 응답 조립 헬퍼
-	private TransferLogCursorPageResponse buildCursorPageResponse(List<TransferLog> logs, boolean hasNext) {
+	private TransferLogCursorPageResponseDto buildCursorPageResponse(List<TransferLog> logs, boolean hasNext) {
+		List<TransferLogDto> dtos = logs.stream()
+			.map(TransferLogDto::from)
+			.toList();
+
 		if (hasNext && !logs.isEmpty()) {
 			TransferLog last = logs.get(logs.size() - 1);
-			return TransferLogCursorPageResponse.builder()
-				.data(logs)
+			return TransferLogCursorPageResponseDto.builder()
+				.data(dtos)
 				.hasNext(true)
 				.nextCursorTime(last.getSendTime())
 				.nextCursorId(last.getId())
 				.build();
 		}
-		return TransferLogCursorPageResponse.builder()
-			.data(logs)
+		return TransferLogCursorPageResponseDto.builder()
+			.data(dtos)
 			.hasNext(false)
 			.nextCursorTime(null)
 			.nextCursorId(null)

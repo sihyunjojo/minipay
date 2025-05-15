@@ -1,7 +1,7 @@
 package org.c4marathon.assignment.domain.service;
 
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
-import org.c4marathon.assignment.domain.repository.TransferLogRepository;
+import org.c4marathon.assignment.domain.repository.transferlog.TransferLogRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,15 +23,15 @@ public class TransferLogService {
 		transferLogRepository.save(transferLog);
 	}
 
-	public Slice<TransferLog> findAllBySendTimeAndIdAfterCursor(LocalDateTime startAt, Long startId, Pageable pageable) {
-		return transferLogRepository.findAllBySendTimeAndIdAfterCursor(startAt, startId, pageable);
+	public Slice<TransferLog> findAllBySendTimeAndIdAfterCursor(String accountNumber, LocalDateTime startAt, Long startId, int size) {
+		return transferLogRepository.findAllByAccountNumberAndSendTimeAndIdAfterCursor(accountNumber, startAt, startId, size);
 	}
 
-	public Slice<TransferLog> findAllBySendTimeAfterCursor(LocalDateTime startAt, Pageable pageable) {
-		return transferLogRepository.findAllBySendTimeAfterCursor(startAt, pageable);
+	public Slice<TransferLog> findAllBySendTimeAfterCursor(String accountNumber, LocalDateTime startAt, int size) {
+		return transferLogRepository.findAllByAccountNumberAndSendTimeAfterCursor(accountNumber, startAt, size);
 	}
 
-	public Page<TransferLog> findRecentLogs(Pageable pageable) {
-		return transferLogRepository.findAllByOrderBySendTimeDescIdDesc(pageable);
+	public Page<TransferLog> findRecentLogs(String accountNumber, Pageable pageable) {
+		return transferLogRepository.findPageByAccountNumber(accountNumber, pageable);
 	}
 }
