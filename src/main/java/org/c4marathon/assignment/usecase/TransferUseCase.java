@@ -84,7 +84,7 @@ public class TransferUseCase {
 			() -> mainAccountService.getRefreshedAccount(fromAccount.getId()),
 			() -> savingAccountService.getRefreshedAccount(toAccount.getId()),
 			amount,
-			(from, to) -> transferLogFactory.createToSavingTransferLog(from, to, amount)
+			(from, to) -> transferLogFactory.createImmediateTransferLog(from, to, amount)
 		);
 	}
 
