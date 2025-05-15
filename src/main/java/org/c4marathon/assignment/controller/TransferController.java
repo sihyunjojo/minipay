@@ -29,7 +29,7 @@ public class TransferController {
 	private final TransferUseCase transferUseCase;
 
 	@Operation(summary = "메인 계좌에서 메인 계좌로 즉시 송금 요청", description = "보류 없이 바로 송금하는 API입니다.")
-	@PostMapping("")
+	@PostMapping("main-to-main")
 	public ResponseEntity<ApiResponse<String>> transferFromMainToMain(
 		@Valid @RequestBody TransferRequestDto request
 	) {
@@ -38,7 +38,7 @@ public class TransferController {
 	}
 
 	@Operation(summary = "메인 계좌에서 메인 계좌로 계좌번호로 즉시 송금 요청", description = "계좌번호를 사용하여 보류 없이 바로 송금하는 API입니다.")
-	@PostMapping("/by-account-number")
+	@PostMapping("main-to-main/by-account-number")
 	public ResponseEntity<ApiResponse<String>> transferFromMainToMainByAccountNumber(
 		@Valid @RequestBody AccountNumberTransferRequestDto request
 	) {
