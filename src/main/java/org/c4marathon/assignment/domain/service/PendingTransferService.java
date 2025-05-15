@@ -36,7 +36,7 @@ public class PendingTransferService {
 	 */
 	// @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor =
 	// Exception.class)
-	public Boolean initiate(Long fromAccountId, Long toAccountId, Long amount) {
+	public PendingTransferTransaction initiate(Long fromAccountId, Long toAccountId, Long amount) {
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
@@ -58,7 +58,7 @@ public class PendingTransferService {
 
 				transferTransactionRepository.save(tx);
 
-				return null;
+				return tx;
 			} catch (Exception e) {
 				status.setRollbackOnly();
 				throw e;

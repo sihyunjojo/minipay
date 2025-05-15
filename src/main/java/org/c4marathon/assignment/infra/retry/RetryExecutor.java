@@ -31,20 +31,22 @@ public class RetryExecutor {
 
 	/**
 	 * 재시도 로직을 통한 함수 실행
+	 *
+	 * @return
 	 */
 	// // 재시도 로직까지 하나의 트랜잭션으로 묶여서 예외가 터진것을 롤백할 상황이라고 생각
 	// // 1. @Transactional 메서드 진입 → 트랜잭션 시작
 	// // 2. 중간에 예외 발생 → rollback-only 플래그 설정
 	// // 3. catch로 예외를 처리하더라도 rollback-only는 유지됨
 	// // 4. 메서드 종료 후 커밋 시도 → 이미 rollback-only라서 UnexpectedRollbackException 발생
-	public <T> void executeWithRetry(Callable<T> operation) {
+	public <T> T executeWithRetry(Callable<T> operation) {
 		int attempts = 0;
 		Exception lastException = null;
 
 		while (attempts < MAX_RETRY) {
 			try {
-				operation.call();
-				return;
+				T result = operation.call(); // ← 값을 받아 리턴
+				return result;
 			} catch (Exception e) {
 				if (isRetryableException(e)) {
 					attempts++;

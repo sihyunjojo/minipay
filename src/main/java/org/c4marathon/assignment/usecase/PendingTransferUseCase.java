@@ -51,14 +51,18 @@ public class PendingTransferUseCase {
 			chargeAmount);
 		transferLogService.saveTransferLog(transferLog);
 
-		retryExecutor.executeWithRetry(
-				() -> pendingTransferService.initiate(request.fromAccountId(), request.toAccountId(),
-						request.amount()));
+		PendingTransferTransaction tx = retryExecutor.executeWithRetry(
+			() -> pendingTransferService.initiate(
+				request.fromAccountId(),
+				request.toAccountId(),
+				request.amount()
+			)
+		);
 
 		Account fromAccount = mainAccountService.getRefreshedAccount(request.fromAccountId());
 		Account toAccount2 = mainAccountService.getRefreshedAccount(request.toAccountId());
 		TransferLog immediateTransferLog = transferLogFactory.createPendingTransferLog(fromAccount,
-				toAccount2, request.amount());
+				toAccount2, request.amount(), tx.getCreatedAt());
 		transferLogService.saveTransferLog(immediateTransferLog);
 	}
 
@@ -75,7 +79,8 @@ public class PendingTransferUseCase {
 				tx.getId(),
 				tx.getFromMainAccount(),
 				tx.getToMainAccount(),
-				tx.getAmount());
+				tx.getAmount(),
+				tx.getCreatedAt());
 		transferLogService.saveTransferLog(transferLog);
 	}
 
@@ -92,7 +97,8 @@ public class PendingTransferUseCase {
 				tx.getId(),
 				tx.getFromMainAccount(),
 				tx.getToMainAccount(),
-				tx.getAmount());
+				tx.getAmount(),
+				tx.getCreatedAt());
 		transferLogService.saveTransferLog(transferLog);
 	}
 
@@ -107,7 +113,8 @@ public class PendingTransferUseCase {
 					tx.getId(),
 					tx.getFromMainAccount(),
 					tx.getToMainAccount(),
-					tx.getAmount());
+					tx.getAmount(),
+					tx.getCreatedAt());
 			transferLogService.saveTransferLog(transferLog);
 		}
 	}
