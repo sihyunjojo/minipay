@@ -24,7 +24,7 @@ public class TransferLog extends BaseTimeEntity {
 	private Long id;
 
 	@Column(nullable = true)
-	private Long parentTransactionId;
+	private Long parentTransferTransactionId;
 
 	@Embedded
 	@AttributeOverrides({
