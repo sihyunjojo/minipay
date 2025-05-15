@@ -5,7 +5,9 @@ import org.c4marathon.assignment.common.validation.DifferentAccounts;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Builder;
 
+@Builder
 @DifferentAccounts(message = "자신에게 송금할 수 없습니다.")
 public record TransferRequestDto(
 

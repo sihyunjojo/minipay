@@ -35,4 +35,12 @@ public interface SavingAccountRepository extends JpaRepository<SavingAccount, Lo
 		@Param("version") Long version);
 
 	boolean existsByAccountNumber(String accountNumber);
+
+	@Query("SELECT sa FROM SavingAccount sa WHERE sa.accountNumber = :accountNumber")
+	@QueryHints({
+		@QueryHint(name = "org.hibernate.cacheable", value = "false"),
+		@QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "BYPASS"),
+		@QueryHint(name = "jakarta.persistence.cache.storeMode", value = "REFRESH")
+	})
+	Optional<SavingAccount> findByAccountNumber(@Param("accountNumber") String accountNumber);
 }

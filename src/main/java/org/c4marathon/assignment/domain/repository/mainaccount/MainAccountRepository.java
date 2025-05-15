@@ -32,10 +32,6 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	@Query("SELECT a FROM MainAccount a LEFT JOIN FETCH a.sentTransactions WHERE a.id = :id")
 	Optional<MainAccount> findByIdWithSentTransactions(@Param("id") Long id);
 
-	// DB에서 가져오는 건 딱 id 하나
-	@Query("SELECT m.id FROM MainAccount m WHERE m.member.id = :memberId")
-	Optional<Long> findIdByMemberId(@Param("memberId") Long memberId);
-
 	// JPA 직접 업데이트를 쓸 땐 거의 무조건 필수
 	// JPA가 자동으로 영속성 컨텍스트를 초기화
 	// 이후 findById(id) 같은 조회를 해도 영속성 컨텍스트의 캐시가 아닌, DB의 최신값을 보장
@@ -64,6 +60,14 @@ public interface MainAccountRepository extends JpaRepository<MainAccount, Long>,
 	Long findMainAccountAmountById(@Param("accountId") Long accountId);
 
 	boolean existsByAccountNumber(String accountNumber);
+
+	@Query("SELECT m FROM MainAccount m WHERE m.accountNumber = :accountNumber")
+	@QueryHints({
+		@QueryHint(name = "org.hibernate.cacheable", value = "false"),
+		@QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "BYPASS"),
+		@QueryHint(name = "jakarta.persistence.cache.storeMode", value = "REFRESH")
+	})
+	Optional<MainAccount> findByAccountNumber(@Param("accountNumber") String accountNumber);
 
 	boolean tryFastCharge(Long id, Long amount, Long minRequiredBalance, Long dailyLimit);
 }

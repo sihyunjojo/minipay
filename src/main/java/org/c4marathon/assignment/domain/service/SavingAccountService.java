@@ -78,6 +78,12 @@ public class SavingAccountService {
 		});
 	}
 
+	@Transactional(readOnly = true)
+	public SavingAccount findByAccountNumberOrThrow(String accountNumber) {
+		return savingAccountRepository.findByAccountNumber(accountNumber)
+			.orElseThrow(() -> new IllegalStateException(String.format("계좌번호 %s인 적금 계좌가 존재하지 않습니다.", accountNumber)));
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public SavingAccount getRefreshedAccount(Long accountId) {
 		return savingAccountRepository.findByIdWithoutSecondCache(accountId)

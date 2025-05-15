@@ -26,8 +26,14 @@ public class MainAccountService {
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountNumberRetryExecutor accountNumberRetryExecutor;
 
+    @Transactional(readOnly = true)
+    public MainAccount findByAccountNumberOrThrow(String accountNumber) {
+        return mainAccountRepository.findByAccountNumber(accountNumber)
+            .orElseThrow(() -> new IllegalStateException(String.format("계좌번호 %s인 메인 계좌가 존재하지 않습니다.", accountNumber)));
+    }
+
 	@Transactional
-	public void createMainAccountForMember(Member member) {
+	public String createMainAccountForMember(Member member) {
 		validateNoMainAccount(member);
 
 		String accountNumber = generateUniqueAccountNumber();
@@ -35,6 +41,8 @@ public class MainAccountService {
 		MainAccount mainAccount = MainAccount.create(member, accountNumber);
 		member.setMainAccount(mainAccount);
 		mainAccountRepository.save(mainAccount);
+
+		return accountNumber;
 	}
 
 	private void validateNoMainAccount(Member member) {
