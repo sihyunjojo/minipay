@@ -50,7 +50,7 @@ public class PendingTransferScheduler {
 	}
 
 	// Todo: 배치 처리 또는 chunk 단위 업데이트, 혹은 비동기 처리 , 재시도 전략
-	@Scheduled(fixedDelay = 6000)
+	@Scheduled(fixedDelay = 60000)
 	@Transactional
 	public void expireTargetTransactions() {
 		try {
