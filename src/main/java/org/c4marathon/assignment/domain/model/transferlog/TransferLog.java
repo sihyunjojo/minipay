@@ -13,10 +13,10 @@ import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-// todo: index 추가
-// @Table(name = "transfer_log", indexes = {
-// 	@Index(name = "idx_sender_receiver_time", columnList = "senderAccountId, receiverAccountId, sendTime")
-// })
+@Table(name = "transfer_log", indexes = {
+	@Index(name = "idx_from_number_send_time", columnList = "from_account_number, send_time, id"),
+	@Index(name = "idx_to_number_receive_time", columnList = "to_account_number, receiver_time, id")
+})
 public class TransferLog extends BaseTimeEntity {
 
 	@Id
@@ -53,9 +53,9 @@ public class TransferLog extends BaseTimeEntity {
 	@Column(nullable = false)
 	private TransferStatus status;
 
-	@Column(nullable = true)
+	@Column(name = "send_time", nullable = true)
 	private LocalDateTime sendTime;
 
-	@Column(nullable = true)
+	@Column(name = "receiver_time", nullable = true)
 	private LocalDateTime receiverTime;
 }
