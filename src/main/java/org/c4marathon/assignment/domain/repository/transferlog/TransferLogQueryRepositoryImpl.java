@@ -90,7 +90,7 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 		List<TransferLog> merged = Stream.concat(fromLogs.stream(), toLogs.stream())
 			.sorted(Comparator
 				.comparing((TransferLog log) ->
-					transferLog.from.number.equals(accountNumber) ? log.getSendTime() : log.getReceiverTime()
+					accountNumber.equals(log.getFrom().getNumber()) ? log.getSendTime() : log.getReceiverTime()
 				)
 				.thenComparing(TransferLog::getId)
 			)
