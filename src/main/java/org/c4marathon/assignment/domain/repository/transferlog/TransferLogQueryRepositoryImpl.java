@@ -20,14 +20,33 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
 public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepository {
 
 	private final JPAQueryFactory queryFactory;
+
+	// fixme: fetch join 등으로 성능 향상 수정하기.
+	// @Override
+	// public Slice<TransferLog> findAllByAccountNumberAndSendTimeAndIdAfterCursor(
+	// 	String accountNumber,
+	// 	LocalDateTime cursorTime,
+	// 	Long cursorId,
+	// 	int size
+	// ) {
+	// 	BooleanExpression accountMatch = buildAccountMatch(accountNumber);
+	// 	DateTimeExpression<LocalDateTime> sortTime = buildSortTime(accountNumber);
+	//
+	// 	BooleanExpression cursorCondition = sortTime.gt(cursorTime)
+	// 		.or(sortTime.eq(cursorTime).and(transferLog.id.gt(cursorId)));
+	//
+	// 	return fetchSlice(accountMatch.and(cursorCondition), sortTime.asc(), size);
+	// }
 
 	@Override
 	public Slice<TransferLog> findAllByAccountNumberAndSendTimeAndIdAfterCursor(
@@ -36,13 +55,54 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 		Long cursorId,
 		int size
 	) {
-		BooleanExpression accountMatch = buildAccountMatch(accountNumber);
-		DateTimeExpression<LocalDateTime> sortTime = buildSortTime(accountNumber);
+		List<TransferLog> fromLogs = queryFactory
+			.selectFrom(transferLog)
+			.where(
+				transferLog.from.number.eq(accountNumber)
+					.and(
+						transferLog.sendTime.gt(cursorTime)
+							.or(
+								transferLog.sendTime.eq(cursorTime)
+									.and(transferLog.id.gt(cursorId))
+							)
+					)
+			)
+			.orderBy(transferLog.sendTime.asc(), transferLog.id.asc())
+			.limit(size + 1)
+			.fetch();
 
-		BooleanExpression cursorCondition = sortTime.gt(cursorTime)
-			.or(sortTime.eq(cursorTime).and(transferLog.id.gt(cursorId)));
+		List<TransferLog> toLogs = queryFactory
+			.selectFrom(transferLog)
+			.where(
+				transferLog.to.number.eq(accountNumber)
+					.and(
+						transferLog.receiverTime.gt(cursorTime)
+							.or(
+								transferLog.receiverTime.eq(cursorTime)
+									.and(transferLog.id.gt(cursorId))
+							)
+					)
+			)
+			.orderBy(transferLog.receiverTime.asc(), transferLog.id.asc())
+			.limit(size + 1)
+			.fetch();
 
-		return fetchSlice(accountMatch.and(cursorCondition), sortTime.asc(), size);
+		List<TransferLog> merged = Stream.concat(fromLogs.stream(), toLogs.stream())
+			.sorted(Comparator
+				.comparing((TransferLog log) ->
+					transferLog.from.number.equals(accountNumber) ? log.getSendTime() : log.getReceiverTime()
+				)
+				.thenComparing(TransferLog::getId)
+			)
+			.limit(size + 1)
+			.toList();
+
+		boolean hasNext = merged.size() > size;
+		if (hasNext) {
+			merged = merged.subList(0, size);
+		}
+
+		return new SliceImpl<>(merged, PageRequest.of(0, size), hasNext);
 	}
 
 	@Override
