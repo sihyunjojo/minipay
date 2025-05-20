@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,6 +19,7 @@ public class MemberRegistrationController {
 
 	private final MemberAccountUseCase memberAccountUseCase;
 
+	@Operation(summary = "사용자 추가", description = "사용자 추가 및 사용자 메인 계좌 생성하는 API입니다.")
 	@PostMapping
 	public ResponseEntity<ApiResponse<String>> registerMemberWithAccount(
 		@RequestBody MemberRegistrationRequestDto request) {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ public class SettlementController {
 
 	private final SettlementUseCase settlementUseCase;
 
+	@Operation(summary = "정산 요청", description = "사용자들이 정산 요청하는 API입니다.")
 	@PostMapping
 	public ResponseEntity<ApiResponse<List<SettlementResponseDto>>> settle(
 		@RequestBody @Valid SettlementRequestDto request
