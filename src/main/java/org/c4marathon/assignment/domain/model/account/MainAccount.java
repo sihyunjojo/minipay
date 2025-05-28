@@ -3,8 +3,9 @@ package org.c4marathon.assignment.domain.model.account;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.transfer.TransferTransaction;
+import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,8 +13,9 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "main_account", uniqueConstraints = {
+	@UniqueConstraint(columnNames = "account_number"),
 	@UniqueConstraint(columnNames = "member_id")
-}) // 똑같은 회원에 대해 중복 생성 방지
+})
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,8 +25,12 @@ public class MainAccount implements Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "account_number", nullable = false, unique = true, length = 20)
+	private String accountNumber;
+
+	// todo: BigInteger 사용 고려
 	private Long balance;
-	private Long dailyChargeAmount = 0L;
+	private Long dailyChargeAmount;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
@@ -32,21 +38,33 @@ public class MainAccount implements Account {
 
 	// 서로 Setter만 잘되어 있으면, emberRepository.save(member)만으로 account까지 자동 저장
 	@OneToMany(mappedBy = "mainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SavingAccount> savingAccounts;
+	private List<SavingAccount> savingAccounts = new ArrayList<>();
 
 	@OneToMany(mappedBy = "fromMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TransferTransaction> sentTransactions = new ArrayList<>();
+	private List<PendingTransferTransaction> sentTransactions = new ArrayList<>();
 
 	@OneToMany(mappedBy = "toMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TransferTransaction> receivedTransactions = new ArrayList<>();
+	private List<PendingTransferTransaction> receivedTransactions = new ArrayList<>();
 
 	@Version
 	private Long version;
 
-	@Builder
-	public MainAccount(Member member, Long balance) {
-		this.member = member;
+	@Builder(access = AccessLevel.PRIVATE)
+	private MainAccount(String accountNumber, Long balance, Long dailyChargeAmount, Member member) {
+		this.accountNumber = accountNumber;
 		this.balance = balance;
+		this.dailyChargeAmount = dailyChargeAmount;
+		this.member = member;
+	}
+
+	public static MainAccount create( Member member, String accountNumber) {
+		if (member == null) throw new IllegalArgumentException("회원 정보는 필수입니다.");
+		return MainAccount.builder()
+			.accountNumber(accountNumber)
+			.balance(0L)
+			.dailyChargeAmount(0L)
+			.member(member)
+			.build();
 	}
 
 	public void setMember(Member member) {
@@ -57,7 +75,7 @@ public class MainAccount implements Account {
 	}
 
 	// 보낸 거래 추가
-	public void addSentTransaction(TransferTransaction transaction) {
+	public void addSentTransaction(PendingTransferTransaction transaction) {
 		sentTransactions.add(transaction);
 		if (transaction != null && transaction.getFromMainAccount() != this) {
 			transaction.setFromMainAccount(this);
@@ -72,10 +90,15 @@ public class MainAccount implements Account {
 	}
 
 	// 받은 거래 추가
-	public void addReceivedTransaction(TransferTransaction transaction) {
+	public void addReceivedTransaction(PendingTransferTransaction transaction) {
 		receivedTransactions.add(transaction);
 		if (transaction != null && transaction.getToMainAccount() != this) {
 			transaction.setToMainAccount(this);
 		}
+	}
+
+	@Override
+	public AccountType getType() {
+		return AccountType.MAIN_ACCOUNT;
 	}
 }

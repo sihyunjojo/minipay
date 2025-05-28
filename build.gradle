@@ -81,6 +81,7 @@ sonar {
 def querydslDir = "src/main/generated"
 
 tasks.withType(JavaCompile) {
+    options.compilerArgs += "-parameters"
     options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
 
