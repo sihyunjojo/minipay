@@ -27,7 +27,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect # Oracle 10g 이상 버전용
+        dialect: org.hibernate.dialect.Oracle12cDialect # Oracle 10g 이상 버전용
 #        dialect: org.hibernate.dialect.MySQL8Dialect
 
 
