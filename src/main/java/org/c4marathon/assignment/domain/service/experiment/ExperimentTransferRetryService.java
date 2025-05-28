@@ -1,5 +1,6 @@
 package org.c4marathon.assignment.domain.service.experiment;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,7 +18,7 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
+// import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
@@ -63,7 +64,7 @@ public class ExperimentTransferRetryService {
 		OptimisticLockException.class,
 		ObjectOptimisticLockingFailureException.class,
 		OptimisticLockingFailureException.class,
-		MySQLTransactionRollbackException.class,
+		// MySQLTransactionRollbackException.class,
 		DataAccessException.class,
 		TransactionSystemException.class
 	);
@@ -151,6 +152,16 @@ public class ExperimentTransferRetryService {
 		// 예외의 근본 원인까지 검사
 		Throwable current = e;
 		while (current != null) {
+
+			if (current instanceof SQLException sqlEx) {
+				int errorCode = sqlEx.getErrorCode();
+				// ORA-08177: can't serialize access for this transaction
+				if (errorCode == 8177) return true;
+
+				// ORA-00060: deadlock detected
+				if (errorCode == 60) return true;
+			}
+
 			for (Class<? extends Throwable> exceptionClass : RETRYABLE_EXCEPTIONS) {
 				if (exceptionClass.isInstance(current)) {
 					return true;

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
+// import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockTimeoutException;
@@ -33,7 +33,10 @@ public class ExperimentMainAccountService {
 
 	private static final List<Class<? extends Throwable>> RETRYABLE_EXCEPTIONS = List.of(OptimisticLockException.class,
 		ObjectOptimisticLockingFailureException.class, PessimisticLockingFailureException.class,
-		LockTimeoutException.class, MySQLTransactionRollbackException.class);
+		// MySQLTransactionRollbackException.class,
+		LockTimeoutException.class);
+
+
 
 	private final EntityManager entityManager;
 
