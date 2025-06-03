@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.listener;
+package org.c4marathon.assignment.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.RetryCallback;

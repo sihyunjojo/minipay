@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.response;
+package org.c4marathon.assignment.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

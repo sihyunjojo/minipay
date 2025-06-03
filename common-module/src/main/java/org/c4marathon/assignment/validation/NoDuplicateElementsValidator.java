@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.validation;
+package org.c4marathon.assignment.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

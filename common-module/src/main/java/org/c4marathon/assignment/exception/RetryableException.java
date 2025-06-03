@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.exception;
+package org.c4marathon.assignment.exception;
 
 /**
  * 재시도가 가능한 예외를 나타냅니다.

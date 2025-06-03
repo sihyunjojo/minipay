@@ -1,11 +1,10 @@
-package org.c4marathon.assignment.common.exception.handler;
-
-import org.c4marathon.assignment.common.response.ApiResponse;
+package org.c4marathon.assignment.exception.handler;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.c4marathon.assignment.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

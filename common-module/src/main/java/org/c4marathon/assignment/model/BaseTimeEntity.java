@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.model;
+package org.c4marathon.assignment.model;
 
 import java.time.LocalDateTime;
 
