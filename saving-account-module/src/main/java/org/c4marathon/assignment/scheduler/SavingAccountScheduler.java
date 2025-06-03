@@ -1,6 +1,5 @@
 package org.c4marathon.assignment.scheduler;
 
-import org.c4marathon.assignment.usecase.SavingAccountUseCase;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

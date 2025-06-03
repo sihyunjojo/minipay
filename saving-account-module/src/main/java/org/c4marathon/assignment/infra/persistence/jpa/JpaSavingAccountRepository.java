@@ -1,9 +1,9 @@
-package org.c4marathon.assignment.domain.repository;
+package org.c4marathon.assignment.infra.persistence.jpa;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.c4marathon.assignment.domain.model.account.SavingAccount;
+import org.c4marathon.assignment.domain.model.SavingAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,8 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import jakarta.persistence.QueryHint;
 
-public interface SavingAccountRepository extends JpaRepository<SavingAccount, Long> {
-
+public interface JpaSavingAccountRepository extends JpaRepository<SavingAccount, Long> {
 	@Query("SELECT sa FROM SavingAccount sa " +
 		"JOIN FETCH sa.member m " +
 		"JOIN FETCH m.mainAccount " +
@@ -43,4 +42,5 @@ public interface SavingAccountRepository extends JpaRepository<SavingAccount, Lo
 		@QueryHint(name = "jakarta.persistence.cache.storeMode", value = "REFRESH")
 	})
 	Optional<SavingAccount> findByAccountNumber(@Param("accountNumber") String accountNumber);
+
 }

@@ -6,18 +6,8 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
-import org.c4marathon.assignment.common.exception.RetryableException;
-import org.c4marathon.assignment.common.generator.AccountNumberGenerator;
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.account.SavingAccount;
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
+import org.c4marathon.assignment.AccountNumberRetryExecutor;
 import org.c4marathon.assignment.domain.repository.SavingAccountRepository;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.dto.account.AccountResponseDto;
-import org.c4marathon.assignment.dto.account.CreateFixedSavingAccountRequestDto;
-import org.c4marathon.assignment.dto.account.SavingDepositRequest;
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
-import org.c4marathon.assignment.infra.retry.AccountNumberRetryExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SavingAccountService {
 
-	private final AccountPolicyProperties accountPolicyProperties;
 	private final SavingAccountRepository savingAccountRepository;
 	private final MainAccountRepository mainAccountRepository;
 	private final AccountNumberGenerator accountNumberGenerator;
@@ -104,7 +93,7 @@ public class SavingAccountService {
 
 	@Transactional
 	public Long applyInterest(SavingAccount account) {
-		double rate = accountPolicyProperties.getSaving().getInterestRate(account.getSavingType());
+		double rate = savingAccountPolicy.getInterestRate(account.getSavingType());
 		Long interest = account.calculateInterest(rate);
 		account.deposit(interest);
 		return interest;

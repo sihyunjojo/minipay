@@ -1,9 +1,9 @@
-package org.c4marathon.assignment.infra.config.property;
+package org.c4marathon.assignment.infra.properties;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.c4marathon.assignment.domain.model.account.enums.SavingType;
+import org.c4marathon.assignment.enums.SavingType;
 
 @Getter
 @Setter
@@ -20,8 +20,8 @@ public class SavingAccountPolicy {
 
 	public double getInterestRate(SavingType type) {
 		return switch (type) {
-			case FIXED -> fixedInterestRate;
-			case FLEXIBLE -> flexibleInterestRate;
+			case SavingType.FIXED -> fixedInterestRate;
+			case SavingType.FLEXIBLE -> flexibleInterestRate;
 			default -> throw new IllegalArgumentException("지원하지 않는 적금 유형입니다: " + type);
 		};
 	}

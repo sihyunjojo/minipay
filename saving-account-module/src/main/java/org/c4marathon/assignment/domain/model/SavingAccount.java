@@ -1,8 +1,8 @@
-package org.c4marathon.assignment.domain.model.account;
+package org.c4marathon.assignment.domain.model;
 
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
+import org.c4marathon.assignment.enums.AccountType;
 import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.account.enums.SavingType;
+import org.c4marathon.assignment.enums.SavingType;
 
 import jakarta.persistence.*;
 import lombok.*;
