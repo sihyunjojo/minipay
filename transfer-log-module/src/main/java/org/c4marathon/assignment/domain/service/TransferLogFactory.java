@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import org.c4marathon.assignment.domain.model.TransferLog;
 import org.c4marathon.assignment.domain.model.account.Account;
-import org.c4marathon.assignment.enums.AccountSnapshot;
+import org.c4marathon.assignment.model.AccountSnapshot;
 import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.enums.TransferType;
 import org.c4marathon.assignment.enums.TransferStatus;
