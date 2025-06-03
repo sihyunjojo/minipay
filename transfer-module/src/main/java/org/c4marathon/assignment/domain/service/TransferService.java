@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.service.mainaccount;
+package org.c4marathon.assignment.domain.service;
 
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.account.SavingAccount;
