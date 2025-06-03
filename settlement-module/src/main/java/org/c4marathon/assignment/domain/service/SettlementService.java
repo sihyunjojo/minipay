@@ -1,12 +1,12 @@
-package org.c4marathon.assignment.domain.service.mainaccount;
+package org.c4marathon.assignment.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
 
-import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.dto.settlement.SettlementRequestDto;
-import org.c4marathon.assignment.dto.settlement.SettlementResponseDto;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
+import org.c4marathon.assignment.settlement.dto.SettlementRequestDto;
+import org.c4marathon.assignment.settlement.dto.SettlementResponseDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +19,8 @@ public class SettlementService {
 		long totalAmount = request.totalAmount();
 
 		return switch (request.type()) {
-			case EQUAL -> calculateEqualShare(totalAmount, participantIds);
-			case RANDOM -> calculateRandomShare(totalAmount, participantIds);
+			case SettlementPolicy.EQUAL -> calculateEqualShare(totalAmount, participantIds);
+			case SettlementPolicy.RANDOM -> calculateRandomShare(totalAmount, participantIds);
 			default -> throw new IllegalStateException(String.format("%s는 존재하지 않는 값입니다. ", request.type()));
 		};
 	}
