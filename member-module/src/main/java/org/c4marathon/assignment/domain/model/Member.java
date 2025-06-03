@@ -1,11 +1,11 @@
-package org.c4marathon.assignment.domain.model.member;
+package org.c4marathon.assignment.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.account.SavingAccount;
-import org.c4marathon.assignment.common.model.BaseTimeEntity;
+import org.c4marathon.assignment.model.BaseTimeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
