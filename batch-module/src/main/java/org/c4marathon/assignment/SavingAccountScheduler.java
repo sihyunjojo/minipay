@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.scheduler;
+package org.c4marathon.assignment;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

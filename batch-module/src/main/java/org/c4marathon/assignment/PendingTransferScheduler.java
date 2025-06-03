@@ -1,12 +1,9 @@
-package org.c4marathon.assignment.scheduler;
+package org.c4marathon.assignment;
 
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.service.PendingTransferService;
-import org.c4marathon.assignment.domain.service.ReminderService;
-import org.c4marathon.assignment.usecase.PendingTransferUseCase;
+import org.c4marathon.assignment.transfer.usecase.PendingTransferUseCase;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
