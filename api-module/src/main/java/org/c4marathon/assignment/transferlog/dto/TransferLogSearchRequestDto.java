@@ -1,11 +1,11 @@
-package org.c4marathon.assignment.dto.transferlog;
+package org.c4marathon.assignment.transferlog.dto;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 public record TransferLogSearchRequestDto(
 

@@ -1,9 +1,10 @@
-package org.c4marathon.assignment.dto.transfer;
+package org.c4marathon.assignment.transfer.dto;
+
+import org.c4marathon.assignment.transfer.validation.DifferentAccounts;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.c4marathon.assignment.common.validation.DifferentAccounts;
 
 @DifferentAccounts(message = "자기 자신에게 송금할 수 없습니다.")
 public record TransferPendingRequestDto(

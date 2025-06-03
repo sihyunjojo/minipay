@@ -1,9 +1,8 @@
-package org.c4marathon.assignment.controller;
+package org.c4marathon.assignment.transfer;
 
-import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.transfer.AccountNumberTransferRequestDto;
-import org.c4marathon.assignment.dto.transfer.TransferRequestDto;
-import org.c4marathon.assignment.usecase.TransferUseCase;
+import org.c4marathon.assignment.response.ApiResponse;
+import org.c4marathon.assignment.transfer.dto.AccountNumberTransferRequestDto;
+import org.c4marathon.assignment.transfer.usecase.TransferUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +38,7 @@ public class TransferController {
 	@Operation(summary = "메인 계좌에서 메인 계좌로 계좌번호로 즉시 송금 요청", description = "계좌번호를 사용하여 보류 없이 바로 송금하는 API입니다.")
 	@PostMapping("main-to-main")
 	public ResponseEntity<ApiResponse<String>> transferFromMainToMainByAccountNumber(
-		@Valid @RequestBody AccountNumberTransferRequestDto request
+		@Valid @RequestBody org.c4marathon.assignment.transfer.dto.AccountNumberTransferRequestDto request
 	) {
 		transferUseCase.transferByAccountNumber(request);
 		return ResponseEntity.ok(ApiResponse.res(200, "송금 성공"));

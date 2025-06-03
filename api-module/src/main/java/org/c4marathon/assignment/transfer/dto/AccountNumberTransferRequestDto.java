@@ -1,6 +1,6 @@
-package org.c4marathon.assignment.dto.transfer;
+package org.c4marathon.assignment.transfer.dto;
 
-import org.c4marathon.assignment.common.validation.DifferentAccountNumbers;
+import org.c4marathon.assignment.transfer.validation.DifferentAccountNumbers;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

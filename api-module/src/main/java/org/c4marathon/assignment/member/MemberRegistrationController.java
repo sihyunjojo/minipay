@@ -1,8 +1,8 @@
-package org.c4marathon.assignment.controller;
+package org.c4marathon.assignment.member;
 
-import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
-import org.c4marathon.assignment.usecase.MemberAccountUseCase;
+import org.c4marathon.assignment.member.dto.MemberRegistrationRequestDto;
+import org.c4marathon.assignment.member.usecase.MemberAccountUseCase;
+import org.c4marathon.assignment.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +24,7 @@ public class MemberRegistrationController {
 	public ResponseEntity<ApiResponse<String>> registerMemberWithAccount(
 		@RequestBody MemberRegistrationRequestDto request) {
 		String mainAccountNumber = memberAccountUseCase.registerMemberWithAccount(request);
-		return ResponseEntity.ok(ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", mainAccountNumber));
+		return ResponseEntity.ok(
+			ApiResponse.res(201, "회원 등록 및 메인 계좌 생성 완료", mainAccountNumber));
 	}
-
 }

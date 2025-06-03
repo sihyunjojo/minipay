@@ -1,6 +1,6 @@
-package org.c4marathon.assignment.common.validation;
+package org.c4marathon.assignment.transfer.validation;
 
-import org.c4marathon.assignment.dto.transfer.AccountNumberTransferRequestDto;
+import org.c4marathon.assignment.transfer.dto.AccountNumberTransferRequestDto;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

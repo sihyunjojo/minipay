@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.controller;
+package org.c4marathon.assignment.savingaccount;
 
 import org.c4marathon.assignment.common.response.ApiResponse;
 import org.c4marathon.assignment.dto.account.AccountResponseDto;

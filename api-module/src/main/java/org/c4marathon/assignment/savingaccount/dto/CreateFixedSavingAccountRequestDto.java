@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.account;
+package org.c4marathon.assignment.savingaccount.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

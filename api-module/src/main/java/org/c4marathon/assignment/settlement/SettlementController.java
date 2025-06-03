@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.controller;
+package org.c4marathon.assignment.settlement;
 
 import java.util.List;
 

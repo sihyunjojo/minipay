@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.settlement;
+package org.c4marathon.assignment.settlement.dto;
 
 import jakarta.validation.constraints.NotNull;
 

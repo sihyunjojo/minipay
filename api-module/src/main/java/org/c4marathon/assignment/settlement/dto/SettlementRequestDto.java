@@ -1,9 +1,9 @@
-package org.c4marathon.assignment.dto.settlement;
+package org.c4marathon.assignment.settlement.dto;
 
 import java.util.List;
 
 import org.c4marathon.assignment.common.validation.NoDuplicateElements;
-import org.c4marathon.assignment.domain.model.policy.SettlementPolicy;
+import org.c4marathon.assignment.model.policy.SettlementPolicy;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;

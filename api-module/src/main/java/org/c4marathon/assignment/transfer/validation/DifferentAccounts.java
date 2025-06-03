@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.validation;
+package org.c4marathon.assignment.transfer.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

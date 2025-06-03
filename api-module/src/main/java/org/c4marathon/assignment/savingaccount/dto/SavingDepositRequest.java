@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.account;
+package org.c4marathon.assignment.savingaccount.dto;
 
 import org.c4marathon.assignment.domain.model.account.SavingAccount;
 

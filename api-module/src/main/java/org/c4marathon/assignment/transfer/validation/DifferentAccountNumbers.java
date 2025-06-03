@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.common.validation;
+package org.c4marathon.assignment.transfer.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

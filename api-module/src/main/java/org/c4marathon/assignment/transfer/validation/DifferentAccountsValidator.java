@@ -1,9 +1,9 @@
-package org.c4marathon.assignment.common.validation;
+package org.c4marathon.assignment.transfer.validation;
+
+import org.c4marathon.assignment.transfer.dto.TransferRequestDto;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-
-import org.c4marathon.assignment.dto.transfer.TransferRequestDto;
 
 public class DifferentAccountsValidator implements ConstraintValidator<DifferentAccounts, TransferRequestDto> {
 

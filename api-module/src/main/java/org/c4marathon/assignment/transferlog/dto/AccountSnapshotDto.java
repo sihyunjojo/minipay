@@ -1,7 +1,8 @@
-package org.c4marathon.assignment.dto.transferlog;
+package org.c4marathon.assignment.transferlog.dto;
+
+import org.c4marathon.assignment.model.AccountSnapshot;
 
 import lombok.Builder;
-import org.c4marathon.assignment.domain.model.transferlog.AccountSnapshot;
 
 @Builder
 public record AccountSnapshotDto(

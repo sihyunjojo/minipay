@@ -1,8 +1,8 @@
-package org.c4marathon.assignment.controller;
+package org.c4marathon.assignment.transfer;
 
-import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.transfer.TransferPendingRequestDto;
-import org.c4marathon.assignment.usecase.PendingTransferUseCase;
+import org.c4marathon.assignment.response.ApiResponse;
+import org.c4marathon.assignment.transfer.dto.TransferPendingRequestDto;
+import org.c4marathon.assignment.transfer.usecase.PendingTransferUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
