@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.repository.mainaccount;
+package org.c4marathon.assignment.infra.persistence.query;
 
 import org.c4marathon.assignment.domain.model.account.QMainAccount;
 import org.springframework.stereotype.Repository;

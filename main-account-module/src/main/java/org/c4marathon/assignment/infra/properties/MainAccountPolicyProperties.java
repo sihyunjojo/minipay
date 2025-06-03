@@ -1,4 +1,6 @@
-package org.c4marathon.assignment.infra.config.property;
+package org.c4marathon.assignment.infra.properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -6,7 +8,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MainAccountPolicy {
+@ConfigurationProperties(prefix = "business.rule.account.main")
+public class MainAccountPolicyProperties {
 
 	// 💡 'business.rule.account.main-daily-limit' 값이 yml에 없을 경우 3000000으로 fallback (기본값)
 	@NotNull

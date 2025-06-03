@@ -1,17 +1,14 @@
-package org.c4marathon.assignment.domain.service.mainaccount;
+package org.c4marathon.assignment.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.c4marathon.assignment.common.exception.RetryableException;
-import org.c4marathon.assignment.common.generator.AccountNumberGenerator;
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
-import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
-import org.c4marathon.assignment.infra.retry.AccountNumberRetryExecutor;
+import org.c4marathon.assignment.AccountNumberRetryExecutor;
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.repository.MainAccountRepository;
+import org.c4marathon.assignment.enums.AccountType;
+import org.c4marathon.assignment.exception.RetryableException;
+import org.c4marathon.assignment.infra.properties.MainAccountPolicyProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MainAccountService {
 
 	private final MainAccountRepository mainAccountRepository;
-	private final AccountPolicyProperties accountPolicyProperties;
+	private final MainAccountPolicyProperties mainAccountPolicyProperties;
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountNumberRetryExecutor accountNumberRetryExecutor;
 
@@ -87,7 +84,7 @@ public class MainAccountService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void chargeOrThrow(Long accountId, Long chargeAmount, Long minRequiredBalance) {
 		boolean success = mainAccountRepository.tryFastCharge(accountId, chargeAmount, minRequiredBalance,
-			accountPolicyProperties.getMain().getMainDailyLimit());
+			mainAccountPolicyProperties.getMainDailyLimit());
 
 		if (!success) {
 			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");

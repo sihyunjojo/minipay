@@ -1,8 +1,8 @@
-package org.c4marathon.assignment.domain.repository.mainaccount;
+package org.c4marathon.assignment.infra.persistence.jpa;
 
 import java.util.Optional;
 
-import org.c4marathon.assignment.domain.model.account.MainAccount;
+import org.c4marathon.assignment.domain.model.MainAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import jakarta.persistence.QueryHint;
 
-public interface MainAccountRepository extends JpaRepository<MainAccount, Long>, MainAccountQueryRepository {
+public interface JpaMainAccountRepository extends JpaRepository<MainAccount, Long> {
 	// @Lock(LockModeType.PESSIMISTIC_WRITE) // 비관적 락
 	// DB에서 MainAccount 테이블의 모든 컬럼을 가져옵니다.
 	// 이걸 다시 JPA가 엔티티로 변환하고 영속성 컨텍스트에 등록하죠.

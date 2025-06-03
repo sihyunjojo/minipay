@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.repository.mainaccount;
+package org.c4marathon.assignment.infra.persistence.query;
 
 public interface MainAccountQueryRepository {
 	/**
