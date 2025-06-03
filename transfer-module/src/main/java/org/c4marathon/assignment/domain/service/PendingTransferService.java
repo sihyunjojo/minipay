@@ -5,11 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.infra.config.property.PendingTransferPolicyProperties;
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.domain.repository.transfertransaction.PendingTransferRepository;
+import org.c4marathon.assignment.domain.model.PendingTransfer;
+import org.c4marathon.assignment.domain.repository.PendingTransferRepository;
+import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
+import org.c4marathon.assignment.infra.properties.PendingTransferPolicyProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
