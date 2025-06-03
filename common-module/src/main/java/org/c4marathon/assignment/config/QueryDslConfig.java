@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.infra.config;
+package org.c4marathon.assignment.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

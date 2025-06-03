@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.infra.retry;
+package org.c4marathon.assignment.retry;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;

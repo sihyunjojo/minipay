@@ -1,7 +1,6 @@
-package org.c4marathon.assignment.domain.model.transferlog;
+package org.c4marathon.assignment.enums;
 
 import org.c4marathon.assignment.domain.model.account.Account;
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;

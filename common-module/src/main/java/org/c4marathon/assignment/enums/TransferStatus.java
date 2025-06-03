@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.model.transfer.enums;
+package org.c4marathon.assignment.enums;
 
 public enum TransferStatus {
 	PENDING,

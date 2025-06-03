@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.model.account.enums;
+package org.c4marathon.assignment.enums;
 
 import lombok.Getter;
 
