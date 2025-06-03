@@ -1,8 +1,8 @@
-package org.c4marathon.assignment.infra.retry;
+package org.c4marathon.assignment;
 
 import java.util.concurrent.Callable;
 
-import org.c4marathon.assignment.common.exception.RetryableException;
+import org.c4marathon.assignment.exception.RetryableException;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;

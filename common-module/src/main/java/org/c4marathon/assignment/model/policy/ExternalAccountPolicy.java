@@ -1,7 +1,7 @@
-package org.c4marathon.assignment.domain.model.policy;
+package org.c4marathon.assignment.model.policy;
 
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
-import org.c4marathon.assignment.domain.model.transferlog.AccountSnapshot;
+import org.c4marathon.assignment.model.AccountSnapshot;
+import org.c4marathon.assignment.enums.AccountType;
 
 import lombok.Getter;
 

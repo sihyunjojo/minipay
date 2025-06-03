@@ -1,8 +1,7 @@
-package org.c4marathon.assignment.common.generator;
+package org.c4marathon.assignment;
 
 import lombok.RequiredArgsConstructor;
-import org.c4marathon.assignment.domain.model.account.enums.AccountType;
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.enums.AccountType;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;

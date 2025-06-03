@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.dto.log;
+package org.c4marathon.assignment.listener.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
