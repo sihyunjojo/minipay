@@ -5,16 +5,18 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.dto.log.RetryResult;
+
+
+// import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
+
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.repository.MainAccountRepository;
+import org.c4marathon.assignment.listener.dto.RetryResult;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-// import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockTimeoutException;
@@ -39,7 +41,6 @@ public class ExperimentMainAccountService {
 
 
 	private final EntityManager entityManager;
-
 	private final MainAccountRepository mainAccountRepository;
 
 	// 📌 2. ID 기반 최신 조회 (Post-fetch용)

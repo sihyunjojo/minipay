@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.repository.MainAccountRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -20,7 +20,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 // import com.mysql.cj.jdbc.exceptions.MySQLTransactionRollbackException;
 
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,8 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ExperimentTransferRetryService {
 
 	private final MainAccountRepository mainAccountRepository;
-	private final PlatformTransactionManager transactionManager;
-	private final EntityManager entityManager;
 
 	private static final int MAX_RETRY = 5;
 	private static final long BASE_SLEEP_TIME_MS = 100;
@@ -43,11 +40,8 @@ public class ExperimentTransferRetryService {
 	// 생성자 주입으로 트랜잭션 템플릿 초기화
 	public ExperimentTransferRetryService(
 		MainAccountRepository mainAccountRepository,
-		PlatformTransactionManager transactionManager,
-		EntityManager entityManager) {
+		PlatformTransactionManager transactionManager) {
 		this.mainAccountRepository = mainAccountRepository;
-		this.transactionManager = transactionManager;
-		this.entityManager = entityManager;
 
 		// 읽기 전용 트랜잭션 템플릿
 		this.readOnlyTemplate = new TransactionTemplate(transactionManager);
