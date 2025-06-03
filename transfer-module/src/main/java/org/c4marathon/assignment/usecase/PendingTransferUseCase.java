@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.c4marathon.assignment.domain.model.account.Account;
 import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
+import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.PendingTransferService;
 import org.c4marathon.assignment.domain.service.TransferLogService;
-import org.c4marathon.assignment.dto.transfer.TransferPendingRequestDto;
+import org.c4marathon.assignment.transfer.dto.TransferPendingRequestDto;
 import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.infra.retry.RetryExecutor;
@@ -51,7 +50,7 @@ public class PendingTransferUseCase {
 			chargeAmount);
 		transferLogService.saveTransferLog(transferLog);
 
-		PendingTransferTransaction tx = retryExecutor.executeWithRetry(
+		PendingTransfer tx = retryExecutor.executeWithRetry(
 			() -> pendingTransferService.initiate(
 				request.fromAccountId(),
 				request.toAccountId(),
@@ -69,7 +68,7 @@ public class PendingTransferUseCase {
 	@Transactional
 	public void acceptPendingTransfer(Long transactionId) {
 		// 대기 중인 거래 조회
-		PendingTransferTransaction tx = pendingTransferService.findPendingPendingTransferTransaction(transactionId);
+		PendingTransfer tx = pendingTransferService.findPendingPendingTransfer(transactionId);
 
 		// 거래 수락 실행
 		retryExecutor.executeWithRetry(() -> pendingTransferService.accept(transactionId));
@@ -87,7 +86,7 @@ public class PendingTransferUseCase {
 	@Transactional
 	public void cancelPendingTransfer(Long transactionId) {
 		// 대기 중인 거래 조회
-		PendingTransferTransaction tx = pendingTransferService.findPendingPendingTransferTransaction(transactionId);
+		PendingTransfer tx = pendingTransferService.findPendingPendingTransfer(transactionId);
 
 		// 거래 취소 실행
 		retryExecutor.executeWithRetry(() -> pendingTransferService.cancel(transactionId));
@@ -105,9 +104,9 @@ public class PendingTransferUseCase {
 	// todo: 보상 로직 만들기
 	@Transactional
 	public void expirePendingTransfer() {
-		List<PendingTransferTransaction> expiredPendingPendingTransferTransactions = pendingTransferService
-				.findAllByExpiredPendingPendingTransferTransactionWithMainAccount();
-		for (PendingTransferTransaction tx : expiredPendingPendingTransferTransactions) {
+		List<PendingTransfer> expiredPendingPendingTransfers = pendingTransferService
+				.findAllByExpiredPendingPendingTransferWithMainAccount();
+		for (PendingTransfer tx : expiredPendingPendingTransfers) {
 			pendingTransferService.expired(tx);
 
 			TransferLog transferLog = transferLogFactory.createExpirePendingTransferLog(

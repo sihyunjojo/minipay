@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.infra.config.property;
+package org.c4marathon.assignment.infra.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.time.Duration;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "transfer-policy")
-public class PendingTransferTransactionPolicyProperties {
+public class PendingTransferPolicyProperties {
     private long pendingTransferExpireAfterDurationHours = 72;
     private long pendingTransferRemindDurationHours = 24;
 

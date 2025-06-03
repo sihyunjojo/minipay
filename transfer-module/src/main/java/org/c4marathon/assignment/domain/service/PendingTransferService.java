@@ -5,12 +5,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.c4marathon.assignment.infra.config.property.PendingTransferTransactionPolicyProperties;
+import org.c4marathon.assignment.infra.config.property.PendingTransferPolicyProperties;
 import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
-import org.c4marathon.assignment.domain.repository.transfertransaction.PendingTransferTransactionRepository;
+import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
+import org.c4marathon.assignment.domain.repository.transfertransaction.PendingTransferRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -26,9 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingTransferService {
 
 	private final PlatformTransactionManager transactionManager;
-	private final PendingTransferTransactionPolicyProperties pendingTransferTransactionPolicyProperties;
+	private final PendingTransferPolicyProperties pendingTransferTransactionPolicyProperties;
 
-	private final PendingTransferTransactionRepository transferTransactionRepository;
+	private final PendingTransferRepository transferTransactionRepository;
 	private final MainAccountRepository mainAccountRepository;
 
 	/**
@@ -36,7 +35,7 @@ public class PendingTransferService {
 	 */
 	// @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor =
 	// Exception.class)
-	public PendingTransferTransaction initiate(Long fromAccountId, Long toAccountId, Long amount) {
+	public PendingTransfer initiate(Long fromAccountId, Long toAccountId, Long amount) {
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
@@ -53,7 +52,7 @@ public class PendingTransferService {
 
 				MainAccount toAccount = mainAccountRepository.findByIdWithSentTransactions(toAccountId)
 						.orElseThrow(() -> new IllegalArgumentException("메인 계좌가 존재하지 않음"));
-				PendingTransferTransaction tx = PendingTransferTransaction.createPending(fromAccount, toAccount, amount,
+				PendingTransfer tx = PendingTransfer.createPending(fromAccount, toAccount, amount,
 					pendingTransferTransactionPolicyProperties.getPendingTransferExpireAfterDurationHours());
 
 				transferTransactionRepository.save(tx);
@@ -76,7 +75,7 @@ public class PendingTransferService {
 		return template.execute(status -> {
 			try {
 				// 거래 조회 및 상태 확인
-				PendingTransferTransaction tx = transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
+				PendingTransfer tx = transferTransactionRepository.findPendingPendingTransferById(transactionId)
 						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 입금 계좌 정보 갱신
@@ -113,7 +112,7 @@ public class PendingTransferService {
 		return template.execute(status -> {
 			try {
 				// 거래 조회 및 상태 확인
-				PendingTransferTransaction tx = transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
+				PendingTransfer tx = transferTransactionRepository.findPendingPendingTransferById(transactionId)
 						.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 
 				// 환불 계좌 정보 갱신
@@ -140,7 +139,7 @@ public class PendingTransferService {
 		});
 	}
 
-	public void expired(PendingTransferTransaction tx) {
+	public void expired(PendingTransfer tx) {
 		TransactionTemplate template = new TransactionTemplate(transactionManager);
 		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
@@ -174,26 +173,26 @@ public class PendingTransferService {
 	/**
 	 * 대기 중인 거래 조회
 	 */
-	public PendingTransferTransaction findPendingPendingTransferTransaction(Long transactionId) {
-		return transferTransactionRepository.findPendingPendingTransferTransactionById(transactionId)
+	public PendingTransfer findPendingPendingTransfer(Long transactionId) {
+		return transferTransactionRepository.findPendingPendingTransferById(transactionId)
 				.orElseThrow(() -> new IllegalArgumentException("대기 중인 거래가 존재하지 않음"));
 	}
 	
-	public Map<Member, List<PendingTransferTransaction>> findRemindTargetGroupedByMember() {
+	public Map<Member, List<PendingTransfer>> findRemindTargetGroupedByMember() {
 		Duration duration = pendingTransferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindTargetGroupedByMember(remindTime);
 	}
 
-	public List<PendingTransferTransaction> findRemindPendingTargetTransactionsWithMember() {
+	public List<PendingTransfer> findRemindPendingTargetTransactionsWithMember() {
 		Duration duration = pendingTransferTransactionPolicyProperties.getPendingTransferRemindDurationHours();
 		LocalDateTime remindTime = LocalDateTime.now().minus(duration);
 
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMember(remindTime);
 	}
 
-	public List<PendingTransferTransaction> findAllByExpiredPendingPendingTransferTransactionWithMainAccount() {
+	public List<PendingTransfer> findAllByExpiredPendingPendingTransferWithMainAccount() {
 		return transferTransactionRepository.findRemindPendingTargetTransactionsWithMainAccount(LocalDateTime.now());
 	}
 }

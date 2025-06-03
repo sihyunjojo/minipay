@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.model.transfer;
+package org.c4marathon.assignment.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,17 +6,17 @@ import lombok.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import org.c4marathon.assignment.common.model.BaseTimeEntity;
+import org.c4marathon.assignment.enums.TransferStatus;
+import org.c4marathon.assignment.enums.TransferType;
+import org.c4marathon.assignment.model.BaseTimeEntity;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.transfer.enums.TransferType;
-import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class PendingTransferTransaction extends BaseTimeEntity {
+public class PendingTransfer extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,27 +45,15 @@ public class PendingTransferTransaction extends BaseTimeEntity {
 	@JoinColumn(name = "to_main_account_id", nullable = false)
 	private MainAccount toMainAccount;
 
-	public static PendingTransferTransaction createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount,
+	public static PendingTransfer createPending(MainAccount fromMainAccount, MainAccount toMainAccount, Long amount,
 		Duration expireAfter) {
 		LocalDateTime expiredAt = LocalDateTime.now().plus(expireAfter);
 
-		PendingTransferTransaction transferTransaction = new PendingTransferTransaction(null, amount, TransferType.PENDING,
+		PendingTransfer transferTransaction = new PendingTransfer(null, amount, TransferType.PENDING,
 			TransferStatus.PENDING, expiredAt, fromMainAccount, toMainAccount);
 		fromMainAccount.addSentTransaction(transferTransaction);
 		toMainAccount.addReceivedTransaction(transferTransaction);
 
 		return transferTransaction;
-	}
-
-	public void markAsCompleted() {
-		this.status = TransferStatus.COMPLETED;
-	}
-
-	public void markAsCanceled() {
-		this.status = TransferStatus.CANCELED;
-	}
-
-	public void markAsExpired() {
-		this.status = TransferStatus.EXPIRED;
 	}
 }

@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.domain.model.transfer.PendingTransferTransaction;
-import org.c4marathon.assignment.domain.service.PendingTransferService;
+import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.service.PendingTransferService;
 import org.c4marathon.assignment.domain.service.ReminderService;
 import org.c4marathon.assignment.usecase.PendingTransferUseCase;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,7 +41,7 @@ public class PendingTransferScheduler {
 	@Transactional
 	public void remindPendingTargetTransactionsByImproved() {
 		try {
-			Map<Member, List<PendingTransferTransaction>> remindTargetGroupedByMember = pendingTransferService.findRemindTargetGroupedByMember();
+			Map<Member, List<PendingTransfer>> remindTargetGroupedByMember = pendingTransferService.findRemindTargetGroupedByMember();
 			reminderService.remindTransactions(remindTargetGroupedByMember);
 		} catch (Exception e) {
 			log.error("[Good] 대기 중인 송금에 대한 알림 중 오류 발생", e);
