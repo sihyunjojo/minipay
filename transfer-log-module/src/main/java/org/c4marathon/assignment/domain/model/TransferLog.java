@@ -1,12 +1,14 @@
-package org.c4marathon.assignment.domain.model.transferlog;
+package org.c4marathon.assignment.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-import org.c4marathon.assignment.common.model.BaseTimeEntity;
-import org.c4marathon.assignment.domain.model.transfer.enums.TransferType;
-import org.c4marathon.assignment.domain.model.transfer.enums.TransferStatus;
+// import org.c4marathon.assignment.model.BaseTimeEntity;
+import org.c4marathon.assignment.enums.AccountSnapshot;
+import org.c4marathon.assignment.enums.TransferType;
+import org.c4marathon.assignment.enums.TransferStatus;
+import org.c4marathon.assignment.model.BaseTimeEntity;
 
 @Entity
 @Getter

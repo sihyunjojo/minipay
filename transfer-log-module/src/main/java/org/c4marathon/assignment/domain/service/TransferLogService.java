@@ -1,10 +1,10 @@
 package org.c4marathon.assignment.domain.service;
 
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
-import org.c4marathon.assignment.domain.repository.transferlog.TransferLogRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import org.c4marathon.assignment.domain.model.TransferLog;
+import org.c4marathon.assignment.domain.repository.TransferLogRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

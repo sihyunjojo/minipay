@@ -1,12 +1,12 @@
-package org.c4marathon.assignment.usecase;
+package org.c4marathon.assignment.transferlog.usecase;
 
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.service.TransferLogService;
 import lombok.RequiredArgsConstructor;
 
-import org.c4marathon.assignment.dto.transferlog.TransferLogCursorPageResponseDto;
-import org.c4marathon.assignment.dto.transferlog.TransferLogDto;
-import org.c4marathon.assignment.dto.transferlog.TransferLogSearchRequestDto;
+import org.c4marathon.assignment.transferlog.dto.TransferLogCursorPageResponseDto;
+import org.c4marathon.assignment.transferlog.dto.TransferLogDto;
+import org.c4marathon.assignment.transferlog.dto.TransferLogSearchRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +41,8 @@ public class TransferLogUseCase {
 		return buildCursorPageResponse(slice.getContent(), slice.hasNext());
 	}
 
-	public TransferLogCursorPageResponseDto findAllByOffsetOrDefaultPaging(TransferLogSearchRequestDto request) {
+	public TransferLogCursorPageResponseDto findAllByOffsetOrDefaultPaging(
+		org.c4marathon.assignment.transferlog.dto.TransferLogSearchRequestDto request) {
 		String accountNumber = request.accountNumber();
 		int page = Optional.ofNullable(request.page()).orElse(0);
 		int size = Optional.ofNullable(request.size()).orElse(10);

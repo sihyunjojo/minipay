@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.domain.repository.transferlog;
+package org.c4marathon.assignment.infra.persistence.query;
 
 import static org.c4marathon.assignment.domain.model.transferlog.QTransferLog.transferLog;
 
@@ -10,7 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
+import org.c4marathon.assignment.domain.model.TransferLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -56,34 +56,34 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 		int size
 	) {
 		List<TransferLog> fromLogs = queryFactory
-			.selectFrom(transferLog)
+			.selectFrom(QTransferLog.transferLog)
 			.where(
-				transferLog.from.number.eq(accountNumber)
+				QTransferLog.transferLog.from.number.eq(accountNumber)
 					.and(
-						transferLog.sendTime.gt(cursorTime)
+						QTransferLog.transferLog.sendTime.gt(cursorTime)
 							.or(
-								transferLog.sendTime.eq(cursorTime)
-									.and(transferLog.id.gt(cursorId))
+								QTransferLog.transferLog.sendTime.eq(cursorTime)
+									.and(QTransferLog.transferLog.id.gt(cursorId))
 							)
 					)
 			)
-			.orderBy(transferLog.sendTime.asc(), transferLog.id.asc())
+			.orderBy(QTransferLog.transferLog.sendTime.asc(), QTransferLog.transferLog.id.asc())
 			.limit(size + 1)
 			.fetch();
 
 		List<TransferLog> toLogs = queryFactory
-			.selectFrom(transferLog)
+			.selectFrom(QTransferLog.transferLog)
 			.where(
-				transferLog.to.number.eq(accountNumber)
+				QTransferLog.transferLog.to.number.eq(accountNumber)
 					.and(
-						transferLog.receiverTime.gt(cursorTime)
+						QTransferLog.transferLog.receiverTime.gt(cursorTime)
 							.or(
-								transferLog.receiverTime.eq(cursorTime)
-									.and(transferLog.id.gt(cursorId))
+								QTransferLog.transferLog.receiverTime.eq(cursorTime)
+									.and(QTransferLog.transferLog.id.gt(cursorId))
 							)
 					)
 			)
-			.orderBy(transferLog.receiverTime.asc(), transferLog.id.asc())
+			.orderBy(QTransferLog.transferLog.receiverTime.asc(), QTransferLog.transferLog.id.asc())
 			.limit(size + 1)
 			.fetch();
 
@@ -127,17 +127,17 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 		DateTimeExpression<LocalDateTime> sortTime = buildSortTime(accountNumber);
 
 		List<TransferLog> results = queryFactory
-			.selectFrom(transferLog)
+			.selectFrom(QTransferLog.transferLog)
 			.where(accountMatch)
-			.orderBy(sortTime.desc(), transferLog.id.desc())
+			.orderBy(sortTime.desc(), QTransferLog.transferLog.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		Long total = Optional.ofNullable(
 			queryFactory
-				.select(transferLog.count())
-				.from(transferLog)
+				.select(QTransferLog.transferLog.count())
+				.from(QTransferLog.transferLog)
 				.where(accountMatch)
 				.fetchOne()
 		).orElse(0L);
@@ -147,15 +147,15 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 
 
 	private BooleanExpression buildAccountMatch(String accountNumber) {
-		return transferLog.from.number.eq(accountNumber)
-			.or(transferLog.to.number.eq(accountNumber));
+		return QTransferLog.transferLog.from.number.eq(accountNumber)
+			.or(QTransferLog.transferLog.to.number.eq(accountNumber));
 	}
 
 	private DateTimeExpression<LocalDateTime> buildSortTime(String accountNumber) {
 		return new CaseBuilder()
-			.when(transferLog.from.number.eq(accountNumber)).then(transferLog.sendTime)
-			.when(transferLog.to.number.eq(accountNumber)).then(transferLog.receiverTime)
-			.otherwise(transferLog.sendTime);
+			.when(QTransferLog.transferLog.from.number.eq(accountNumber)).then(QTransferLog.transferLog.sendTime)
+			.when(QTransferLog.transferLog.to.number.eq(accountNumber)).then(QTransferLog.transferLog.receiverTime)
+			.otherwise(QTransferLog.transferLog.sendTime);
 	}
 
 	private Slice<TransferLog> fetchSlice(
@@ -164,9 +164,9 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 		int size
 	) {
 		List<TransferLog> results = queryFactory
-			.selectFrom(transferLog)
+			.selectFrom(QTransferLog.transferLog)
 			.where(condition)
-			.orderBy(sortOrder, transferLog.id.asc())
+			.orderBy(sortOrder, QTransferLog.transferLog.id.asc())
 			.limit(size + 1L)
 			.fetch();
 
