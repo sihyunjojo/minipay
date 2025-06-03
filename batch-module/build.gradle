@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.c4cometrue'
+version = '0.0.1-SNAPSHOT'
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+    implementation project(':api-module')
+}
+
+
+test {
+    useJUnitPlatform()
+}
