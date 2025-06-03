@@ -1,18 +1,12 @@
-package org.c4marathon.assignment.usecase;
+package org.c4marathon.assignment.transfer;
 
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.account.SavingAccount;
-import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
-import org.c4marathon.assignment.domain.service.SavingAccountService;
+
+import org.c4marathon.assignment.domain.service.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
+import org.c4marathon.assignment.domain.service.TransferService;
+import org.c4marathon.assignment.retry.RetryExecutor;
 import org.c4marathon.assignment.transfer.dto.TransferRequestDto;
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
-import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
-import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
 import org.c4marathon.assignment.transfer.dto.AccountNumberTransferRequestDto;
-import org.c4marathon.assignment.infra.retry.RetryExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +87,7 @@ public class TransferUseCase {
 		Long shortfall = mainAccountService.calculateShortfall(accountId, amount);
 
 		if (shortfall > 0) {
-			long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
+			long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(accountId, chargeAmount, amount);
 
 			MainAccount refreshedAccount = mainAccountService.getRefreshedAccount(accountId);

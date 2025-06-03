@@ -1,9 +1,8 @@
-package org.c4marathon.assignment.usecase;
+package org.c4marathon.assignment.member;
 
-import org.c4marathon.assignment.domain.model.member.Member;
-import org.c4marathon.assignment.dto.member.MemberRegistrationRequestDto;
-import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
+import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.service.MemberService;
+import org.c4marathon.assignment.member.dto.MemberRegistrationRequestDto;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +17,13 @@ public class MemberAccountUseCase {
 
 	@Transactional
 	public String registerMemberWithAccount(MemberRegistrationRequestDto request) {
-		Member member = memberService.registerember(request);
+		Member member = Member.builder()
+			.name(request.name())
+			.email(request.email())
+			.password(request.password())
+			.build();
+
+		member = memberService.registerember(member);
 		return mainAccountService.createMainAccountForMember(member);
 	}
-
 }

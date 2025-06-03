@@ -1,17 +1,15 @@
-package org.c4marathon.assignment.usecase;
+package org.c4marathon.assignment.transfer;
 
 import java.util.List;
 
-import org.c4marathon.assignment.domain.model.account.Account;
-import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.domain.model.PendingTransfer;import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
+import org.c4marathon.assignment.domain.model.PendingTransfer;
+import org.c4marathon.assignment.domain.model.TransferLog;
 import org.c4marathon.assignment.domain.service.PendingTransferService;
+import org.c4marathon.assignment.domain.service.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
+import org.c4marathon.assignment.retry.RetryExecutor;
 import org.c4marathon.assignment.transfer.dto.TransferPendingRequestDto;
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
-import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
-import org.c4marathon.assignment.infra.retry.RetryExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +38,7 @@ public class PendingTransferUseCase {
 			return;
 		}
 
-		long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
+		long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
 		mainAccountService.chargeOrThrow(request.fromAccountId(), chargeAmount, request.amount());
 
 		Account toAccount = mainAccountService.getRefreshedAccount(request.fromAccountId());

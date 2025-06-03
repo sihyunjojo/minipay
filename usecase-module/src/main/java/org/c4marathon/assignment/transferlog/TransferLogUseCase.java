@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.transferlog.usecase;
+package org.c4marathon.assignment.transferlog;
 
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.service.TransferLogService;

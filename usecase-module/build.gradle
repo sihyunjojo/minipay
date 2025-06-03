@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.c4cometrue'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation project(':common-module')
+    implementation project(':transfer-module')
+    implementation project(':transfer-log-module')
+    implementation project(':member-module')
+    implementation project(':main-account-module')
+    implementation project(':saving-account-module')
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,4 +1,4 @@
-package org.c4marathon.assignment.usecase;
+package org.c4marathon.assignment.savingaccount;
 
 import java.util.List;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 import org.c4marathon.assignment.domain.model.account.Account;
 import org.c4marathon.assignment.domain.model.account.MainAccount;
 import org.c4marathon.assignment.domain.model.account.SavingAccount;
-import org.c4marathon.assignment.domain.model.policy.ExternalAccountPolicy;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
 import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
@@ -15,10 +15,10 @@ import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
 import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
 import org.c4marathon.assignment.domain.service.SavingAccountService;
 import org.c4marathon.assignment.dto.account.AccountResponseDto;
-import org.c4marathon.assignment.dto.account.CreateFixedSavingAccountRequestDto;
-import org.c4marathon.assignment.dto.account.SavingDepositRequest;
+import org.c4marathon.assignment.savingaccount.dto.CreateFixedSavingAccountRequestDto;
+import org.c4marathon.assignment.savingaccount.dto.SavingDepositRequest;
 import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
-import org.c4marathon.assignment.infra.retry.RetryExecutor;
+import org.c4marathon.assignment.retry.RetryExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class SavingAccountUseCase {
 		Long shortfall = mainAccountService.calculateShortfall(mainAccountId, amount);
 
 		if (shortfall > 0) {
-			long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
+			long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(mainAccountId, chargeAmount, amount);
 
 			Account toAccount = mainAccountService.getRefreshedAccount(mainAccountId);
@@ -102,7 +102,7 @@ public class SavingAccountUseCase {
 
 			// 잔액 부족 시 충전 진행
 			if (shortfall > 0) {
-				long chargeAmount = accountPolicyProperties.getMain().getRoundedCharge(shortfall);
+				long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
 				mainAccountService.chargeOrThrow(mainAccount.getId(), chargeAmount, totalAmount);
 
 				TransferLog transferLog = transferLogFactory.createExternalChargeLog(
