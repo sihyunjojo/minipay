@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "business.rule.account.main")
-public class MainAccountPolicyProperties {
+public class MainAccountPolicy {
 
 	// 💡 'business.rule.account.main-daily-limit' 값이 yml에 없을 경우 3000000으로 fallback (기본값)
 	@NotNull
