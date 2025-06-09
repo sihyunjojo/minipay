@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.c4marathon.assignment.enums.AccountType;
-import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.domain.model.PendingTransfer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +17,7 @@ import lombok.*;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MainAccount implements Account {
+public class MainAccount {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

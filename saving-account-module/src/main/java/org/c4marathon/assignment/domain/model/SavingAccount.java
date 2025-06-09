@@ -15,7 +15,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class SavingAccount implements Account {
+public class SavingAccount {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
