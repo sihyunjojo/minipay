@@ -1,7 +1,6 @@
 package org.c4marathon.assignment;
 
 import lombok.RequiredArgsConstructor;
-import org.c4marathon.assignment.enums.AccountType;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -13,11 +12,8 @@ public class AccountNumberGenerator {
 	private static final int ACCOUNT_NUMBER_LENGTH = 12;
 	private static final SecureRandom RANDOM = new SecureRandom();
 
-	private final AccountPolicyProperties policy;
-
-	public String generate(AccountType accountType) {
+	public String generate(String prefix) {
 		String raw = generateRawNumber();
-		String prefix = getPrefix(accountType);
 		return format(prefix, raw);
 	}
 
@@ -27,14 +23,6 @@ public class AccountNumberGenerator {
 			sb.append(RANDOM.nextInt(10)); // 0~9
 		}
 		return sb.toString();
-	}
-
-	private String getPrefix(AccountType accountType) {
-		return switch (accountType) {
-			case MAIN_ACCOUNT -> policy.getMain().getAccountPrefix();
-			case SAVING_ACCOUNT -> policy.getSaving().getAccountPrefix();
-			case EXTERNAL_ACCOUNT -> throw new UnsupportedOperationException("외부 계좌는 prefix가 없습니다.");
-		};
 	}
 
 	private String format(String prefix, String rawNumber) {
