@@ -21,6 +21,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     implementation project(':common-module')
+    implementation project(':main-account-module')
 }
 
 

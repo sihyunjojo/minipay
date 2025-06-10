@@ -15,7 +15,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    implementation project(':interface-module')
+    implementation project(':common-module')
+    implementation project(':main-account-module')
+    implementation project(':member-module')
+    implementation project(':saving-account-module')
+    implementation project(':settlement-module')
+    implementation project(':transfer-module')
+    implementation project(':transfer-log-module')
 }
 
 test {
