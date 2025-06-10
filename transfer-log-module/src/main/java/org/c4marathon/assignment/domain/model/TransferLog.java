@@ -5,7 +5,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 // import org.c4marathon.assignment.model.BaseTimeEntity;
-import org.c4marathon.assignment.model.AccountSnapshot;
 import org.c4marathon.assignment.enums.TransferType;
 import org.c4marathon.assignment.enums.TransferStatus;
 import org.c4marathon.assignment.model.BaseTimeEntity;

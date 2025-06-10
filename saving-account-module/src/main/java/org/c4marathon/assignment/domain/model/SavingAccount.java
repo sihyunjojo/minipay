@@ -1,7 +1,6 @@
 package org.c4marathon.assignment.domain.model;
 
 import org.c4marathon.assignment.enums.AccountType;
-import org.c4marathon.assignment.domain.model.member.Member;
 import org.c4marathon.assignment.enums.SavingType;
 
 import jakarta.persistence.*;
@@ -96,7 +95,6 @@ public class SavingAccount {
 		return (long) (this.balance * rate); // 소수점 절삭
 	}
 
-	@Override
 	public AccountType getType() {
 		return AccountType.SAVING_ACCOUNT;
 	}

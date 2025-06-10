@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.c4marathon.assignment.enums.AccountType;
-import org.c4marathon.assignment.domain.model.PendingTransfer;
+// import org.c4marathon.assignment.domain.model.PendingTransfer;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,19 +30,19 @@ public class MainAccount {
 	private Long balance;
 	private Long dailyChargeAmount;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
 	// 서로 Setter만 잘되어 있으면, emberRepository.save(member)만으로 account까지 자동 저장
-	@OneToMany(mappedBy = "mainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SavingAccount> savingAccounts = new ArrayList<>();
-
-	@OneToMany(mappedBy = "fromMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PendingTransfer> sentTransactions = new ArrayList<>();
-
-	@OneToMany(mappedBy = "toMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PendingTransfer> receivedTransactions = new ArrayList<>();
+	// @OneToMany(mappedBy = "mainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+	// private List<SavingAccount> savingAccounts = new ArrayList<>();
+	//
+	// @OneToMany(mappedBy = "fromMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+	// private List<PendingTransfer> sentTransactions = new ArrayList<>();
+	//
+	// @OneToMany(mappedBy = "toMainAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+	// private List<PendingTransfer> receivedTransactions = new ArrayList<>();
 
 	@Version
 	private Long version;
@@ -55,7 +55,7 @@ public class MainAccount {
 		this.member = member;
 	}
 
-	public static MainAccount create( Member member, String accountNumber) {
+	public static MainAccount create(Member member, String accountNumber) {
 		if (member == null) throw new IllegalArgumentException("회원 정보는 필수입니다.");
 		return MainAccount.builder()
 			.accountNumber(accountNumber)
@@ -65,37 +65,36 @@ public class MainAccount {
 			.build();
 	}
 
-	public void setMember(Member member) {
-		this.member = member;
-		if (member != null && member.getMainAccount() != this) {
-			member.setMainAccount(this);
-		}
-	}
+	// public void setMember(Member member) {
+	// 	this.member = member;
+	// 	if (member != null && member.getMainAccount() != this) {
+	// 		member.setMainAccount(this);
+	// 	}
+	// }
+	//
+	// // 보낸 거래 추가
+	// public void addSentTransaction(PendingTransfer transaction) {
+	// 	sentTransactions.add(transaction);
+	// 	if (transaction != null && transaction.getFromMainAccount() != this) {
+	// 		transaction.setFromMainAccount(this);
+	// 	}
+	// }
 
-	// 보낸 거래 추가
-	public void addSentTransaction(PendingTransfer transaction) {
-		sentTransactions.add(transaction);
-		if (transaction != null && transaction.getFromMainAccount() != this) {
-			transaction.setFromMainAccount(this);
-		}
-	}
+	// public void addSavingAccount(SavingAccount savingAccount) {
+	// 	savingAccounts.add(savingAccount);
+	// 	if (savingAccount != null && savingAccount.getMainAccount() != this) {
+	// 		savingAccount.setMainAccount(this);
+	// 	}
+	// }
+	//
+	// // 받은 거래 추가
+	// public void addReceivedTransaction(PendingTransfer transaction) {
+	// 	receivedTransactions.add(transaction);
+	// 	if (transaction != null && transaction.getToMainAccount() != this) {
+	// 		transaction.setToMainAccount(this);
+	// 	}
+	// }
 
-	public void addSavingAccount(SavingAccount savingAccount) {
-		savingAccounts.add(savingAccount);
-		if (savingAccount != null && savingAccount.getMainAccount() != this) {
-			savingAccount.setMainAccount(this);
-		}
-	}
-
-	// 받은 거래 추가
-	public void addReceivedTransaction(PendingTransfer transaction) {
-		receivedTransactions.add(transaction);
-		if (transaction != null && transaction.getToMainAccount() != this) {
-			transaction.setToMainAccount(this);
-		}
-	}
-
-	@Override
 	public AccountType getType() {
 		return AccountType.MAIN_ACCOUNT;
 	}
