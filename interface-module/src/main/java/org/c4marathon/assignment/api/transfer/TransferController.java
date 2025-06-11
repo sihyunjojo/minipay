@@ -2,7 +2,7 @@ package org.c4marathon.assignment.api.transfer;
 
 import org.c4marathon.assignment.response.ApiResponse;
 import org.c4marathon.assignment.api.transfer.dto.AccountNumberTransferRequestDto;
-import org.c4marathon.assignment.transfer.usecase.TransferUseCase;
+import org.c4marathon.assignment.usecase.transfer.TransferUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

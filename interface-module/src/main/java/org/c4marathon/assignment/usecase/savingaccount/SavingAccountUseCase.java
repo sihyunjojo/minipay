@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.c4marathon.assignment.domain.model.account.Account;
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.account.SavingAccount;
-import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
-import org.c4marathon.assignment.domain.model.transferlog.TransferLogFactory;
-import org.c4marathon.assignment.domain.service.TransferLogService;
-import org.c4marathon.assignment.domain.service.mainaccount.TransferService;
-import org.c4marathon.assignment.domain.service.mainaccount.MainAccountService;
-import org.c4marathon.assignment.domain.service.SavingAccountService;
-import org.c4marathon.assignment.dto.account.AccountResponseDto;
+import org.c4marathon.assignment.api.savingaccount.dto.SavingAccountResponseDto;
 import org.c4marathon.assignment.api.savingaccount.dto.CreateFixedSavingAccountRequestDto;
-import org.c4marathon.assignment.api.savingaccount.dto.SavingDepositRequest;
-import org.c4marathon.assignment.infra.config.property.AccountPolicyProperties;
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.model.SavingAccount;
+import org.c4marathon.assignment.domain.model.TransferLog;
+import org.c4marathon.assignment.domain.service.MainAccountService;
+import org.c4marathon.assignment.domain.service.SavingAccountService;
+import org.c4marathon.assignment.domain.service.TransferLogFactory;
+import org.c4marathon.assignment.domain.service.TransferLogService;
+import org.c4marathon.assignment.domain.service.TransferService;
+import org.c4marathon.assignment.infra.properties.MainAccountPolicy;
+import org.c4marathon.assignment.model.Account;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.retry.RetryExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -34,17 +33,19 @@ public class SavingAccountUseCase {
 	private final TransferLogService transferLogService;
 
 	private final TransferLogFactory transferLogFactory;
-	private final AccountPolicyProperties accountPolicyProperties;
+	private final MainAccountPolicy mainAccountPolicy;
 	private final RetryExecutor retryExecutor;
 
 	@Transactional
-	public AccountResponseDto registerFixedSavingAccount(Long memberId, CreateFixedSavingAccountRequestDto request) {
-		return savingAccountService.createFixedSavingAccount(memberId, request);
+	public SavingAccountResponseDto registerFixedSavingAccount(Long memberId, CreateFixedSavingAccountRequestDto request) {
+		SavingAccount fixedSavingAccount = savingAccountService.createFixedSavingAccount(memberId, request.subscribedDepositAmount());
+		return SavingAccountResponseDto.of(fixedSavingAccount);
 	}
 
 	@Transactional
-	public AccountResponseDto registerFlexibleSavingAccount(Long memberId) {
-		return savingAccountService.createFlexibleSavingAccount(memberId);
+	public SavingAccountResponseDto registerFlexibleSavingAccount(Long memberId) {
+		SavingAccount flexibleSavingAccount = savingAccountService.createFlexibleSavingAccount(memberId);
+		return SavingAccountResponseDto.of(flexibleSavingAccount);
 	}
 
 	@Transactional
@@ -56,7 +57,7 @@ public class SavingAccountUseCase {
 			long chargeAmount = mainAccountPolicy.getRoundedCharge(shortfall);
 			mainAccountService.chargeOrThrow(mainAccountId, chargeAmount, amount);
 
-			Account toAccount = mainAccountService.getRefreshedAccount(mainAccountId);
+			MainAccount toAccount = mainAccountService.getRefreshedAccount(mainAccountId);
 			TransferLog chargeLog = transferLogFactory.createExternalChargeLog(
 				ExternalAccountPolicy.TEMPORARY_CHARGING,
 				toAccount,
@@ -73,8 +74,8 @@ public class SavingAccountUseCase {
 
 		retryExecutor.executeWithRetry(performDeposit);
 
-		Account fromAccount = mainAccountService.getRefreshedAccount(mainAccountId);
-		Account toAccount = savingAccountService.getRefreshedAccount(savingAccountId);
+		MainAccount fromAccount = mainAccountService.getRefreshedAccount(mainAccountId);
+		SavingAccount toAccount = savingAccountService.getRefreshedAccount(savingAccountId);
 		TransferLog depositLog = transferLogFactory.createImmediateTransferLog(
 			fromAccount, 
 			toAccount, 
@@ -87,15 +88,16 @@ public class SavingAccountUseCase {
 	// ✅ 비즈니스 로직이 복잡해지면 Service로 넘기는 게 맞다.
 	@Transactional
 	public void processFixedSavingDeposits() {
-		Map<MainAccount, List<SavingDepositRequest>> amountMapping = savingAccountService.getSubscribedDepositAmount();
+		Map<MainAccount, List<SavingAccount>> amountMapping = savingAccountService.getSubscribedDepositAmount();
 
 		// 각 메인 계좌별로 처리
-		for (Map.Entry<MainAccount, List<SavingDepositRequest>> entry : amountMapping.entrySet()) {
+		for (Map.Entry<MainAccount, List<SavingAccount>> entry : amountMapping.entrySet()) {
 			MainAccount mainAccount = entry.getKey();
-			List<SavingDepositRequest> amountResult = entry.getValue();
+
+			List<SavingAccount> savingAccounts = entry.getValue();
 
 			// 해당 메인 계좌에서 모든 적금 계좌로 입금해야 할 총 이자 금액 계산
-			long totalAmount = getTotalAmount(amountResult);
+			long totalAmount = getTotalAmount(savingAccounts);
 
 			// 잔액 부족분 확인
 			long shortfall = mainAccountService.calculateShortfall(mainAccount.getId(), totalAmount);
@@ -113,16 +115,16 @@ public class SavingAccountUseCase {
 			}
 
 			// 각 적금 계좌별로 이자 입금 처리
-			for (SavingDepositRequest interestResult : amountResult) {
-				transferToSavingAccount(interestResult, mainAccount);
+			for (SavingAccount savingAccount : savingAccounts) {
+				transferToSavingAccount(savingAccount, mainAccount);
 			}
 		}
 	}
 
-	private void transferToSavingAccount(SavingDepositRequest interestResult, MainAccount mainAccount) {
+	private void transferToSavingAccount(SavingAccount savingAccount, MainAccount mainAccount) {
 		final Long fromAccountId = mainAccount.getId();
-		final Long toAccountId = interestResult.savingAccount().getId();
-		final long amount = interestResult.subscribedDepositAmount();
+		final Long toAccountId = savingAccount.getId();
+		final long amount = savingAccount.getSubscribedDepositAmount();
 
 		try {
 			Callable<Void> performTransfer = () -> {
@@ -147,8 +149,8 @@ public class SavingAccountUseCase {
 		transferLogService.saveTransferLog(depositLog);
 	}
 
-	private static long getTotalAmount(List<SavingDepositRequest> interestResults) {
-		return interestResults.stream().mapToLong(SavingDepositRequest::subscribedDepositAmount).sum();
+	private long getTotalAmount(List<SavingAccount> savingAccounts) {
+		return savingAccounts.stream().mapToLong(SavingAccount::getSubscribedDepositAmount).sum();
 	}
 
 	@Transactional

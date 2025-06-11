@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.c4marathon.assignment.response.ApiResponse;
 import org.c4marathon.assignment.api.transferlog.dto.TransferLogCursorPageResponseDto;
 import org.c4marathon.assignment.api.transferlog.dto.TransferLogSearchRequestDto;
-import org.c4marathon.assignment.transferlog.usecase.TransferLogUseCase;
+import org.c4marathon.assignment.usecase.transferlog.TransferLogUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

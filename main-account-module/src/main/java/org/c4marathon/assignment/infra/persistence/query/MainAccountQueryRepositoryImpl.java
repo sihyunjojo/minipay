@@ -1,6 +1,6 @@
 package org.c4marathon.assignment.infra.persistence.query;
 
-import org.c4marathon.assignment.domain.model.account.QMainAccount;
+import org.c4marathon.assignment.domain.model.QMainAccount;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;

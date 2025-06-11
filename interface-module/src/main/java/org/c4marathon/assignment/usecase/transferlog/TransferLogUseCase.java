@@ -1,6 +1,6 @@
 package org.c4marathon.assignment.usecase.transferlog;
 
-import org.c4marathon.assignment.domain.model.transferlog.TransferLog;
+import org.c4marathon.assignment.domain.model.TransferLog;
 import org.c4marathon.assignment.domain.service.TransferLogService;
 import lombok.RequiredArgsConstructor;
 

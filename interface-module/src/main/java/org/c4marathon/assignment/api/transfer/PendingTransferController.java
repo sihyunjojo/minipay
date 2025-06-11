@@ -2,7 +2,7 @@ package org.c4marathon.assignment.api.transfer;
 
 import org.c4marathon.assignment.response.ApiResponse;
 import org.c4marathon.assignment.api.transfer.dto.TransferPendingRequestDto;
-import org.c4marathon.assignment.transfer.usecase.PendingTransferUseCase;
+import org.c4marathon.assignment.usecase.transfer.PendingTransferUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

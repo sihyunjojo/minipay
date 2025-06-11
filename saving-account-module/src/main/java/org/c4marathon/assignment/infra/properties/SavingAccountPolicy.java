@@ -1,12 +1,15 @@
 package org.c4marathon.assignment.infra.properties;
 
+import org.c4marathon.assignment.enums.SavingType;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.c4marathon.assignment.enums.SavingType;
 
 @Getter
 @Setter
+@ConfigurationProperties(prefix = "business.rule.account.saving")
 public class SavingAccountPolicy {
 
 	@NotNull
@@ -20,9 +23,8 @@ public class SavingAccountPolicy {
 
 	public double getInterestRate(SavingType type) {
 		return switch (type) {
-			case SavingType.FIXED -> fixedInterestRate;
-			case SavingType.FLEXIBLE -> flexibleInterestRate;
-			default -> throw new IllegalArgumentException("지원하지 않는 적금 유형입니다: " + type);
+			case FIXED -> fixedInterestRate;
+			case FLEXIBLE -> flexibleInterestRate;
 		};
 	}
 }

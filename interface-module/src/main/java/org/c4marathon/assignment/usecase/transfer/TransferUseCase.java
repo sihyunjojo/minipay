@@ -1,9 +1,16 @@
 package org.c4marathon.assignment.usecase.transfer;
 
 
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.model.SavingAccount;
+import org.c4marathon.assignment.domain.model.TransferLog;
+import org.c4marathon.assignment.domain.service.MainAccountService;
+import org.c4marathon.assignment.domain.service.SavingAccountService;
 import org.c4marathon.assignment.domain.service.TransferLogFactory;
 import org.c4marathon.assignment.domain.service.TransferLogService;
 import org.c4marathon.assignment.domain.service.TransferService;
+import org.c4marathon.assignment.infra.properties.MainAccountPolicy;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.retry.RetryExecutor;
 import org.c4marathon.assignment.api.transfer.dto.TransferRequestDto;
 import org.c4marathon.assignment.api.transfer.dto.AccountNumberTransferRequestDto;
@@ -27,7 +34,7 @@ public class TransferUseCase {
 	private final TransferLogService transferLogService;
 	private final TransferLogFactory transferLogFactory;
 	private final RetryExecutor retryExecutor;
-	private final AccountPolicyProperties accountPolicyProperties;
+	private final MainAccountPolicy mainAccountPolicy;
 
 	/**
 	 * 계좌 ID를 기반으로 일반 계좌 간 이체를 수행합니다.

@@ -4,8 +4,8 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 
 import org.c4marathon.assignment.domain.model.TransferLog;
-import org.c4marathon.assignment.domain.model.account.Account;
-import org.c4marathon.assignment.model.AccountSnapshot;
+import org.c4marathon.assignment.domain.model.AccountSnapshot;
+import org.c4marathon.assignment.model.Account;
 import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 import org.c4marathon.assignment.enums.TransferType;
 import org.c4marathon.assignment.enums.TransferStatus;
@@ -62,14 +62,14 @@ public class TransferLogFactory {
 	}
 
 	public TransferLog createInterestPaymentLog(Account toAccount, long amount) {
-		AccountSnapshot from = ExternalAccountPolicy.COMPANY.snapshot();
+		AccountSnapshot from = AccountSnapshot.from(ExternalAccountPolicy.COMPANY);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
 		return buildTransferLog(null, from, to, amount, TransferType.INTEREST, TransferStatus.COMPLETED);
 	}
 
 	// 외부 → 메인 충전
 	public TransferLog createExternalChargeLog(ExternalAccountPolicy externalAccount, Account toAccount, long amount) {
-		AccountSnapshot from = externalAccount.snapshot();
+		AccountSnapshot from = AccountSnapshot.from(ExternalAccountPolicy.COMPANY);
 		AccountSnapshot to = AccountSnapshot.from(toAccount);
 		return buildTransferLog(null, from, to, amount, TransferType.CHARGE, TransferStatus.COMPLETED);
 	}

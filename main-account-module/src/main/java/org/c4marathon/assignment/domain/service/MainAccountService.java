@@ -3,12 +3,13 @@ package org.c4marathon.assignment.domain.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.c4marathon.assignment.AccountNumberGenerator;
 import org.c4marathon.assignment.AccountNumberRetryExecutor;
 import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.model.Member;
 import org.c4marathon.assignment.domain.repository.MainAccountRepository;
-import org.c4marathon.assignment.enums.AccountType;
 import org.c4marathon.assignment.exception.RetryableException;
-import org.c4marathon.assignment.infra.properties.MainAccountPolicyProperties;
+import org.c4marathon.assignment.infra.properties.MainAccountPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MainAccountService {
 
 	private final MainAccountRepository mainAccountRepository;
-	private final MainAccountPolicyProperties mainAccountPolicyProperties;
+	private final MainAccountPolicy mainAccountPolicy;
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountNumberRetryExecutor accountNumberRetryExecutor;
 
@@ -30,16 +31,14 @@ public class MainAccountService {
     }
 
 	@Transactional
-	public String createMainAccountForMember(Member member) {
+	public MainAccount createMainAccountForMember(Member member) {
 		validateNoMainAccount(member);
 
 		String accountNumber = generateUniqueAccountNumber();
 
 		MainAccount mainAccount = MainAccount.create(member, accountNumber);
-		member.setMainAccount(mainAccount);
-		mainAccountRepository.save(mainAccount);
 
-		return accountNumber;
+		return mainAccountRepository.save(mainAccount);
 	}
 
 	private void validateNoMainAccount(Member member) {
@@ -54,7 +53,7 @@ public class MainAccountService {
 	 */
 	private String generateUniqueAccountNumber() {
 		return accountNumberRetryExecutor.executeWithRetry(() -> {
-			String candidate = accountNumberGenerator.generate(AccountType.MAIN_ACCOUNT);
+			String candidate = accountNumberGenerator.generate(mainAccountPolicy.getAccountPrefix());
 
 			if (mainAccountRepository.existsByAccountNumber(candidate)) {
 				throw new RetryableException("중복된 메인 계좌번호 발생. 재시도합니다.");
@@ -84,7 +83,7 @@ public class MainAccountService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void chargeOrThrow(Long accountId, Long chargeAmount, Long minRequiredBalance) {
 		boolean success = mainAccountRepository.tryFastCharge(accountId, chargeAmount, minRequiredBalance,
-			mainAccountPolicyProperties.getMainDailyLimit());
+			mainAccountPolicy.getMainDailyLimit());
 
 		if (!success) {
 			throw new IllegalStateException("충전 불가: 충전해도 잔액 부족이거나 일일 한도 초과");

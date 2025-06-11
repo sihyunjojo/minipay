@@ -6,8 +6,14 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+import org.c4marathon.assignment.AccountNumberGenerator;
 import org.c4marathon.assignment.AccountNumberRetryExecutor;
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.model.SavingAccount;
+import org.c4marathon.assignment.domain.repository.MainAccountRepository;
 import org.c4marathon.assignment.domain.repository.SavingAccountRepository;
+import org.c4marathon.assignment.exception.RetryableException;
+import org.c4marathon.assignment.infra.properties.SavingAccountPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +26,10 @@ public class SavingAccountService {
 	private final MainAccountRepository mainAccountRepository;
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountNumberRetryExecutor accountNumberRetryExecutor;
+	private final SavingAccountPolicy savingAccountPolicy;
 
 	@Transactional
-	public AccountResponseDto createFixedSavingAccount(Long memberId, CreateFixedSavingAccountRequestDto request) {
+	public SavingAccount createFixedSavingAccount(Long memberId, Long subscribedDepositAmount) {
 		MainAccount mainAccount = mainAccountRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("메인 계좌를 찾을 수 없습니다."));
 
@@ -32,11 +39,11 @@ public class SavingAccountService {
 			accountNumber,
 			mainAccount.getMember(),
 			mainAccount,
-			request.subscribedDepositAmount()
+			subscribedDepositAmount
 		);
 
 		savingAccountRepository.save(savingAccount);
-		return new AccountResponseDto(savingAccount);
+		return savingAccount;
 	}
 
 	@Transactional(readOnly = true)
@@ -45,7 +52,7 @@ public class SavingAccountService {
 	}
 
 	@Transactional
-	public AccountResponseDto createFlexibleSavingAccount(Long memberId) {
+	public SavingAccount createFlexibleSavingAccount(Long memberId) {
 		MainAccount mainAccount = mainAccountRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("메인 계좌를 찾을 수 없습니다."));
 
@@ -58,12 +65,12 @@ public class SavingAccountService {
 		);
 
 		savingAccountRepository.save(savingAccount);
-		return new AccountResponseDto(savingAccount);
+		return savingAccount;
 	}
 
 	private String generateUniqueAccountNumber() {
 		return accountNumberRetryExecutor.executeWithRetry(() -> {
-			String candidate = accountNumberGenerator.generate(AccountType.SAVING_ACCOUNT);
+			String candidate = accountNumberGenerator.generate(savingAccountPolicy.getAccountPrefix());
 
 			if (savingAccountRepository.existsByAccountNumber(candidate)) {
 				throw new RetryableException("중복된 적금 계좌번호 발생. 재시도합니다.");
@@ -99,22 +106,19 @@ public class SavingAccountService {
 		return interest;
 	}
 
-	public Map<MainAccount, List<SavingDepositRequest>> getSubscribedDepositAmount() {
-		List<SavingAccount> accounts = savingAccountRepository.findAllFixedSavingAccountWithMemberAndMainAccount();
+	public Map<MainAccount, List<SavingAccount>> getSubscribedDepositAmount() {
+		List<SavingAccount> accounts = savingAccountRepository.findAllFixedSavingAccountWithMainAccount();
 
 		return accounts.stream()
 			.filter(this::isLinkedToMainAccount)
 			.collect(Collectors.groupingBy(
-				account -> account.getMember().getMainAccount(),
-				Collectors.mapping(
-					account -> new SavingDepositRequest(account, account.getSubscribedDepositAmount()),
-					Collectors.toList()
-				)
+				SavingAccount::getMainAccount,
+				Collectors.toList()
 			));
 	}
 
 	private boolean isLinkedToMainAccount(SavingAccount account) {
-		return account.getMember() != null && account.getMember().getMainAccount() != null;
+		return account.getMember() != null && account.getMainAccount() != null;
 	}
 }
 

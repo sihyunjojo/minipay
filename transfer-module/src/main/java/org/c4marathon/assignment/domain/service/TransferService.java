@@ -1,9 +1,9 @@
 package org.c4marathon.assignment.domain.service;
 
-import org.c4marathon.assignment.domain.model.account.MainAccount;
-import org.c4marathon.assignment.domain.model.account.SavingAccount;
+import org.c4marathon.assignment.domain.model.MainAccount;
+import org.c4marathon.assignment.domain.model.SavingAccount;
+import org.c4marathon.assignment.domain.repository.MainAccountRepository;
 import org.c4marathon.assignment.domain.repository.SavingAccountRepository;
-import org.c4marathon.assignment.domain.repository.mainaccount.MainAccountRepository;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;

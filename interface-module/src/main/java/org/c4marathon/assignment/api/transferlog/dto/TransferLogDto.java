@@ -2,6 +2,8 @@ package org.c4marathon.assignment.api.transferlog.dto;
 
 import java.time.LocalDateTime;
 
+import org.c4marathon.assignment.domain.model.TransferLog;
+
 import lombok.Builder;
 
 @Builder

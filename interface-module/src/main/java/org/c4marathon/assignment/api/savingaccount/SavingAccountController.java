@@ -1,9 +1,9 @@
 package org.c4marathon.assignment.api.savingaccount;
 
-import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.account.AccountResponseDto;
-import org.c4marathon.assignment.dto.account.CreateFixedSavingAccountRequestDto;
-import org.c4marathon.assignment.usecase.SavingAccountUseCase;
+import org.c4marathon.assignment.api.savingaccount.dto.CreateFixedSavingAccountRequestDto;
+import org.c4marathon.assignment.api.savingaccount.dto.SavingAccountResponseDto;
+import org.c4marathon.assignment.response.ApiResponse;
+import org.c4marathon.assignment.usecase.savingaccount.SavingAccountUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,17 +23,17 @@ public class SavingAccountController {
 
 	@Operation(summary = "정기 적금 추가", description = "정기 적금 계좌를 생성하는 API입니다.")
 	@PostMapping("/fixed")
-	public ResponseEntity<ApiResponse<AccountResponseDto>> createFixedSavingAccount(@RequestParam Long memberId, @RequestBody
+	public ResponseEntity<ApiResponse<SavingAccountResponseDto>> createFixedSavingAccount(@RequestParam Long memberId, @RequestBody
 	CreateFixedSavingAccountRequestDto request) {
-		AccountResponseDto savingAccount = savingAccountUseCase.registerFixedSavingAccount(memberId, request);
+		SavingAccountResponseDto savingAccount = savingAccountUseCase.registerFixedSavingAccount(memberId, request);
 		return ResponseEntity.status(201)
 			.body(ApiResponse.res(201, "정기 적금 계좌 생성 완료", savingAccount));
 	}
 
 	@Operation(summary = "자유 적금 추가", description = "자유 적금 계좌를 생성하는 API입니다.")
 	@PostMapping("/flexible")
-	public ResponseEntity<ApiResponse<AccountResponseDto>> createFlexibleSavingAccount(@RequestParam Long memberId) {
-		AccountResponseDto savingAccount = savingAccountUseCase.registerFlexibleSavingAccount(memberId);
+	public ResponseEntity<ApiResponse<SavingAccountResponseDto>> createFlexibleSavingAccount(@RequestParam Long memberId) {
+		SavingAccountResponseDto savingAccount = savingAccountUseCase.registerFlexibleSavingAccount(memberId);
 		return ResponseEntity.status(201)
 			.body(ApiResponse.res(201, "자유 적금 계좌 생성 완료", savingAccount));
 	}
