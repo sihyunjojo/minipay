@@ -7,16 +7,20 @@ import org.c4marathon.assignment.domain.model.SavingAccount;
 
 public interface SavingAccountRepository {
 
-	List<SavingAccount> findAllFixedSavingAccountWithMemberAndMainAccount();
+    Optional<SavingAccount> findById(Long id);
 
-	Optional<SavingAccount> findByIdWithoutSecondCache(Long id);
+    List<SavingAccount> findAll();
 
-	int depositByOptimistic(Long accountId, Long amount, Long version);
+    List<SavingAccount> findAllFixedSavingAccountWithMainAccount();
 
-	boolean existsByAccountNumber(String accountNumber);
+    Optional<SavingAccount> findByIdWithoutSecondCache(Long id);
 
-	Optional<SavingAccount> findByAccountNumber(String accountNumber);
+    boolean existsByAccountNumber(String accountNumber);
 
-	SavingAccount save(SavingAccount account);
+    Optional<SavingAccount> findByAccountNumber(String accountNumber);
+
+    void save(SavingAccount account);
+
+    int depositByOptimistic(Long accountId, Long amount, Long version);
 
 }

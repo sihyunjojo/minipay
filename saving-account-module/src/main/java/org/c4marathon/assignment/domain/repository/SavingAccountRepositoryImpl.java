@@ -15,18 +15,23 @@ public class SavingAccountRepositoryImpl implements SavingAccountRepository {
 	private final JpaSavingAccountRepository jpa;
 
 	@Override
-	public List<SavingAccount> findAllFixedSavingAccountWithMemberAndMainAccount() {
-		return jpa.findAllFixedSavingAccountWithMemberAndMainAccount();
+	public Optional<SavingAccount> findById(Long id) {
+		return jpa.findById(id);
+	}
+
+	@Override
+	public List<SavingAccount> findAll() {
+		return jpa.findAll();
+	}
+
+	@Override
+	public List<SavingAccount> findAllFixedSavingAccountWithMainAccount() {
+		return jpa.findAllFixedSavingAccountWithMainAccount();
 	}
 
 	@Override
 	public Optional<SavingAccount> findByIdWithoutSecondCache(Long id) {
 		return jpa.findByIdWithoutSecondCache(id);
-	}
-
-	@Override
-	public int depositByOptimistic(Long accountId, Long amount, Long version) {
-		return jpa.depositByOptimistic(accountId, amount, version);
 	}
 
 	@Override
@@ -40,7 +45,12 @@ public class SavingAccountRepositoryImpl implements SavingAccountRepository {
 	}
 
 	@Override
-	public SavingAccount save(SavingAccount account) {
-		return jpa.save(account);
+	public void save(SavingAccount account) {
+		jpa.save(account);
+	}
+
+	@Override
+	public int depositByOptimistic(Long accountId, Long amount, Long version) {
+		return jpa.depositByOptimistic(accountId, amount, version);
 	}
 }

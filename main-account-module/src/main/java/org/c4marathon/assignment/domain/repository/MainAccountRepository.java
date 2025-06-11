@@ -1,13 +1,16 @@
 package org.c4marathon.assignment.domain.repository;
 
-import java.util.Optional;
-
 import org.c4marathon.assignment.domain.model.MainAccount;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface MainAccountRepository {
+	MainAccount save(MainAccount mainAccount);
+
 	Optional<MainAccount> findById(Long id);
 
-	Optional<MainAccount> findByIdWithSentTransactions(Long id);
+	Optional<MainAccount> findByIdWithoutSecondCache(Long id);
 
 	Optional<MainAccount> findByMemberId(Long memberId);
 

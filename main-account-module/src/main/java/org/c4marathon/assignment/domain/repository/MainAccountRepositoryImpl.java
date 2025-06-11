@@ -17,13 +17,18 @@ public class MainAccountRepositoryImpl implements MainAccountRepository {
 	private final MainAccountQueryRepository query;
 
 	@Override
+	public MainAccount save(MainAccount mainAccount) {
+		return jpa.save(mainAccount);
+	}
+
+	@Override
 	public Optional<MainAccount> findById(Long id) {
 		return jpa.findById(id);
 	}
 
 	@Override
-	public Optional<MainAccount> findByIdWithSentTransactions(Long id) {
-		return jpa.findByIdWithSentTransactions(id);
+	public Optional<MainAccount> findByIdWithoutSecondCache(Long id) {
+		return jpa.findByIdWithoutSecondCache(id);
 	}
 
 	@Override
