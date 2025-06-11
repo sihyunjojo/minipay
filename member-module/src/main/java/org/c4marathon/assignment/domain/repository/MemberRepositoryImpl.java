@@ -14,6 +14,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 	@Override
 	public Member save(Member member) {
-		return jpa.save(member); //----저장 로직 위임----
+		return jpa.save(member);
 	}
 }

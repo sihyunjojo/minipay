@@ -21,13 +21,8 @@ public class TransferLogRepositoryImpl implements TransferLogRepository {
 	private final TransferLogQueryRepository query;
 
 	@Override
-	public Optional<TransferLog> findById(Long id) {
-		return jpa.findById(id);
-	}
-
-	@Override
-	public TransferLog save(TransferLog transferLog) {
-		return jpa.save(transferLog);
+	public void save(TransferLog transferLog) {
+		jpa.save(transferLog);
 	}
 
 	@Override

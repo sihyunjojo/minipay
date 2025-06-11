@@ -29,6 +29,5 @@ public record TransferLogCursorPageResponseDto(
 		description = "다음 커서 ID (sendTime이 동일한 경우 식별 용도)",
 		example = "456"
 	)
-	Long nextCursorId //----MODIFIED PART 2 END----
-
+	Long nextCursorId
 ) {}

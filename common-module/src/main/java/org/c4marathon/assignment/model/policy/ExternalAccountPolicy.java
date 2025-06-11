@@ -1,6 +1,5 @@
 package org.c4marathon.assignment.model.policy;
 
-import org.c4marathon.assignment.model.AccountSnapshot;
 import org.c4marathon.assignment.enums.AccountType;
 
 import lombok.Getter;
@@ -18,9 +17,5 @@ public enum ExternalAccountPolicy {
         this.id = id;
         this.number = number;
         this.type = type;
-    }
-
-    public AccountSnapshot snapshot() {
-        return new AccountSnapshot(id, type, number);
     }
 }
