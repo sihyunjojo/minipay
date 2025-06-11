@@ -9,8 +9,12 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    from sourceSets.main.output
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
 
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -21,7 +25,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     implementation project(':common-module')
+    implementation project(':member-module')
     implementation project(':main-account-module')
+    implementation project(':saving-account-module')
+
 }
 
 

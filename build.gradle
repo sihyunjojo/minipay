@@ -15,6 +15,11 @@ allprojects {
     group = 'com.c4cometrue' // 공통 group 설정 (Java 패키지 기준)
     version = '0.0.1-SNAPSHOT' // 공통 버전 설정
 
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+    }
+
     repositories {
         mavenCentral() // 모든 모듈에서 사용할 중앙 저장소 선언
     }
@@ -44,9 +49,10 @@ allprojects {
 subprojects {
 
     dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
         runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
     }
 
 }
@@ -96,6 +102,7 @@ dependencies {
     implementation project(':interface-module')
     implementation project(':main-account-module')
     implementation project(':member-module')
+    implementation project(':reminder-module')
     implementation project(':saving-account-module')
     implementation project(':settlement-module')
     implementation project(':transfer-module')
@@ -107,7 +114,7 @@ dependencies {
 //    annotationProcessor 'org.projectlombok:lombok'
 
     // db
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//    
     // swagger
 //    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
