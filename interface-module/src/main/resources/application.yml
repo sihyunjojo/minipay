@@ -3,7 +3,7 @@ spring:
     name: mini-pay
 
   profiles:
-    active: oracle  # 현재 활성화할 프로파일 지정
+    active: mysql  # 현재 활성화할 프로파일 지정
 
   config:
     import:
