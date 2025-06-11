@@ -2,10 +2,10 @@ package org.c4marathon.assignment.api.settlement;
 
 import java.util.List;
 
-import org.c4marathon.assignment.common.response.ApiResponse;
-import org.c4marathon.assignment.dto.settlement.SettlementRequestDto;
-import org.c4marathon.assignment.dto.settlement.SettlementResponseDto;
-import org.c4marathon.assignment.usecase.SettlementUseCase;
+import org.c4marathon.assignment.api.settlement.dto.SettlementRequestDto;
+import org.c4marathon.assignment.api.settlement.dto.SettlementResponseDto;
+import org.c4marathon.assignment.response.ApiResponse;
+import org.c4marathon.assignment.usecase.settlement.SettlementUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

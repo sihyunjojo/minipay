@@ -1,7 +1,5 @@
 package org.c4marathon.assignment.infra.persistence.query;
 
-import static org.c4marathon.assignment.domain.model.transferlog.QTransferLog.transferLog;
-
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -10,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
+import org.c4marathon.assignment.domain.model.QTransferLog;
 import org.c4marathon.assignment.domain.model.TransferLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
