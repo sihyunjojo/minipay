@@ -2,7 +2,6 @@ package org.c4marathon.assignment.domain.repository;
 
 import org.c4marathon.assignment.domain.model.MainAccount;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MainAccountRepository {

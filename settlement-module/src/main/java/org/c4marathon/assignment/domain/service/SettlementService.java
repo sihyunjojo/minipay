@@ -23,7 +23,6 @@ public class SettlementService {
 		return switch (policyType) {
 			case EQUAL -> calculateEqualShare(totalAmount, participantMemberIdList);
 			case RANDOM -> calculateRandomShare(totalAmount, participantMemberIdList);
-			default -> throw new IllegalStateException(String.format("%s는 존재하지 않는 값입니다. ", command.policyType()));
 		};
 	}
 

@@ -1,7 +1,6 @@
 package org.c4marathon.assignment.domain.repository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.c4marathon.assignment.domain.model.TransferLog;
 import org.c4marathon.assignment.infra.persistence.jpa.JpaTransferLogRepository;
