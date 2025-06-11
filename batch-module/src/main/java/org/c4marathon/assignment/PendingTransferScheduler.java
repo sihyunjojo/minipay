@@ -1,9 +1,7 @@
 package org.c4marathon.assignment;
 
-import java.util.List;
-import java.util.Map;
 
-import org.c4marathon.assignment.transfer.usecase.PendingTransferUseCase;
+import org.c4marathon.assignment.usecase.transfer.PendingTransferUseCase;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PendingTransferScheduler {
 
-	private final PendingTransferService pendingTransferService;
 	private final PendingTransferUseCase pendingTransferUseCase;
-	private final ReminderService reminderService;
 
 	// Todo: fcm 알림 붙이기.
 	// @Scheduled(fixedDelay = 6000)
@@ -38,8 +34,7 @@ public class PendingTransferScheduler {
 	@Transactional
 	public void remindPendingTargetTransactionsByImproved() {
 		try {
-			Map<Member, List<PendingTransfer>> remindTargetGroupedByMember = pendingTransferService.findRemindTargetGroupedByMember();
-			reminderService.remindTransactions(remindTargetGroupedByMember);
+			pendingTransferUseCase.remindPendingTargetTransactionsByImproved();
 		} catch (Exception e) {
 			log.error("[Good] 대기 중인 송금에 대한 알림 중 오류 발생", e);
 		}
