@@ -1,21 +1,30 @@
-HELP.md
-.gradle
-build/
+# Gradle
+.gradle/
+/build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
+# Build output directories
+/bin/
+/out/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# IDE specific files
+.idea/
+*.iws
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+.settings/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
 
 ### IntelliJ IDEA ###
 .idea
@@ -26,17 +35,57 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.springBeans
+.sts4-cache
+
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
+# Mac OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-docs/
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Local configuration files
+*.properties
+*.yml
+*.yaml
+!gradle.properties
+
+# Documentation
+/docs/
+
+# Formatter configuration
 naver-intellij-formatter.xml
-# QueryDSL Q 클래스 자동 생성 파일 무시
-/src/main/generated/
+
+# QueryDSL generated sources
+**/generated/
+**/Q*.java
+**/target/
+**/.gradle/
+**/build/
+!**/src/**/build/
+
+# Local development environment files
+.env
+.env.local
+.env.*.local
