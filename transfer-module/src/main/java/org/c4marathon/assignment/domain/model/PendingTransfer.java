@@ -51,4 +51,16 @@ public class PendingTransfer extends BaseTimeEntity {
 		return new PendingTransfer(null, amount, TransferType.PENDING,
 			TransferStatus.PENDING, expiredAt, fromMainAccount, toMainAccount);
 	}
+
+	public void markAsCompleted() {
+		this.status = TransferStatus.COMPLETED;
+	}
+
+	public void markAsCanceled() {
+		this.status = TransferStatus.CANCELED;
+	}
+
+	public void markAsExpired() {
+		this.status = TransferStatus.EXPIRED;
+	}
 }
