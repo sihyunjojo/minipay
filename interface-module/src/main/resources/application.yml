@@ -3,11 +3,12 @@ spring:
     name: mini-pay
 
   profiles:
-    active: oracle  # 현재 활성화할 프로파일 지정
+    active: mysql  # 현재 활성화할 프로파일 지정
 
   config:
     import:
-      - classpath:policy-account.yml
+      - classpath:main-account-policy.yml
+      - classpath:saving-account-policy.yml
       - classpath:transfer-transaction-policy.yml
 
 # java -XX:+PrintFlagsFinal -version # JVM이 사용하는 내부 설정값(Flags)을 전부 출력
