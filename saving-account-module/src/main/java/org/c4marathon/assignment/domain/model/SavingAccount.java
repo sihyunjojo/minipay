@@ -2,6 +2,7 @@ package org.c4marathon.assignment.domain.model;
 
 import org.c4marathon.assignment.enums.AccountType;
 import org.c4marathon.assignment.enums.SavingType;
+import org.c4marathon.assignment.model.Account;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class SavingAccount {
+public class SavingAccount implements Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

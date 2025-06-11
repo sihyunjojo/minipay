@@ -1,11 +1,10 @@
 package org.c4marathon.assignment.domain.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.c4marathon.assignment.enums.AccountType;
-// import org.c4marathon.assignment.domain.model.PendingTransfer;
+import org.c4marathon.assignment.model.Account;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @ToString
@@ -17,7 +16,7 @@ import lombok.*;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MainAccount {
+public class MainAccount implements Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +29,7 @@ public class MainAccount {
 	private Long balance;
 	private Long dailyChargeAmount;
 
+	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
