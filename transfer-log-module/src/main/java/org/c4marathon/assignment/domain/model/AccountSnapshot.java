@@ -2,6 +2,7 @@ package org.c4marathon.assignment.domain.model;
 
 import org.c4marathon.assignment.enums.AccountType;
 import org.c4marathon.assignment.model.Account;
+import org.c4marathon.assignment.model.policy.ExternalAccountPolicy;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -27,6 +28,14 @@ public class AccountSnapshot {
 			account.getId(),
 			account.getType(),
 			account.getAccountNumber()
+		);
+	}
+
+	public static AccountSnapshot from(ExternalAccountPolicy externalAccount) {
+		return new AccountSnapshot(
+			externalAccount.getId(),
+			externalAccount.getType(),
+			externalAccount.getNumber()
 		);
 	}
 }
