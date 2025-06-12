@@ -1,1 +1,17 @@
 rootProject.name = 'assignment'
+
+// Core Modules
+include 'common-module'
+
+// Domain Modules
+include 'member-module'
+include 'main-account-module'
+include 'saving-account-module'
+include 'transfer-module'
+include 'transfer-log-module'
+include 'settlement-module'
+
+// Application Modules
+include 'interface-module'
+include 'batch-module'
+include 'reminder-module'
