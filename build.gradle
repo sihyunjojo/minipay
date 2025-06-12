@@ -118,6 +118,14 @@ project(':interface-module') {
         // swagger
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
 
+        // Test Dependencies
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+        // AssertJ for fluent assertions
+        testImplementation 'org.assertj:assertj-core:3.24.2'
+
         // Mapper
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
         annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
