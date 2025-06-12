@@ -11,6 +11,16 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'checkstyle'
     apply plugin: 'io.spring.dependency-management'
+    
+    // 루트 프로젝트에서는 bootJar, bootRun 비활성화
+    if (project == rootProject) {
+        bootJar {
+            enabled = false
+        }
+        bootRun {
+            enabled = false
+        }
+    }
 
     java {
         sourceCompatibility = JavaVersion.valueOf("VERSION_${javaVersion}")
@@ -38,6 +48,29 @@ allprojects {
 }
 
 subprojects {
+    //---- QueryDSL 설정 ----
+    def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+    sourceSets {
+        main.java.srcDirs += [ querydslDir ]
+    }
+
+    configurations {
+        querydsl.extendsFrom compileClasspath
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += [
+                "-parameters",
+                "-Aquerydsl.getters.returnOptional=true"
+        ]
+        options.getGeneratedSourceOutputDirectory().set(querydslDir)
+    }
+
+    clean {
+        delete querydslDir
+    }
+
     dependencies {
         // Core Spring Boot Dependencies
         implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
@@ -119,9 +152,14 @@ project(':interface-module') {
         implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
 
         // Test Dependencies
+        testImplementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
+        testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+        // Lombok for test
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
         // AssertJ for fluent assertions
         testImplementation 'org.assertj:assertj-core:3.24.2'
@@ -155,22 +193,4 @@ project(':common-module') {
         implementation 'org.springframework.boot:spring-boot-starter-aop'
         implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     }
-}
-
-//---- QueryDSL ----
-def querydslDir = "src/main/generated"
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs += "-parameters"
-    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
-}
-
-
-
-sourceSets {
-    main.java.srcDirs += [querydslDir]
-}
-
-clean {
-    delete file(querydslDir)
 }
