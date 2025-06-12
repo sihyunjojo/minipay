@@ -161,9 +161,6 @@ project(':interface-module') {
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-        // AssertJ for fluent assertions
-        testImplementation 'org.assertj:assertj-core:3.24.2'
-
         // Mapper
         implementation "org.mapstruct:mapstruct:${mapstructVersion}"
         annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
