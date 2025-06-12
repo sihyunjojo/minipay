@@ -39,7 +39,6 @@ public class TransferUseCase {
 	/**
 	 * 계좌 ID를 기반으로 일반 계좌 간 이체를 수행합니다.
 	 */
-	// todo: 롤백 모든 상황에서 잘 되는지 체크
 	@Transactional
 	public void transfer(TransferRequestDto request) {
 		final Long fromAccountId = request.fromAccountId();

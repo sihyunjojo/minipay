@@ -16,7 +16,6 @@ public class PendingTransferScheduler {
 
 	private final PendingTransferUseCase pendingTransferUseCase;
 
-	// Todo: fcm 알림 붙이기.
 	// @Scheduled(fixedDelay = 6000)
 	// @Transactional
 	// public void remindPendingTargetTransactions() {

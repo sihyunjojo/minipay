@@ -30,7 +30,6 @@ public class TransferLogQueryRepositoryImpl implements TransferLogQueryRepositor
 
 	private final JPAQueryFactory queryFactory;
 
-	// fixme: fetch join 등으로 성능 향상 수정하기.
 	// @Override
 	// public Slice<TransferLog> findAllByAccountNumberAndSendTimeAndIdAfterCursor(
 	// 	String accountNumber,
