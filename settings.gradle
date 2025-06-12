@@ -15,15 +15,3 @@ include 'settlement-module'
 include 'interface-module'
 include 'batch-module'
 include 'reminder-module'
-
-// Define module dependencies
-project(':interface-module').projectDir = file('interface-module')
-project(':batch-module').projectDir = file('batch-module')
-project(':common-module').projectDir = file('common-module')
-project(':transfer-module').projectDir = file('transfer-module')
-project(':transfer-log-module').projectDir = file('transfer-log-module')
-project(':member-module').projectDir = file('member-module')
-project(':main-account-module').projectDir = file('main-account-module')
-project(':saving-account-module').projectDir = file('saving-account-module')
-project(':settlement-module').projectDir = file('settlement-module')
-project(':reminder-module').projectDir = file('reminder-module')
