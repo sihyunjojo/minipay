@@ -1,72 +1,108 @@
-# Marathon-Assignment
+# Mini-Pay
+[취뽀컴트루 & 취준마라톤 과제 레포](https://github.com/sihyunjojo/c4-cometrue-assignment)를 기반으로 개발한 프로젝트입니다.
 
-- 취뽀컴트루 & 취준마라톤 과제 레포
-- 각 프로젝트 설명은 assignment 폴더를 참고 바랍니다.
+# 프로젝트 소개
 
-| 과제 이름 | 한 줄 설명 | 예상 난이도 (1 - 5) | 링크 |
-| -- | -- | -- | -- |
-| My-Storage | 간단한 형태의 클라우드 스토리지를 만들어 봅시다. | 4 ~ 5 | [링크](assignments/my-storage.md) |
-| Mini-Pay | 기본 송금과 정산 기능이 있는 페이 서비스를 만들어 봅시다. | 4 | [링크](assignments/mini-pay.md) |
-| Accelerated To-Do | iCal 형식에 맞춘 일정을 제공하는 To-Do 서버를 개발해 봅시다. | 4 ~ 5 | [링크](assignments/accelerated-to-do.md) |
-| Opener-Market | 구매자와 판매자 기능이 있는 오픈마켓 서비스를 개발해 봅시다. | 3 ~ 4 | [링크](assignments/opener-market.md) |
-| Popping-Community | 일반적인 커뮤니티를 개발해 봅시다. 단, 사용자가 엄청나게 많을 겁니다. | 3 ~ 4 | [링크](assignments/popping-community.md) |
-| Algorithm-Market | 알고리즘 연습 사이트 (ex. 릿코드, 백준, 프로그래머스) 를 개발해 봅시다. | 4 | [링크](assignments/algorithm-market.md) |
-| Very-Simple-SNS | 간단한 형태의 SNS를 개발해 봅시다.<br />어느정도 규모 있는 서버 개발을 해 본적이 없는 분들에게 추천드립니다. | 2 | [링크](assignments/very-simple-sns.md) |
+이 프로젝트는 계좌 이체 및 보류 이체 기능을 제공하는 금융 서비스 백엔드입니다.  
+주요 기능으로는 일반 계좌 간 이체, 보류 이체(수취인 승인 후 이체 완료), 이체 취소 등이 있습니다.
 
-## Branch Guide
+---
 
-- c4-cometrue org에 존재하는 레포에 본인의 대표 브랜치를 생성합니다.
-- 이후, 각 Step 마다 해당 브랜치를 베이스로 하는 새로운 브랜치를 생성합니다.
-    - 이 경우, 각 브랜치의 이름은 `feature/{대표 브랜치 이름}_step0` 과 같은 방식으로 생성합니다.
-    - PR은 대표 브랜치 <- Step 브랜치로 진행합니다.
-- 필수적으로 PR Approve를 받아야 합니다. PR을 올리신 이후엔 리뷰어 지정 부탁드립니다. (@VSFe)
-    - 가능하다면, 참여하시는 모든 멤버를 리뷰어로 지정해주세요. 서로의 코드를 읽고, 코멘트 하는 것도 많은 도움이 됩니다.
 
-## Git Convention
+## 주요 기능
 
-### 포맷
+### 1. 일반 이체
+- 실시간 계좌 이체 (메인계좌 → 메인계좌, 메인계좌 → 적금계좌)
+- 트랜잭션 관리와 동시성 제어를 통한 안전한 자산 이체
+- 낙관적 락(Optimistic Lock)을 활용한 동시성 제어
+
+### 2. 보류 이체
+- 수신자 확인이 필요한 보류 이체 기능
+- 보류 이체 수락/거절/취소 기능
+- 미확인 보류 이체에 대한 자동 만료 처리
+
+### 3. 이체 내역
+- 사용자별 이체 내역 조회
+- 커서 기반 페이지네이션을 통한 대량 데이터 효율적 조회
+- 다양한 조건에 따른 필터링 및 정렬
+
+---
+
+# 프로젝트 구조
 
 ```
-type: subject
-
-body
+c4-cometrue-assignment/
+cometrue-assignment/
+├── interface-module/      # API 계층
+├── transfer-module/       # 이체 도메인
+├── transfer-log-module/   # 이체 내역 도메인
+├── main-account-module/   # 메인 계좌 도메인
+├── saving-account-module/ # 적금 계좌 도메인
+└── common-module/         # 공통 유틸리티
+└── ...
 ```
 
-#### type
+---
 
-- 하나의 커밋에 여러 타입이 존재하는 경우 상위 우선순위의 타입을 사용한다.
-- fix: 버스 픽스
-- feat: 새로운 기능 추가
-- refactor: 리팩토링 (버그픽스나 기능추가없는 코드변화)
-- docs: 문서만 변경
-- style: 코드의 의미가 변경 안 되는 경우 (띄어쓰기, 포맷팅, 줄바꿈 등)
-- test: 테스트코드 추가/수정
-- chore: 빌드 테스트 업데이트, 패키지 매니저를 설정하는 경우 (프로덕션 코드 변경 X)
+## 기술적 고민과 해결
 
-#### subject
+### 1. 트랜잭션 관리
+- **도전**: 이체 중 예외 발생 시 데이터 일관성 유지  
+- **해결**: TransactionTemplate을 사용한 명시적 트랜잭션 관리  
+  - `PROPAGATION_REQUIRES_NEW`로 독립 트랜잭션 구성  
+  - 예외 발생 시 명시적 롤백 처리
 
-- 제목은 50글자를 넘지 않도록 한다.
-- 개조식 구문 사용
-    - 중요하고 핵심적인 요소만 간추려서 (항목별로 나열하듯이) 표현
-- 마지막에 특수문자를 넣지 않는다. (마침표, 느낌표, 물음표 등)
+### 2. 동시성 제어
+- **도전**: 계좌 잔액 동시 업데이트 시 경쟁 조건  
+- **해결**: Optimistic Locking 전략 구현  
+  - `@Version`을 사용한 버전 관리  
+  - 낙관적 락 충돌 시 `OptimisticLockingFailureException` 처리
 
-#### body (optional)
+### 3. 보류 이체 상태 관리
+- **도전**: 복잡한 보류 이체 생명주기 관리  
+- **해결**: 상태 패턴(State Pattern) 적용  
+  - `PENDING → COMPLETED/CANCELED/EXPIRED` 상태 전이  
+  - 각 상태별 비즈니스 로직 캡슐화
 
-- 각 라인별로 balled list로 표시한다.
-    - 예시) - AA
-- 가능하면 한줄당 72자를 넘지 않도록 한다.
-- 본문의 양에 구애받지 않고 최대한 상세히 작성
-- “어떻게” 보다는 “무엇을" “왜” 변경했는지 설명한다.
+### 4. 대량 데이터 페이징
+- **도전**: 대량의 이체 내역에서 효율적인 페이징 처리  
+- **해결**: 커서 기반 페이지네이션 구현  
+  - `WHERE sendTime > lastSeenTime AND id > lastSeenId` 방식의 복합 커서  
+  - 인덱스 스캔 최소화를 위한 복합 인덱스 설계
 
-## Additional Requirement
+### 5. 커서 기반 페이지네이션
+- **도전**: 대용량 이체 로그에서 Offset 방식은 Limit + Offset에 따른 불필요한 정렬/스캔 비용으로 인해 성능 저하 발생
+- **해결**: No-Offset 방식의 커서 기반 페이지네이션 구현
+  - (sendTime, id) 복합 커서를 기준으로 조회
+  - 정렬 기준과 커서 조건을 분리하지 않고 복합 인덱스로 활용
+  - limit + 1 방식으로 다음 페이지 존재 여부(hasNext) 판단
 
-각 PR의 요구사항과 더불어, 해당 명세를 **반드시** 만족해야 합니다.
+### 6. 도메인 모듈화
+- **도전**: 도메인 간 의존도가 높아질수록 비즈니스 변경 시 파급 효과가 커지고 유지보수성 저하
+- **해결**: 기능 단위 모듈 분리를 통해 응집도와 독립성 강화
+  - transfer, main-account, saving-account, transfer-log 등 각각 독립 책임을 가진 모듈로 분리
+  - common-module에 공통 로직과 유틸리티 클래스 집중
+  - 모듈 간 의존성 최소화로 각 도메인의 독립적인 테스트 및 배포 가능
 
-- 매 Step 마다 테스트 코드를 작성해보세요.
-  - 커버리지 80% 이상을 맞추지 못할 경우, PR이 제한됩니다.
-- Code Smell을 최소화 하세요.
-  - SonarQube를 사용합니다. PR 과정에서 SonarQube Major Issue 발견 시, PR이 제한됩니다. 
-- Code Convention 을 사용하여 코드를 작성해 주세요.
-- 여기서는 **네이버 핵 데이 컨벤션**을 사용합니다.
-    - 출처: https://naver.github.io/hackday-conventions-java/
-- 가능하면, 다른 분들의 PR도 코멘트를 달아보도록 노력해보세요. 상대방의 코드를 지적하는 것만이 코드 리뷰가 아닙니다. 코드를 보고 배울 점이 있다고 생각해도, 가감없이 코멘트를 달아주세요.
+
+---
+
+## 성능 최적화
+
+### 1. 쿼리 최적화
+- QueryDSL을 활용한 동적 쿼리 구성
+- 필요한 컬럼만 선택적으로 조회
+- 적절한 인덱스 설계
+
+### 2. 부하 테스트
+- **도구**: Locust
+- **목표**: 초당 600 TPS 처리  
+- **결과**: 평균 응답 시간 200ms 이하 유지
+- 
+---
+
+# 기타
+
+- **공통 응답 구조**: `ApiResponse`를 통해 일관된 API 응답 제공  
+- **Swagger (OpenAPI)**: 각 API에 `@Operation` 어노테이션으로 문서화  
+- **Validation**: DTO에 `@Valid` 적용, 컨트롤러 단에서 유효성 검증
